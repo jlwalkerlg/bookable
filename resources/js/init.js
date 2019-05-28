@@ -6,17 +6,9 @@ import { oauthLogin } from './actions/user';
 const setupAxios = () => {
   axios.defaults.headers.common['Accept'] = 'application/json';
   axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-  axios.defaults.headers.common['X-CSRF-TOKEN'] = document.head
-    .querySelector('meta[name="csrf-token"]')
-    .getAttribute('content');
 };
 
-const initLogin = async () => {
-  if (localStorage.getItem('access_token')) {
-    const token = localStorage.getItem('access_token');
-    await store.dispatch(oauthLogin(token));
-  }
-};
+const initLogin = () => store.dispatch(oauthLogin());
 
 const init = async () => {
   setupAxios();

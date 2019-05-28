@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import AppRoute from '../layouts/AppLayout';
 
 const GuestRoute = ({ user, ...props }) => {
-  return user.token ? (
+  return user.id ? (
     <Redirect {...props} to="/dashboard" />
   ) : (
     <AppRoute {...props} />

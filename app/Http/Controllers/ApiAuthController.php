@@ -20,18 +20,18 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('Bookable Personal Access Client')->accessToken;
 
-        return [
+        return response([
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'token' => $token,
-        ];
+        ])->cookie('laravel_token', $token, 100, '/', null, false, true);
     }
 
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
-        return ['message' => 'You have been successfully logged out!'];
+        return response(['message' => 'You have been successfully logged out!'])->cookie('laravel_token', null, -1);
     }
 
     public function register(Request $request)
@@ -47,13 +47,11 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('Bookable Personal Access Client')->accessToken;
 
-        Cookie::se
-
-        return [
+        return response([
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
             'token' => $token,
-        ];
+        ])->cookie('laravel_token', $token, 100, '/', null, false, true);
     }
 }

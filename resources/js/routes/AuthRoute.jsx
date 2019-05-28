@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import AppRoute from '../layouts/AppLayout';
 
 const AuthRoute = ({ user, ...props }) => {
-  return user.token ? (
+  return user.id ? (
     <AppRoute {...props} />
   ) : (
     <Redirect {...props} to="/login" />

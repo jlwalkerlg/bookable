@@ -45,14 +45,14 @@ class NavBar extends Component {
               Home
             </Nav.Link>
             <Button onClick={this.test}>TEST</Button>
-            {user.token && (
+            {user.id && (
               <Nav.Link as={NavLink} to="/dashboard">
                 Dashboard
               </Nav.Link>
             )}
           </Nav>
           <Nav>
-            {user.token ? (
+            {user.id ? (
               <Form inline onSubmit={this.logout}>
                 <Nav.Link as={Button} type="submit" variant="link">
                   Logout
