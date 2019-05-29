@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import AppRoute from '../layouts/AppLayout';
 
-const AuthRoute = ({ user, ...props }) => {
+const UserRoute = ({ user, ...props }) => {
   return user.id ? (
     <AppRoute {...props} />
   ) : (
@@ -15,4 +15,4 @@ const mapStateToProps = state => ({
   user: state.user
 });
 
-export default connect(mapStateToProps)(AuthRoute);
+export default connect(mapStateToProps)(UserRoute);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { BrowserRouter as Router, Switch } from 'react-router-dom';
-import AuthRoute from './routes/AuthRoute';
+import UserRoute from './routes/UserRoute';
 import GuestRoute from './routes/GuestRoute';
 import AppRoute from './routes/AppRoute';
 import Loading from './views/Loading';
@@ -18,7 +18,7 @@ const App = ({ loading }) =>
     <Router>
       <Switch>
         <AppRoute exact path="/" component={Home} />
-        <AuthRoute exact path="/dashboard" component={Dashboard} />
+        <UserRoute exact path="/dashboard" component={Dashboard} />
         <GuestRoute exact path="/login" component={Login} />
         <GuestRoute exact path="/register" component={Register} />
         <AppRoute component={NotFound} />
