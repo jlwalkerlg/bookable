@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
 import { Navbar, Nav, Form, Button } from 'react-bootstrap';
 import { logout } from '../actions/user';
-import axios from 'axios';
 
 class NavBar extends Component {
   logout = e => {
@@ -23,13 +22,6 @@ class NavBar extends Component {
     console.log(error);
   };
 
-  test = () => {
-    axios
-      .get('/api/user')
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
-  };
-
   render() {
     const { user } = this.props;
 
@@ -44,7 +36,6 @@ class NavBar extends Component {
             <Nav.Link as={NavLink} to="/">
               Home
             </Nav.Link>
-            <Button onClick={this.test}>TEST</Button>
             {user.id && (
               <Nav.Link as={NavLink} to="/dashboard">
                 Dashboard
