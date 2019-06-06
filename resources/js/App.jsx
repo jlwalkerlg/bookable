@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import UserRoute from './routes/UserRoute';
 import GuestRoute from './routes/GuestRoute';
 import AppRoute from './routes/AppRoute';
@@ -15,15 +15,15 @@ const App = ({ loading }) =>
   loading ? (
     <Loading />
   ) : (
-    <Router>
+    <BrowserRouter>
       <Switch>
         <AppRoute exact path="/" component={Home} />
         <UserRoute exact path="/dashboard" component={Dashboard} />
         <GuestRoute exact path="/login" component={Login} />
         <GuestRoute exact path="/register" component={Register} />
-        <AppRoute component={NotFound} />
+        <Route component={NotFound} />
       </Switch>
-    </Router>
+    </BrowserRouter>
   );
 
 const mapStateToProps = state => ({

@@ -7,9 +7,7 @@ const Home = () => (
     <Row className="align-items-center fullheight-with-nav">
       <Col className="text-center">
         <h1 className="display-4">Welcome to Bookable</h1>
-        <p className="h4 font-weight-light mb-3">
-          Meet your new favourite book.
-        </p>
+        <p className="h4 font-weight-light mb-3">Where the books are.</p>
         <Link to="/" className="btn btn-primary btn-lg">
           Get Started
         </Link>

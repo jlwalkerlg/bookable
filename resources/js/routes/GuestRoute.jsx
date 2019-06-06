@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import AppRoute from '../layouts/AppLayout';
+import AppRoute from './AppRoute';
 
 const GuestRoute = ({ user, ...props }) => {
   return user.id ? (

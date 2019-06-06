@@ -1,12 +1,14 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import AppLayout from '../layouts/AppLayout';
+import NavBar from '../components/NavBar';
 
-const AppRoute = ({ component, ...routeProps }) => (
-  <Route
-    {...routeProps}
-    render={props => <AppLayout {...props} component={component} />}
-  />
+const AppRoute = props => (
+  <>
+    <NavBar {...props} />
+    <main>
+      <Route {...props} />
+    </main>
+  </>
 );
 
 export default AppRoute;

@@ -18,7 +18,7 @@ class ApiAuthController extends Controller
             return response(['message' => 'Password mismatch.'], 422);
         }
 
-        $token = $user->createToken('Bookable Personal Access Client')->accessToken;
+        $token = $user->createToken('BookOn Personal Access Client')->accessToken;
 
         return response([
             'id' => $user->id,
@@ -45,7 +45,7 @@ class ApiAuthController extends Controller
 
         $user = User::create($credentials);
 
-        $token = $user->createToken('Bookable Personal Access Client')->accessToken;
+        $token = $user->createToken('BookOn Personal Access Client')->accessToken;
 
         return response([
             'id' => $user->id,

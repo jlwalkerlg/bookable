@@ -20,3 +20,23 @@ Route::post('/register', 'ApiAuthController@register');
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
+
+Route::get('/books', function () {
+    return [
+        [
+            'title' => 'Bloodborne'
+        ],
+        [
+            'title' => 'Sekiro'
+        ],
+        [
+            'title' => 'Dark Souls 3'
+        ],
+        [
+            'title' => 'Biomutant'
+        ],
+        [
+            'title' => 'God of War 3'
+        ],
+    ];
+});
