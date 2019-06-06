@@ -48,10 +48,10 @@ const Home = () => (
       </div>
     </header>
     {/* BEST SELLER */}
-    <article className="bg-beige section text-center text-lg-right">
+    <article className="bg-beige section text-center">
       <Container>
         <Row>
-          <Col xs={12} lg={4} className="mb-4 mb-lg-0">
+          <Col xs={12} lg={4} className="mb-4 mb-lg-0 text-lg-right">
             <h2 className="mb-5">
               <span className="heading right">Best Seller</span>
             </h2>
@@ -70,7 +70,12 @@ const Home = () => (
               className="d-block mx-auto book-highlight"
             />
           </Col>
-          <Col xs={12} md={6} lg={4} className="d-flex align-items-end">
+          <Col
+            xs={12}
+            md={6}
+            lg={4}
+            className="d-flex align-items-end text-md-left"
+          >
             <div>
               <p className="font-serif">
                 A nineteenth-century boy from a Mississippi River town recounts
@@ -170,17 +175,19 @@ const Home = () => (
       </Container>
     </article>
     {/* PHILOSOPHY FEATURE */}
-    <article className="bg-beige section text-center text-md-right">
+    <article className="bg-beige section text-center">
       <Container>
-        <h2 className=" mb-4">
-          <span className="heading right">
-            Trending in{' '}
-            <Link to="/" className="text-dark">
-              philosophy
-            </Link>
-          </span>
-        </h2>
         <Row>
+          <Col xs={12} md={6} className="offset-md-6">
+            <h2 className="text-md-left mb-4">
+              <span className="heading right">
+                Trending in{' '}
+                <Link to="/" className="text-dark">
+                  philosophy
+                </Link>
+              </span>
+            </h2>
+          </Col>
           <Col xs={12} md={6} className="mb-3 mb-md-0">
             <img
               src="https://images.gr-assets.com/books/1522157426l/19063.jpg"
@@ -188,7 +195,7 @@ const Home = () => (
               className="d-block mx-auto book-highlight"
             />
           </Col>
-          <Col xs={12} md={6}>
+          <Col xs={12} md={6} className="text-md-left">
             <p className="h1 font-serif font-weight-bold text-break">
               <Link to="/" className="text-body">
                 The Book Thief
