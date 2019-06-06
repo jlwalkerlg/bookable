@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import NavBar from '../includes/NavBar';
+import Footer from '../includes/Footer';
 
 const AppRoute = props => (
   <>
     <NavBar {...props} />
-    <main>
-      <Route {...props} />
-    </main>
+    <Route {...props} />
+    <Footer {...props} />
   </>
 );
 

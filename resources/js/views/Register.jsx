@@ -103,7 +103,7 @@ class Register extends Component {
                 {errors.password}
               </Form.Control.Feedback>
             )}
-            <Form.Text className="text-muted">
+            <Form.Text className="text-secondary">
               Password must be at least 8 characters long.
             </Form.Text>
           </Form.Group>

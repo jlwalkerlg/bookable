@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Container } from 'react-bootstrap';
 import Slider from 'react-slick';
 import { getBooks } from '../actions/books';
-import Cheveron from '../components/icons/Cheveron';
+import SlickArrow from '../components/SlickArrow';
 
 class Dashboard extends Component {
   componentDidMount() {
@@ -18,8 +18,8 @@ class Dashboard extends Component {
       slidesToShow: 4,
       slidesToScroll: 1,
       swipeToSlide: true,
-      nextArrow: <Cheveron direction="right" />,
-      prevArrow: <Cheveron direction="left" />,
+      nextArrow: <SlickArrow direction="right" />,
+      prevArrow: <SlickArrow direction="left" />,
       responsive: [
         {
           breakpoint: 768,
@@ -41,14 +41,16 @@ class Dashboard extends Component {
     const { books } = this.props;
 
     return (
-      <Container>
-        <h1>Dashboard!</h1>
-        <Slider {...settings}>
-          {books.map((book, index) => (
-            <div key={index}>{book.title}</div>
-          ))}
-        </Slider>
-      </Container>
+      <main>
+        <Container>
+          <h1>Dashboard!</h1>
+          <Slider {...settings}>
+            {books.map((book, index) => (
+              <div key={index}>{book.title}</div>
+            ))}
+          </Slider>
+        </Container>
+      </main>
     );
   }
 }

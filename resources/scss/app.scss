@@ -10,6 +10,12 @@ $enable-gradients: true;
 @import '../../node_modules/slick-carousel/slick/slick-theme.css';
 
 // Custom CSS.
+@import './mixins';
+@import './_base';
+@import './_site-foot';
+@import './pages/_home';
+@import './_helpers';
+
 .fullheight {
   height: 100vh;
 }
@@ -20,4 +26,61 @@ $enable-gradients: true;
 
 .container-narrow {
   max-width: 600px;
+}
+
+.heading {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 10px;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 400;
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &.right::after {
+    left: initial;
+    transform: none;
+    right: 0;
+  }
+
+  &.left::after {
+    left: 0;
+    transform: none;
+  }
+}
+
+.section {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.social-icon {
+  fill: $gray-700;
+}
+
+.social-icon:hover {
+  &.facebook {
+    fill: #29487d;
+  }
+  &.twitter {
+    fill: #1da1f2;
+  }
+}
+
+.book-highlight {
+  width: 220px;
+
+  @include lg {
+    width: auto;
+  }
 }
