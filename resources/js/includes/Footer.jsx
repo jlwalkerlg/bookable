@@ -50,13 +50,17 @@ const Footer = () => {
           <Col xs={12} md={4}>
             <p className="heading left">Contact</p>
             <address>
-              <p>info@bookable.com</p>
-              <a href="/" className="d-inline-block mr-2">
-                <SocialIcon variant="facebook" width="30" />
-              </a>
-              <a href="/" className="d-inline-block mr-2">
-                <SocialIcon variant="twitter" width="30" />
-              </a>
+              <p>
+                <a href="mailto:info@bookable.com">info@bookable.com</a>
+              </p>
+              <div>
+                <a href="/" className="d-inline-block mr-2">
+                  <SocialIcon variant="facebook" width="30" />
+                </a>
+                <a href="/" className="d-inline-block mr-2">
+                  <SocialIcon variant="twitter" width="30" />
+                </a>
+              </div>
             </address>
           </Col>
         </Row>
