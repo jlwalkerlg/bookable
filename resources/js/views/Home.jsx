@@ -56,11 +56,16 @@ const Home = () => (
               <span className="heading right">Best Seller</span>
             </h2>
             <p className="h1 font-serif font-weight-bold text-break">
-              <Link to="/" className="text-body">
+              <Link to="/books/show" className="text-body">
                 The Adventures of Huckleberry Finn
               </Link>
             </p>
-            <p className="text-secondary">by: Mark Twain</p>
+            <p className="text-secondary">
+              by:{' '}
+              <Link to="/" className="link-secondary">
+                Mark Twain
+              </Link>
+            </p>
             <p className="h2 font-weight-bold text-warning">£15.99</p>
           </Col>
           <Col xs={12} md={6} lg={4} className="mb-5 mb-md-0">
@@ -85,7 +90,7 @@ const Home = () => (
                 for Tom.
               </p>
               <Link
-                to="/"
+                to="/books/show"
                 className="btn btn-warning btn-md rounded-pill text-uppercase"
               >
                 Read More
@@ -105,7 +110,7 @@ const Home = () => (
           {new Array(15).fill(0).map((item, index) => (
             <Link
               key={index}
-              to="/"
+              to="/books/show"
               className="d-inline-block w-auto px-2 text-decoration-none"
             >
               <ProductCard
@@ -136,7 +141,10 @@ const Home = () => (
               xl={12 / 6}
               className="mb-4"
             >
-              <Link to="/" className="d-block text-decoration-none px-2">
+              <Link
+                to="/books/show"
+                className="d-block text-decoration-none px-2"
+              >
                 <ProductCard
                   image="https://images.gr-assets.com/books/1546091617m/15823480.jpg"
                   title="Anna Karenina"
@@ -159,7 +167,7 @@ const Home = () => (
           {new Array(15).fill(0).map((item, index) => (
             <Link
               key={index}
-              to="/"
+              to="/books/show"
               className="d-inline-block w-auto px-2 text-decoration-none"
             >
               <ProductCard
@@ -182,7 +190,7 @@ const Home = () => (
             <h2 className="text-md-left mb-4">
               <span className="heading right">
                 Trending in{' '}
-                <Link to="/" className="text-dark">
+                <Link to="/" className="link-secondary">
                   philosophy
                 </Link>
               </span>
@@ -197,11 +205,16 @@ const Home = () => (
           </Col>
           <Col xs={12} md={6} className="text-md-left">
             <p className="h1 font-serif font-weight-bold text-break">
-              <Link to="/" className="text-body">
+              <Link to="/books/show" className="text-body">
                 The Book Thief
               </Link>
             </p>
-            <p className="text-secondary">by: Markus Zusak</p>
+            <p className="text-secondary">
+              by:{' '}
+              <Link to="/" className="link-secondary">
+                Markus Zusak
+              </Link>
+            </p>
             <p className="h2 font-weight-bold text-warning">£19.99</p>
             <p className="font-serif">
               A nineteenth-century boy from a Mississippi River town recounts
@@ -211,7 +224,7 @@ const Home = () => (
               for Tom.
             </p>
             <Link
-              to="/"
+              to="/books/show"
               className="btn btn-warning btn-md rounded-pill text-uppercase"
             >
               Read More
@@ -220,38 +233,6 @@ const Home = () => (
         </Row>
       </Container>
     </article>
-    {/* <article className="bg-beige section">
-      <Container>
-        <Row className="text-center">
-          <Col xs={12} lg={4} className="text-lg-right mb-4 mb-lg-0">
-            <h2 className="mb-5">
-              <span className="heading right">Trending in philosophy</span>
-            </h2>
-            <p className="h1 font-serif font-weight-bold text-break">
-              The Book Thief
-            </p>
-            <p className="text-secondary">by: Markus Zusak</p>
-            <p className="h2 font-weight-bold text-warning">£19.99</p>
-          </Col>
-          <Col xs={12} md={6} lg={4} className="mb-5 mb-md-0">
-            <img
-              src="https://images.gr-assets.com/books/1522157426l/19063.jpg"
-              alt="The Book Thief"
-              className="d-block mx-auto"
-            />
-          </Col>
-          <Col xs={12} md={6} lg={4} className="d-flex align-items-end">
-            <p className="font-serif">
-              A nineteenth-century boy from a Mississippi River town recounts
-              his adventures as he travels down the river with a runaway slave,
-              encountering a family involved in a feud, two scoundrels
-              pretending to be royalty, and Tom Sawyer's aunt who mistakes him
-              for Tom.
-            </p>
-          </Col>
-        </Row>
-      </Container>
-    </article> */}
   </>
 );
 
