@@ -1,0 +1,22 @@
+.stars {
+  display: inline-block;
+  direction: rtl;
+
+  & > .star {
+    display: inline-block;
+    position: relative;
+    width: 1.1em;
+
+    &.editable {
+      cursor: pointer;
+    }
+  }
+
+  & > .star.active:before,
+  & > .star.active ~ .star:before,
+  & > .star.editable:hover:before,
+  & > .star.editable:hover ~ .star:before {
+    content: '\2605';
+    position: absolute;
+  }
+}

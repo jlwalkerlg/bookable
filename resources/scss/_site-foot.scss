@@ -1,13 +1,10 @@
 .site-foot {
-  color: $secondary;
-  font-size: 0.9rem;
-  font-weight: 300;
+  font-family: $font-family-serif;
+  font-weight: $font-weight-light;
+  font-size: 0.8rem;
+  color: $gray-800;
 
   a {
-    color: inherit;
-    text-decoration: none;
-    &:hover {
-      color: $dark;
-    }
+    @extend .link-secondary;
   }
 }

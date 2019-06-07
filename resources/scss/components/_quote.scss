@@ -1,0 +1,26 @@
+.quote {
+  position: relative;
+
+  &::before,
+  &::after {
+    position: absolute;
+    font-size: 60px;
+    height: 60px;
+    color: $secondary;
+    opacity: 0.1;
+    z-index: -1;
+    transform: rotateZ(10deg);
+  }
+
+  &::before {
+    content: '\201C';
+    top: -20px;
+    left: -20px;
+  }
+
+  &::after {
+    content: '\201D';
+    bottom: -10px;
+    right: 0;
+  }
+}

@@ -10,10 +10,13 @@ $enable-gradients: true;
 @import '../../node_modules/slick-carousel/slick/slick-theme.css';
 
 // Custom CSS.
-@import './mixins';
+@import './_mixins';
 @import './_base';
+@import './components/_stars';
+@import './components/_quote';
 @import './_site-foot';
 @import './pages/_home';
+@import './pages/_show';
 @import './_helpers';
 
 .fullheight {
@@ -84,4 +87,23 @@ $enable-gradients: true;
   @include lg {
     width: auto;
   }
+}
+
+.link-secondary {
+  color: $secondary;
+  &:hover {
+    color: $dark;
+    text-decoration: none;
+  }
+}
+
+.text-description {
+  font-family: $font-family-serif;
+  font-weight: $font-weight-light;
+  font-size: 0.9rem;
+  color: $gray-800;
+}
+
+.scrollspy > li.active > a {
+  color: inherit;
 }

@@ -55,7 +55,7 @@ const Home = () => (
             <h2 className="mb-5">
               <span className="heading right">Best Seller</span>
             </h2>
-            <p className="h1 font-serif font-weight-bold text-break">
+            <p className="h1 font-display font-weight-bold text-break">
               <Link to="/books/show" className="text-body">
                 The Adventures of Huckleberry Finn
               </Link>
@@ -82,7 +82,7 @@ const Home = () => (
             className="d-flex align-items-end text-md-left"
           >
             <div>
-              <p className="font-serif">
+              <p className="text-description">
                 A nineteenth-century boy from a Mississippi River town recounts
                 his adventures as he travels down the river with a runaway
                 slave, encountering a family involved in a feud, two scoundrels
@@ -204,7 +204,7 @@ const Home = () => (
             />
           </Col>
           <Col xs={12} md={6} className="text-md-left">
-            <p className="h1 font-serif font-weight-bold text-break">
+            <p className="h1 font-display font-weight-bold text-break">
               <Link to="/books/show" className="text-body">
                 The Book Thief
               </Link>
@@ -215,8 +215,8 @@ const Home = () => (
                 Markus Zusak
               </Link>
             </p>
-            <p className="h2 font-weight-bold text-warning">£19.99</p>
-            <p className="font-serif">
+            <p className="h2 font-weight-bold text-warning mb-4">£19.99</p>
+            <p className="text-description">
               A nineteenth-century boy from a Mississippi River town recounts
               his adventures as he travels down the river with a runaway slave,
               encountering a family involved in a feud, two scoundrels

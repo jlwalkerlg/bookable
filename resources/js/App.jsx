@@ -10,6 +10,7 @@ import Dashboard from './views/Dashboard';
 import Login from './views/Login';
 import Register from './views/Register';
 import NotFound from './views/NotFound';
+import Show from './views/books/Show';
 
 const App = ({ loading }) =>
   loading ? (
@@ -21,6 +22,7 @@ const App = ({ loading }) =>
         <UserRoute exact path="/dashboard" component={Dashboard} />
         <GuestRoute exact path="/login" component={Login} />
         <GuestRoute exact path="/register" component={Register} />
+        <AppRoute exact path="/books/show" component={Show} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
