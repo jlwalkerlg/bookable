@@ -10,6 +10,12 @@ $breakpoints: (
   'xl': $xl
 );
 
+// Typography.
+$font-family-sans-serif: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+  Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+  'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+$font-family-serif: 'Playfair Display', serif;
+
 // Colours.
 $white: #fff;
 $gray-100: #f8f9fa;
