@@ -179,10 +179,8 @@ class Show extends Component {
               </Col>
               {/* Book details */}
               <Col xs={12} md={8} className="font-serif font-size-7">
-                <section id="overview" className="text-dark">
-                  <h3 className="text-uppercase h2">
-                    <span className="font-size-6">Overview</span>
-                  </h3>
+                <section id="overview" className="text-dark mb-4">
+                  <h3 className="text-uppercase font-size-6">Overview</h3>
                   <p>
                     'If I had my way, every idiot who goes around with Merry
                     Christmas on his lips, would be boiled with his own pudding,
@@ -204,10 +202,8 @@ class Show extends Component {
                     captures the heart of the holidays like no other novel.
                   </p>
                 </section>
-                <section id="details" className="text-dark">
-                  <h3 className="text-uppercase h2">
-                    <span className="font-size-6">Details</span>
-                  </h3>
+                <section id="details" className="text-dark mb-4">
+                  <h3 className="text-uppercase font-size-6">Details</h3>
                   <ul className="list-unstyled">
                     <li>
                       <span className="font-weight-bold">Publisher:</span> AKW
@@ -222,10 +218,8 @@ class Show extends Component {
                     </li>
                   </ul>
                 </section>
-                <section id="quotes" className="text-dark">
-                  <h3 className="text-uppercase h2">
-                    <span className="font-size-6">Quotes</span>
-                  </h3>
+                <section id="quotes" className="text-dark mb-4">
+                  <h3 className="text-uppercase font-size-6">Quotes</h3>
                   <ul className="list-unstyled mb-3">
                     {new Array(5).fill(0).map((item, index) => (
                       <li key={index} className="quote mb-3">
@@ -300,18 +294,13 @@ class Show extends Component {
             </h2>
             <Slider {...slickOptions} className="text-center">
               {new Array(15).fill(0).map((item, index) => (
-                <Link
+                <ProductCard
                   key={index}
-                  to="/books/show"
-                  className="d-inline-block w-auto px-2 text-decoration-none"
-                >
-                  <ProductCard
-                    image="https://images.gr-assets.com/books/1344922523m/1953.jpg"
-                    title="A Tale of Two Cities"
-                    author="Charles Dickens"
-                    price={14.99}
-                  />
-                </Link>
+                  image="https://images.gr-assets.com/books/1344922523m/1953.jpg"
+                  title="A Tale of Two Cities"
+                  author="Charles Dickens"
+                  price={14.99}
+                />
               ))}
             </Slider>
           </Container>
@@ -324,28 +313,21 @@ class Show extends Component {
             </h2>
             <Slider {...slickOptions} className="text-center">
               {new Array(15).fill(0).map((item, index) => (
-                <Link
+                <ProductCard
                   key={index}
-                  to="/books/show"
-                  className="d-inline-block w-auto px-2 text-decoration-none"
-                >
-                  <ProductCard
-                    image="https://images.gr-assets.com/books/1483412266m/865.jpg"
-                    title="The Alchemist"
-                    author="Paulo Coelho"
-                    price={14.99}
-                  />
-                </Link>
+                  image="https://images.gr-assets.com/books/1483412266m/865.jpg"
+                  title="The Alchemist"
+                  author="Paulo Coelho"
+                  price={14.99}
+                />
               ))}
             </Slider>
           </Container>
         </article>
         {/* Reviews */}
-        <article id="reviews" className="text-dark font-size- section">
+        <article id="reviews" className="text-dark section">
           <Container>
-            <h3 className="text-uppercase h2 mb-3">
-              <span className="font-size-6">Reviews</span>
-            </h3>
+            <h3 className="text-uppercase mb-3 h6">Reviews</h3>
             <section className="mb-5">
               <p>
                 Your rating:{' '}
