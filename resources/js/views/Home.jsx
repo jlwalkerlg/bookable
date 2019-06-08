@@ -124,6 +124,7 @@ const Home = () => (
         <div className="d-flex justify-content-center flex-wrap">
           {new Array(8).fill(0).map((item, index) => (
             <ProductCard
+              key={index}
               image="https://images.gr-assets.com/books/1546091617m/15823480.jpg"
               title="Anna Karenina"
               author="Leo Tolstoy"
