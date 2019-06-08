@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import SocialIcon from '../components/SocialIcon';
 
@@ -11,19 +12,19 @@ const Footer = () => {
             <p className="heading left">Menu</p>
             <ul className="list-unstyled">
               <li>
-                <a href="/">Home</a>
+                <Link to="/">Home</Link>
               </li>
               <li>
-                <a href="/">Books</a>
+                <Link to="/">Books</Link>
               </li>
               <li>
-                <a href="/">Wishlist</a>
+                <Link to="/">Wishlist</Link>
               </li>
               <li>
-                <a href="/">Account</a>
+                <Link to="/">Account</Link>
               </li>
               <li>
-                <a href="/">Contact</a>
+                <Link to="/">Contact</Link>
               </li>
             </ul>
           </Col>
@@ -31,19 +32,19 @@ const Footer = () => {
             <p className="heading left">Categories</p>
             <ul className="list-unstyled">
               <li>
-                <a href="/">Philosophy</a>
+                <Link to="/">Philosophy</Link>
               </li>
               <li>
-                <a href="/">Fiction</a>
+                <Link to="/">Fiction</Link>
               </li>
               <li>
-                <a href="/">Science</a>
+                <Link to="/">Science</Link>
               </li>
               <li>
-                <a href="/">Spirituality</a>
+                <Link to="/">Spirituality</Link>
               </li>
               <li>
-                <a href="/">Anthropology</a>
+                <Link to="/">Anthropology</Link>
               </li>
             </ul>
           </Col>
@@ -54,12 +55,12 @@ const Footer = () => {
                 <a href="mailto:info@bookable.com">info@bookable.com</a>
               </p>
               <div>
-                <a href="/" className="d-inline-block mr-2">
+                <Link to="/" className="d-inline-block mr-2">
                   <SocialIcon variant="facebook" width="30" />
-                </a>
-                <a href="/" className="d-inline-block mr-2">
+                </Link>
+                <Link to="/" className="d-inline-block mr-2">
                   <SocialIcon variant="twitter" width="30" />
-                </a>
+                </Link>
               </div>
             </address>
           </Col>
