@@ -6,15 +6,20 @@
   font-family: $font-family-display;
 }
 
-$font-sizes: (
-  1: 3rem,
-  2: 2.5rem,
-  3: 2rem,
-  4: 1.5rem,
-  5: 1.25rem,
-  6: 1rem,
-  7: 0.8rem
-);
+.link-secondary {
+  color: $secondary;
+  &:hover {
+    color: $dark;
+    text-decoration: none;
+  }
+}
+
+.text-description {
+  font-family: $font-family-serif;
+  font-weight: $font-weight-light;
+  font-size: 0.9rem;
+  color: $gray-800;
+}
 
 @each $i, $size in $font-sizes {
   .font-size-#{$i} {

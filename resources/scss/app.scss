@@ -14,6 +14,7 @@ $enable-gradients: true;
 @import './_base';
 @import './components/_stars';
 @import './components/_quote';
+@import './components/_product-card';
 @import './_site-foot';
 @import './pages/_home';
 @import './pages/_show';
@@ -32,14 +33,17 @@ $enable-gradients: true;
 }
 
 .heading {
-  display: inline-block;
   position: relative;
-  padding-bottom: 10px;
-  color: rgba(0, 0, 0, 0.5);
   text-transform: uppercase;
   font-size: 1rem;
   font-weight: 400;
   font-family: $font-family-sans-serif;
+
+  > span {
+    display: inline-block;
+    padding-bottom: 10px;
+    color: $secondary;
+  }
 
   &::after {
     content: '';
@@ -51,15 +55,34 @@ $enable-gradients: true;
     border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   }
 
-  &.right::after {
-    left: initial;
-    transform: none;
-    right: 0;
+  &--right {
+    &::after {
+      left: initial;
+      transform: none;
+      right: 0;
+    }
+
+    &-md::after {
+      @include md {
+        left: initial;
+        transform: none;
+        right: 0;
+      }
+    }
   }
 
-  &.left::after {
-    left: 0;
-    transform: none;
+  &--left {
+    &::after {
+      left: 0;
+      transform: none;
+    }
+
+    &-md::after {
+      @include md {
+        left: 0;
+        transform: none;
+      }
+    }
   }
 }
 
@@ -89,21 +112,15 @@ $enable-gradients: true;
   }
 }
 
-.link-secondary {
+.scrollspy__link {
   color: $secondary;
-  &:hover {
+
+  &:hover,
+  li.active > & {
     color: $dark;
-    text-decoration: none;
   }
-}
 
-.text-description {
-  font-family: $font-family-serif;
-  font-weight: $font-weight-light;
-  font-size: 0.9rem;
-  color: $gray-800;
-}
-
-.scrollspy > li.active > a {
-  color: inherit;
+  li.active > & {
+    font-weight: 500;
+  }
 }

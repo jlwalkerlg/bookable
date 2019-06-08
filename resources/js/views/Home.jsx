@@ -52,19 +52,14 @@ const Home = () => (
       <Container>
         <Row>
           <Col xs={12} lg={4} className="mb-4 mb-lg-0 text-lg-right">
-            <h2 className="mb-5">
-              <span className="heading right">Best Seller</span>
+            <h2 className="heading heading--right-md mb-5">
+              <span>Best Seller</span>
             </h2>
             <p className="h1 font-display font-weight-bold text-break">
-              <Link to="/books/show" className="text-body">
-                The Adventures of Huckleberry Finn
-              </Link>
+              <Link to="/books/show">The Adventures of Huckleberry Finn</Link>
             </p>
             <p className="text-secondary">
-              by:{' '}
-              <Link to="/" className="link-secondary">
-                Mark Twain
-              </Link>
+              by: <Link to="/">Mark Twain</Link>
             </p>
             <p className="h2 font-weight-bold text-warning">£15.99</p>
           </Col>
@@ -103,81 +98,57 @@ const Home = () => (
     {/* NEW BOOKS */}
     <article className="section text-center">
       <Container>
-        <h2 className="mb-5">
-          <span className="heading">New Books</span>
+        <h2 className="heading mb-5">
+          <span>New Books</span>
         </h2>
         <Slider {...slickOptions} className="text-center">
           {new Array(15).fill(0).map((item, index) => (
-            <Link
+            <ProductCard
               key={index}
-              to="/books/show"
-              className="d-inline-block w-auto px-2 text-decoration-none"
-            >
-              <ProductCard
-                image="https://images.gr-assets.com/books/1440319389m/4981.jpg"
-                title="Slaughterhouse-Five"
-                author="Kurt Vonnegut"
-                price={7.99}
-                className={index % 2 !== 0 ? 'mt-lg-4' : ''}
-              />
-            </Link>
+              image="https://images.gr-assets.com/books/1440319389m/4981.jpg"
+              title="Slaughterhouse-Five"
+              author="Kurt Vonnegut"
+              price={7.99}
+              className={index % 2 !== 0 ? 'mt-lg-4' : ''}
+            />
           ))}
         </Slider>
       </Container>
     </article>
     {/* FEATURED BOOKS */}
     <article className="section text-center bg-beige">
-      <h2 className="mb-5">
-        <span className="heading">Featured Books</span>
+      <h2 className="heading mb-5">
+        <span>Featured Books</span>
       </h2>
       <Container>
-        <Row>
+        <div className="d-flex justify-content-center flex-wrap">
           {new Array(8).fill(0).map((item, index) => (
-            <Col
-              key={index}
-              xs={12 / 2}
-              md={12 / 3}
-              lg={12 / 4}
-              xl={12 / 6}
-              className="mb-4"
-            >
-              <Link
-                to="/books/show"
-                className="d-block text-decoration-none px-2"
-              >
-                <ProductCard
-                  image="https://images.gr-assets.com/books/1546091617m/15823480.jpg"
-                  title="Anna Karenina"
-                  author="Leo Tolstoy"
-                  price={12.99}
-                />
-              </Link>
-            </Col>
+            <ProductCard
+              image="https://images.gr-assets.com/books/1546091617m/15823480.jpg"
+              title="Anna Karenina"
+              author="Leo Tolstoy"
+              price={12.99}
+              className="mb-4 mr-4"
+            />
           ))}
-        </Row>
+        </div>
       </Container>
     </article>
     {/* PENGUIN CLASSICS */}
     <article className="section text-center">
       <Container>
-        <h2 className="mb-5">
-          <span className="heading">Penguin Classics</span>
+        <h2 className="heading mb-5">
+          <span>Penguin Classics</span>
         </h2>
         <Slider {...slickOptions} className="text-center">
           {new Array(15).fill(0).map((item, index) => (
-            <Link
+            <ProductCard
               key={index}
-              to="/books/show"
-              className="d-inline-block w-auto px-2 text-decoration-none"
-            >
-              <ProductCard
-                image="https://images.gr-assets.com/books/1546112331m/3836.jpg"
-                title="Don Quixote"
-                author="Miguel de Cervantes Saavedra"
-                price={11.99}
-                className="slick-zoom"
-              />
-            </Link>
+              image="https://images.gr-assets.com/books/1546112331m/3836.jpg"
+              title="Don Quixote"
+              author="Miguel de Cervantes Saavedra"
+              price={11.99}
+            />
           ))}
         </Slider>
       </Container>
@@ -187,13 +158,8 @@ const Home = () => (
       <Container>
         <Row>
           <Col xs={12} md={6} className="offset-md-6">
-            <h2 className="text-md-left mb-4">
-              <span className="heading right">
-                Trending in{' '}
-                <Link to="/" className="link-secondary">
-                  philosophy
-                </Link>
-              </span>
+            <h2 className="heading heading--left-md text-md-left mb-4 text-dark">
+              <span>Trending in</span> <Link to="/">Philosophy</Link>
             </h2>
           </Col>
           <Col xs={12} md={6} className="mb-3 mb-md-0">
@@ -205,15 +171,10 @@ const Home = () => (
           </Col>
           <Col xs={12} md={6} className="text-md-left">
             <p className="h1 font-display font-weight-bold text-break">
-              <Link to="/books/show" className="text-body">
-                The Book Thief
-              </Link>
+              <Link to="/books/show">The Book Thief</Link>
             </p>
             <p className="text-secondary">
-              by:{' '}
-              <Link to="/" className="link-secondary">
-                Markus Zusak
-              </Link>
+              by: <Link to="/">Markus Zusak</Link>
             </p>
             <p className="h2 font-weight-bold text-warning mb-4">£19.99</p>
             <p className="text-description">

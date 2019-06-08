@@ -85,11 +85,8 @@ class Show extends Component {
                 <h1 className="h1 font-display font-weight-bold">
                   A Christmas Carol
                 </h1>
-                <p>
-                  by:{' '}
-                  <Link to="/" className="link-secondary">
-                    Charles Dickens
-                  </Link>
+                <p className="text-secondary">
+                  by: <Link to="/">Charles Dickens</Link>
                 </p>
                 <p className="text-description">
                   To bitter, miserly Ebenezer Scrooge, Christmas is just another
@@ -154,26 +151,26 @@ class Show extends Component {
               {/* Menu */}
               <Col xs={12} md={4} className="d-none d-md-block text-right">
                 <div className="sticky-top mb-3">
-                  <h2 className="text-uppercase mb-4">
-                    <span className="heading right">About This Book</span>
+                  <h2 className="heading heading--right-md mb-4">
+                    <span>About This Book</span>
                   </h2>
                   <Scrollspy
                     items={['overview', 'details', 'quotes']}
                     currentClassName="active font-weight-bold"
-                    className="list-unstyled text-uppercase font-weight-light font-size-7 scrollspy text-dark"
+                    className="list-unstyled text-uppercase font-weight-light scrollspy text-dark"
                   >
                     <li className="mb-2">
-                      <a href="#overview" className="link-secondary">
+                      <a href="#overview" className="scrollspy__link">
                         Overview
                       </a>
                     </li>
                     <li className="mb-2">
-                      <a href="#details" className="link-secondary">
+                      <a href="#details" className="scrollspy__link">
                         Details
                       </a>
                     </li>
                     <li className="mb-2">
-                      <a href="#quotes" className="link-secondary">
+                      <a href="#quotes" className="scrollspy__link">
                         Quotes
                       </a>
                     </li>
@@ -181,12 +178,12 @@ class Show extends Component {
                 </div>
               </Col>
               {/* Book details */}
-              <Col xs={12} md={8} className="font-serif">
+              <Col xs={12} md={8} className="font-serif font-size-7">
                 <section id="overview" className="text-dark">
                   <h3 className="text-uppercase h2">
                     <span className="font-size-6">Overview</span>
                   </h3>
-                  <p className="font-size-7">
+                  <p>
                     'If I had my way, every idiot who goes around with Merry
                     Christmas on his lips, would be boiled with his own pudding,
                     and buried with a stake of holly through his heart. Merry
@@ -211,7 +208,7 @@ class Show extends Component {
                   <h3 className="text-uppercase h2">
                     <span className="font-size-6">Details</span>
                   </h3>
-                  <ul className="list-unstyled font-size-7">
+                  <ul className="list-unstyled">
                     <li>
                       <span className="font-weight-bold">Publisher:</span> AKW
                       Books
@@ -229,7 +226,7 @@ class Show extends Component {
                   <h3 className="text-uppercase h2">
                     <span className="font-size-6">Quotes</span>
                   </h3>
-                  <ul className="list-unstyled font-size-7 mb-3">
+                  <ul className="list-unstyled mb-3">
                     {new Array(5).fill(0).map((item, index) => (
                       <li key={index} className="quote mb-3">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -244,12 +241,9 @@ class Show extends Component {
                       </li>
                     ))}
                   </ul>
-                  <Link
-                    to="/"
-                    className="font-weight-bold text-dark font-size-7"
-                  >
-                    Read More...
-                  </Link>
+                  <p className="font-weight-bold">
+                    <Link to="/">Read More...</Link>
+                  </p>
                 </section>
               </Col>
             </Row>
@@ -260,8 +254,8 @@ class Show extends Component {
           <Container>
             <Row>
               <Col xs={12} md={8} className="offset-md-4 text-md-left">
-                <h2 className="text-uppercase mb-4">
-                  <span className="heading left">About The Author</span>
+                <h2 className="heading heading--left-md mb-4">
+                  <span>About The Author</span>
                 </h2>
               </Col>
             </Row>
@@ -291,12 +285,9 @@ class Show extends Component {
                   an indefatigable letter writer, and campaigned vigorously for
                   children's rights, education, and other social reforms...
                 </div>
-                <Link
-                  to="/"
-                  className="font-weight-bold text-body d-inline-block"
-                >
-                  Read More...
-                </Link>
+                <p className="font-weight-bold">
+                  <Link to="/">Read More...</Link>
+                </p>
               </Col>
             </Row>
           </Container>
@@ -304,13 +295,8 @@ class Show extends Component {
         {/* Other books by author */}
         <article className="section text-center">
           <Container>
-            <h2 className="text-uppercase mb-4">
-              <span className="heading">
-                Other Books by{' '}
-                <Link to="/" className="link-secondary">
-                  Charles Dickens
-                </Link>
-              </span>
+            <h2 className="heading mb-4 text-dark">
+              <span>Other Books by</span> <Link to="/">Charles Dickens</Link>
             </h2>
             <Slider {...slickOptions} className="text-center">
               {new Array(15).fill(0).map((item, index) => (
@@ -333,8 +319,8 @@ class Show extends Component {
         {/* Similar books */}
         <article className="section text-center bg-beige">
           <Container>
-            <h2 className="text-uppercase mb-4">
-              <span className="heading">Readers also enjoyed</span>
+            <h2 className="heading mb-4">
+              <span>Readers also enjoyed</span>
             </h2>
             <Slider {...slickOptions} className="text-center">
               {new Array(15).fill(0).map((item, index) => (
@@ -355,7 +341,7 @@ class Show extends Component {
           </Container>
         </article>
         {/* Reviews */}
-        <article id="reviews" className="text-dark font-size-7 section">
+        <article id="reviews" className="text-dark font-size- section">
           <Container>
             <h3 className="text-uppercase h2 mb-3">
               <span className="font-size-6">Reviews</span>
@@ -372,7 +358,7 @@ class Show extends Component {
                     as="textarea"
                     rows="3"
                     placeholder="Write a review for this book..."
-                    className="placeholder-inherit font-size-7"
+                    className="placeholder-inherit"
                   />
                 </Form.Group>
                 <Button

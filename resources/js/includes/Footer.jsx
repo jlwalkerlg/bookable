@@ -9,7 +9,9 @@ const Footer = () => {
       <Container>
         <Row>
           <Col xs={12} md={4}>
-            <p className="heading left">Menu</p>
+            <p className="heading heading--left">
+              <span>Menu</span>
+            </p>
             <ul className="list-unstyled">
               <li>
                 <Link to="/">Home</Link>
@@ -29,7 +31,9 @@ const Footer = () => {
             </ul>
           </Col>
           <Col xs={12} md={4}>
-            <p className="heading left">Categories</p>
+            <p className="heading heading--left">
+              <span>Categories</span>
+            </p>
             <ul className="list-unstyled">
               <li>
                 <Link to="/">Philosophy</Link>
@@ -49,7 +53,9 @@ const Footer = () => {
             </ul>
           </Col>
           <Col xs={12} md={4}>
-            <p className="heading left">Contact</p>
+            <p className="heading heading--left">
+              <span>Contact</span>
+            </p>
             <address>
               <p>
                 <a href="mailto:info@bookable.com">info@bookable.com</a>

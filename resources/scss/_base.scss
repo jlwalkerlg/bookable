@@ -1,3 +1,11 @@
 img {
   max-width: 100%;
 }
+
+a {
+  color: inherit;
+  &:hover {
+    color: $warning;
+    text-decoration: none;
+  }
+}

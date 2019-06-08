@@ -1,0 +1,24 @@
+.product-card {
+  &__img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    display: block;
+    font-weight: bold;
+    color: $dark;
+    font-family: $font-family-display;
+    margin-bottom: 0;
+  }
+
+  &__author {
+    margin-bottom: 0.5rem;
+  }
+
+  &__price {
+    color: $warning;
+  }
+}
