@@ -6,7 +6,6 @@ import GuestRoute from './routes/GuestRoute';
 import AppRoute from './routes/AppRoute';
 import Loading from './views/Loading';
 import Home from './views/Home';
-import Dashboard from './views/Dashboard';
 import Login from './views/Login';
 import Register from './views/Register';
 import NotFound from './views/NotFound';
@@ -21,7 +20,6 @@ const App = ({ loading }) =>
     <BrowserRouter>
       <Switch>
         <AppRoute exact path="/" component={Home} />
-        <UserRoute exact path="/dashboard" component={Dashboard} />
         <GuestRoute exact path="/login" component={Login} />
         <GuestRoute exact path="/register" component={Register} />
         <AppRoute exact path="/books/show" component={Show} />
