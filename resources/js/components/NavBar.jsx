@@ -48,11 +48,6 @@ class NavBar extends Component {
               <Nav.Link as={NavLink} to="/" exact>
                 Home
               </Nav.Link>
-              {user.id && (
-                <Nav.Link as={NavLink} to="/dashboard" exact>
-                  Dashboard
-                </Nav.Link>
-              )}
             </Nav>
             <Nav>
               {user.id ? (
