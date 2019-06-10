@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
-import NavBar from '../includes/NavBar';
-import Footer from '../includes/Footer';
+import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
 
 class AppRoute extends Component {
   componentDidUpdate(prevProps) {
