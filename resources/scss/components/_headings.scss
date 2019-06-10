@@ -1,0 +1,53 @@
+.heading {
+  position: relative;
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: 400;
+  font-family: $font-family-sans-serif;
+
+  > span {
+    display: inline-block;
+    padding-bottom: 10px;
+    color: $secondary;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    bottom: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &--right {
+    &::after {
+      left: initial;
+      transform: none;
+      right: 0;
+    }
+
+    &-md::after {
+      @include md {
+        left: initial;
+        transform: none;
+        right: 0;
+      }
+    }
+  }
+
+  &--left {
+    &::after {
+      left: 0;
+      transform: none;
+    }
+
+    &-md::after {
+      @include md {
+        left: 0;
+        transform: none;
+      }
+    }
+  }
+}

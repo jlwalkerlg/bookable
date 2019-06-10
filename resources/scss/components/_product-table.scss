@@ -1,0 +1,38 @@
+.product-table {
+  text-align: center;
+
+  &__head {
+    vertical-align: bottom;
+    padding: 1.5rem 0.2rem;
+    border-bottom: 2px solid $gray-400;
+    font-size: 0.8rem;
+    color: $gray-700;
+    font-family: $font-family-serif;
+
+    > :first-child {
+      text-align: left;
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+
+  &__row {
+    padding: 2rem 0.2rem;
+    color: $gray-700;
+    border-bottom: 1px dashed $gray-400;
+
+    &:last-child {
+      border-bottom: none;
+
+      @include md {
+        border-bottom: 2px solid $gray-400;
+      }
+    }
+
+    > :first-child {
+      text-align: left;
+    }
+  }
+}

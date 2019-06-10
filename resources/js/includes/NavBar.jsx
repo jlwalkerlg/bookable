@@ -62,6 +62,9 @@ class NavBar extends Component {
                   <Nav.Link as={NavLink} to="/register" exact>
                     Register
                   </Nav.Link>
+                  <Nav.Link as={NavLink} to="/wishlist" exact>
+                    Wishlist
+                  </Nav.Link>
                 </>
               )}
             </Nav>

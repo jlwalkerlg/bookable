@@ -7,7 +7,7 @@
     <title>Bookable</title>
     <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css?family=Material+Icons|Lato:300,400,700|Merriweather:300,700|Playfair+Display:700&display=swap"
+        href="https://fonts.googleapis.com/css?family=Material+Icons|Lato:300,400,700|Merriweather:300,700&display=swap"
         rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">

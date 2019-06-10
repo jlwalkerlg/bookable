@@ -11,6 +11,7 @@ import Login from './views/Login';
 import Register from './views/Register';
 import NotFound from './views/NotFound';
 import Show from './views/books/Show';
+import Wishlist from './views/Wishlist';
 
 const App = ({ loading }) =>
   loading ? (
@@ -23,6 +24,7 @@ const App = ({ loading }) =>
         <GuestRoute exact path="/login" component={Login} />
         <GuestRoute exact path="/register" component={Register} />
         <AppRoute exact path="/books/show" component={Show} />
+        <AppRoute exact path="/wishlist" component={Wishlist} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
