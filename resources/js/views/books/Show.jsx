@@ -85,8 +85,8 @@ class Show extends Component {
                 <h1 className="h1 font-display font-weight-bold">
                   A Christmas Carol
                 </h1>
-                <p>
-                  <span className="text-dark">by: </span>
+                <p className="text-dark">
+                  <span className="text-secondary">by: </span>
                   <Link to="/">Charles Dickens</Link>
                 </p>
                 <p className="text-description">
@@ -94,6 +94,10 @@ class Show extends Component {
                   day. But all that changes when the ghost of his long-dead
                   business partner appears, warning Scrooge to change his ways
                   before it's too late.
+                </p>
+                <p className="text-dark">
+                  <span className="text-secondary">Categories: </span>
+                  <Link to="/">Philosophy</Link>, <Link to="/">Adventure</Link>
                 </p>
                 <p className="font-weight-bold h2 text-dark mb-4">£19.99</p>
                 {/* Add To Cart */}
