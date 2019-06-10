@@ -100,6 +100,11 @@ class Show extends Component {
                   <Link to="/category/1">Philosophy</Link>,{' '}
                   <Link to="/category/1">Adventure</Link>
                 </p>
+                <p>
+                  <span className="text-secondary">Tags: </span>
+                  <Link to="/category/1">mindful</Link>,{' '}
+                  <Link to="/category/1">long</Link>
+                </p>
                 <p className="font-weight-bold h2 mb-4">£19.99</p>
                 {/* Add To Cart */}
                 <Form action="/" method="POST" onSubmit={this.toggleCart}>
@@ -134,7 +139,12 @@ class Show extends Component {
                   </div>
                 </Form>
                 {/* Add To Wishlist */}
-                <Form action="/" method="POST" onSubmit={this.toggleWishlist}>
+                <Form
+                  action="/"
+                  method="POST"
+                  onSubmit={this.toggleWishlist}
+                  className="mb-3"
+                >
                   <Button
                     variant="link"
                     type="submit"
