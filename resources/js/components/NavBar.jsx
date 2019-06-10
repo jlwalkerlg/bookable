@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { NavLink, withRouter } from 'react-router-dom';
-import { Navbar, Nav, Form, Button, Container } from 'react-bootstrap';
+import {
+  Navbar,
+  Nav,
+  NavDropdown,
+  Form,
+  Button,
+  Container
+} from 'react-bootstrap';
 import { logout } from '../actions/user';
 
 class NavBar extends Component {
@@ -49,11 +56,21 @@ class NavBar extends Component {
             </Nav>
             <Nav>
               {user.id ? (
-                <Form inline onSubmit={this.logout}>
-                  <Nav.Link as={Button} type="submit" variant="link" exact>
-                    Logout
-                  </Nav.Link>
-                </Form>
+                <NavDropdown title="Jordan Walker" id="siteNavDropdown">
+                  <NavDropdown.Item as={NavLink} to="/wishlist" exact>
+                    Wishlist
+                  </NavDropdown.Item>
+                  <Form inline onSubmit={this.logout}>
+                    <NavDropdown.Item
+                      as={Button}
+                      type="submit"
+                      variant="link"
+                      className="text-uppercase"
+                    >
+                      Logout
+                    </NavDropdown.Item>
+                  </Form>
+                </NavDropdown>
               ) : (
                 <>
                   <Nav.Link as={NavLink} to="/login" exact>
@@ -61,9 +78,6 @@ class NavBar extends Component {
                   </Nav.Link>
                   <Nav.Link as={NavLink} to="/register" exact>
                     Register
-                  </Nav.Link>
-                  <Nav.Link as={NavLink} to="/wishlist" exact>
-                    Wishlist
                   </Nav.Link>
                 </>
               )}
