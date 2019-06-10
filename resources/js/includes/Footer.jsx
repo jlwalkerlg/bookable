@@ -36,19 +36,19 @@ const Footer = () => {
             </p>
             <ul className="list-unstyled">
               <li>
-                <Link to="/">Philosophy</Link>
+                <Link to="/category/1">Philosophy</Link>
               </li>
               <li>
-                <Link to="/">Fiction</Link>
+                <Link to="/category/1">Fiction</Link>
               </li>
               <li>
-                <Link to="/">Science</Link>
+                <Link to="/category/1">Science</Link>
               </li>
               <li>
-                <Link to="/">Spirituality</Link>
+                <Link to="/category/1">Spirituality</Link>
               </li>
               <li>
-                <Link to="/">Anthropology</Link>
+                <Link to="/category/1">Anthropology</Link>
               </li>
             </ul>
           </Col>

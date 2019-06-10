@@ -14,12 +14,14 @@ $enable-gradients: true;
 @import './_base';
 @import './components/_stars';
 @import './components/_quote';
-@import './components/_headings';
+@import './components/_heading';
 @import './components/_product-table';
 @import './components/_product-card';
+@import './components/_pagination';
 @import './_site-foot';
 @import './pages/_home';
 @import './pages/_show';
+@import './pages/_category';
 @import './_helpers';
 
 .fullheight {

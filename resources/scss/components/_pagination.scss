@@ -1,0 +1,21 @@
+.pagination-warning {
+  .page-link {
+    color: inherit;
+    background: inherit;
+
+    &:hover {
+      color: $warning;
+      background-color: inherit;
+    }
+  }
+
+  .page-item.active .page-link {
+    color: #fff;
+    background-color: $warning;
+    border-color: $warning;
+  }
+
+  .page-item.disabled .page-link {
+    background-color: inherit;
+  }
+}

@@ -15,9 +15,9 @@ class Wishlist extends Component {
 
   render() {
     return (
-      <main className="section text-dark">
+      <main className="section">
         <Container>
-          <h1 className="mb-4 font-display text-body">Wishlist</h1>
+          <h1 className="mb-4 font-display">Wishlist</h1>
           <div className="product-table d-none d-md-block">
             <Row className="product-table__head">
               <Col md={6}>

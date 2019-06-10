@@ -159,7 +159,7 @@ const Home = () => (
       <Container>
         <Row>
           <Col xs={12} md={6} className="offset-md-6">
-            <h2 className="heading heading--left-md text-md-left mb-4 text-dark">
+            <h2 className="heading heading--left-md text-md-left mb-4">
               <span>Trending in</span> <Link to="/">Philosophy</Link>
             </h2>
           </Col>

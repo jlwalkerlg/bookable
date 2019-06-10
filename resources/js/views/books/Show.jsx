@@ -85,7 +85,7 @@ class Show extends Component {
                 <h1 className="h1 font-display font-weight-bold">
                   A Christmas Carol
                 </h1>
-                <p className="text-dark">
+                <p>
                   <span className="text-secondary">by: </span>
                   <Link to="/">Charles Dickens</Link>
                 </p>
@@ -95,11 +95,12 @@ class Show extends Component {
                   business partner appears, warning Scrooge to change his ways
                   before it's too late.
                 </p>
-                <p className="text-dark">
+                <p>
                   <span className="text-secondary">Categories: </span>
-                  <Link to="/">Philosophy</Link>, <Link to="/">Adventure</Link>
+                  <Link to="/category/1">Philosophy</Link>,{' '}
+                  <Link to="/category/1">Adventure</Link>
                 </p>
-                <p className="font-weight-bold h2 text-dark mb-4">£19.99</p>
+                <p className="font-weight-bold h2 mb-4">£19.99</p>
                 {/* Add To Cart */}
                 <Form action="/" method="POST" onSubmit={this.toggleCart}>
                   <div className="d-inline-block mr-3">
@@ -162,7 +163,7 @@ class Show extends Component {
                   <Scrollspy
                     items={['overview', 'details', 'quotes']}
                     currentClassName="active font-weight-bold"
-                    className="list-unstyled text-uppercase font-weight-light scrollspy text-dark"
+                    className="list-unstyled text-uppercase font-weight-light scrollspy"
                   >
                     <li className="mb-2">
                       <a href="#overview" className="scrollspy__link">
@@ -184,7 +185,7 @@ class Show extends Component {
               </Col>
               {/* Book details */}
               <Col xs={12} md={8} className="font-serif font-size-7">
-                <section id="overview" className="text-dark mb-4">
+                <section id="overview" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Overview</h3>
                   <p>
                     'If I had my way, every idiot who goes around with Merry
@@ -207,7 +208,7 @@ class Show extends Component {
                     captures the heart of the holidays like no other novel.
                   </p>
                 </section>
-                <section id="details" className="text-dark mb-4">
+                <section id="details" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Details</h3>
                   <ul className="list-unstyled">
                     <li>
@@ -223,7 +224,7 @@ class Show extends Component {
                     </li>
                   </ul>
                 </section>
-                <section id="quotes" className="text-dark mb-4">
+                <section id="quotes" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Quotes</h3>
                   <ul className="list-unstyled mb-3">
                     {new Array(5).fill(0).map((item, index) => (
@@ -294,7 +295,7 @@ class Show extends Component {
         {/* Other books by author */}
         <article className="section text-center">
           <Container>
-            <h2 className="heading mb-4 text-dark">
+            <h2 className="heading mb-4">
               <span>Other Books by</span> <Link to="/">Charles Dickens</Link>
             </h2>
             <Slider {...slickOptions} className="text-center">
@@ -330,7 +331,7 @@ class Show extends Component {
           </Container>
         </article>
         {/* Reviews */}
-        <article id="reviews" className="text-dark section">
+        <article id="reviews" className="section">
           <Container>
             <h3 className="text-uppercase mb-3 h6">Reviews</h3>
             <section className="mb-5">

@@ -9,14 +9,12 @@ const ProductCard = ({ image, title, author, price, className, ...props }) => {
         {title}
       </Link>
       {author && (
-        <p className="text-secondary">
-          by:{' '}
-          <Link to="/books/show" className="product-card__author">
-            {author}
-          </Link>
+        <p className="product-card__author">
+          <span className="text-secondary">by: </span>
+          <Link to="/books/show">{author}</Link>
         </p>
       )}
-      <p className="product-card__price">£{price}</p>
+      <p className="product-card__price">£{price.toFixed(2)}</p>
     </div>
   );
 };
