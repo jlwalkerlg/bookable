@@ -129,7 +129,7 @@ const Home = () => (
               title="Anna Karenina"
               author="Leo Tolstoy"
               price={12.99}
-              className="mb-4 mr-4"
+              className="mb-4 mx-3"
             />
           ))}
         </div>
