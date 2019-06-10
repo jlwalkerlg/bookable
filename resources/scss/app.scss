@@ -82,3 +82,11 @@ $enable-gradients: true;
     text-decoration: none;
   }
 }
+
+.dropdown-item.active,
+.dropdown-item:active {
+  color: #fff;
+  text-decoration: none;
+  background: $warning linear-gradient(180deg, lighten($warning, 7%), $warning)
+    repeat-x;
+}
