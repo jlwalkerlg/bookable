@@ -78,12 +78,10 @@ class Wishlist extends Component {
                   >
                     <Button
                       variant="link"
-                      size="sm"
                       type="submit"
-                      className="text-danger"
+                      className="text-danger font-size-7"
                     >
-                      <i className="material-icons align-top mr-1">clear</i>
-                      Remove
+                      Remove from wishlist
                     </Button>
                   </Form>
                 </Col>
@@ -133,12 +131,10 @@ class Wishlist extends Component {
                   >
                     <Button
                       variant="link"
-                      size="sm"
                       type="submit"
-                      className="text-danger"
+                      className="text-danger font-size-7 px-0"
                     >
-                      <i className="material-icons align-top mr-1">clear</i>
-                      Remove
+                      Remove from wishlist
                     </Button>
                   </Form>
                 </Media.Body>

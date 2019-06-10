@@ -52,6 +52,9 @@ class NavBar extends Component {
             <Nav>
               {user.id ? (
                 <NavDropdown title="Jordan Walker" id="siteNavDropdown">
+                  <NavDropdown.Item as={NavLink} to="/user/1/books" exact>
+                    My Books
+                  </NavDropdown.Item>
                   <NavDropdown.Item as={NavLink} to="/wishlist" exact>
                     Wishlist
                   </NavDropdown.Item>

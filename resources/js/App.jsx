@@ -12,6 +12,7 @@ import NotFound from './views/NotFound';
 import Show from './views/books/Show';
 import Wishlist from './views/Wishlist';
 import Category from './views/Category';
+import UsersBooks from './views/users/Books';
 
 const App = ({ loading }) =>
   loading ? (
@@ -25,6 +26,11 @@ const App = ({ loading }) =>
         <AppRoute exact path="/books/show" component={Show} />
         <AppRoute exact path="/wishlist" component={Wishlist} />
         <AppRoute exact path="/category/:id([0-9]+)" component={Category} />
+        <UserRoute
+          exact
+          path="/user/:id([0-9]+)/books"
+          component={UsersBooks}
+        />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
