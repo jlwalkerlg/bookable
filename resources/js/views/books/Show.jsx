@@ -85,8 +85,9 @@ class Show extends Component {
                 <h1 className="h1 font-display font-weight-bold">
                   A Christmas Carol
                 </h1>
-                <p className="text-secondary">
-                  by: <Link to="/">Charles Dickens</Link>
+                <p>
+                  <span className="text-dark">by: </span>
+                  <Link to="/">Charles Dickens</Link>
                 </p>
                 <p className="text-description">
                   To bitter, miserly Ebenezer Scrooge, Christmas is just another
