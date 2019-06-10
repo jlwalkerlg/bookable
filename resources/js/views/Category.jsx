@@ -1,10 +1,21 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Pagination, Form } from 'react-bootstrap';
+import { Container, Row, Col, Pagination, Form, Button } from 'react-bootstrap';
 import ProductCard from '../components/ProductCard';
 
 class Category extends Component {
+  state = {
+    inWishlist: false
+  };
+
+  toggleWishlist = e => {
+    e.preventDefault();
+    this.setState({ inWishlist: !this.state.inWishlist });
+  };
+
   render() {
+    const { inWishlist } = this.state;
+
     return (
       <main>
         <header className="section category-head">
@@ -37,13 +48,39 @@ class Category extends Component {
                 </div>
                 <div className="category-products mb-3">
                   {new Array(20).fill(0).map((item, index) => (
-                    <ProductCard
-                      key={index}
-                      image="https://images.gr-assets.com/books/1390173285l/1381.jpg"
-                      title="The Odyssey"
-                      author="Homer"
-                      price={10.0}
-                    />
+                    <div key={index} className="product-card category-product">
+                      <img
+                        src="https://images.gr-assets.com/books/1390173285l/1381.jpg"
+                        alt="The Odyssey"
+                        className="product-card__img"
+                      />
+                      <Form
+                        action="/"
+                        method="POST"
+                        onSubmit={this.toggleWishlist}
+                        className="float-right"
+                      >
+                        <Button
+                          variant="link"
+                          type="submit"
+                          className="link-secondary p-0"
+                        >
+                          <i className="material-icons text-danger">
+                            {inWishlist ? 'favorite' : 'favorite_border'}
+                          </i>
+                        </Button>
+                      </Form>
+                      <Link to="/books/show" className="product-card__title">
+                        The Odyssey
+                      </Link>
+                      <p className="product-card__author">
+                        <span className="text-secondary">by: </span>
+                        <Link to="/books/show">Homer</Link>
+                      </p>
+                      <p className="product-card__price">
+                        £{(10.0).toFixed(2)}
+                      </p>
+                    </div>
                   ))}
                 </div>
                 <Pagination className="justify-content-center pagination-warning">
