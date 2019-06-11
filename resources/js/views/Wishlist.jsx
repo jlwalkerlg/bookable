@@ -39,7 +39,7 @@ class Wishlist extends Component {
                     />
                     <Media.Body>
                       <p className="font-display h4">
-                        <Link to="/books/show">War and Peace</Link>
+                        <Link to="/books/1">War and Peace</Link>
                       </p>
                       <p>
                         <span className="text-secondary">by: </span>
@@ -98,7 +98,7 @@ class Wishlist extends Component {
                 />
                 <Media.Body>
                   <p className="font-display h4">
-                    <Link to="/books/show">War and Peace</Link>
+                    <Link to="/books/1">War and Peace</Link>
                   </p>
                   <p>
                     <span className="text-secondary">by: </span>

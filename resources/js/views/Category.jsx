@@ -70,12 +70,12 @@ class Category extends Component {
                           </i>
                         </Button>
                       </Form>
-                      <Link to="/books/show" className="product-card__title">
+                      <Link to="/books/1" className="product-card__title">
                         The Odyssey
                       </Link>
                       <p className="product-card__author">
                         <span className="text-secondary">by: </span>
-                        <Link to="/books/show">Homer</Link>
+                        <Link to="/books/1">Homer</Link>
                       </p>
                       <p className="product-card__price">
                         £{(10.0).toFixed(2)}

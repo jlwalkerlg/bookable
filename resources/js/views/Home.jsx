@@ -56,7 +56,7 @@ const Home = () => (
               <span>Best Seller</span>
             </h2>
             <p className="h1 font-display font-weight-bold text-break">
-              <Link to="/books/show">The Adventures of Huckleberry Finn</Link>
+              <Link to="/books/1">The Adventures of Huckleberry Finn</Link>
             </p>
             <p className="text-secondary">
               by: <Link to="/">Mark Twain</Link>
@@ -85,7 +85,7 @@ const Home = () => (
                 for Tom.
               </p>
               <Link
-                to="/books/show"
+                to="/books/1"
                 className="btn btn-warning btn-md rounded-pill text-uppercase"
               >
                 Read More
@@ -172,7 +172,7 @@ const Home = () => (
           </Col>
           <Col xs={12} md={6} className="text-md-left">
             <p className="h1 font-display font-weight-bold text-break">
-              <Link to="/books/show">The Book Thief</Link>
+              <Link to="/books/1">The Book Thief</Link>
             </p>
             <p className="text-secondary">
               by: <Link to="/">Markus Zusak</Link>
@@ -186,7 +186,7 @@ const Home = () => (
               for Tom.
             </p>
             <Link
-              to="/books/show"
+              to="/books/1"
               className="btn btn-warning btn-md rounded-pill text-uppercase"
             >
               Read More

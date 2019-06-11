@@ -111,7 +111,7 @@ class Books extends Component {
                         />
                       </td>
                       <td>
-                        <Link to="/books/show">The Great Gatsby</Link>
+                        <Link to="/books/1">The Great Gatsby</Link>
                       </td>
                       <td>
                         <Link to="/author/1">F. Scott Fitzgerald</Link>
@@ -150,7 +150,7 @@ class Books extends Component {
                     />
                     <Media.Body>
                       <p className="h5">
-                        <Link to="/books/show">The Great Gatsby</Link>
+                        <Link to="/books/1">The Great Gatsby</Link>
                       </p>
                       <p>
                         <span className="text-secondary">by: </span>

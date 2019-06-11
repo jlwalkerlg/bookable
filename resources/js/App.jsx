@@ -10,6 +10,7 @@ import Login from './views/Login';
 import Register from './views/Register';
 import NotFound from './views/NotFound';
 import Show from './views/books/Show';
+import Browse from './views/books/Browse';
 import Wishlist from './views/Wishlist';
 import Category from './views/Category';
 import UsersBooks from './views/users/Books';
@@ -23,7 +24,8 @@ const App = ({ loading }) =>
         <AppRoute exact path="/" component={Home} />
         <GuestRoute exact path="/login" component={Login} />
         <GuestRoute exact path="/register" component={Register} />
-        <AppRoute exact path="/books/show" component={Show} />
+        <AppRoute exact path="/books/1" component={Show} />
+        <AppRoute exact path="/books" component={Browse} />
         <AppRoute exact path="/wishlist" component={Wishlist} />
         <AppRoute exact path="/category/:id([0-9]+)" component={Category} />
         <UserRoute
