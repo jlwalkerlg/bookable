@@ -68,6 +68,16 @@ class Books extends Component {
                     To Read
                   </NavLink>
                 </li>
+                <li>
+                  <NavLink to="/user/1/books?shelf=reviewed" exact>
+                    Reviewed
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/user/1/books?shelf=rated" exact>
+                    Rated
+                  </NavLink>
+                </li>
               </ul>
               <Form className="d-md-none">
                 <Form.Control as="select">
