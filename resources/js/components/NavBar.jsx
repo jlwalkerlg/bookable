@@ -49,7 +49,10 @@ class NavBar extends Component {
                 Home
               </Nav.Link>
               <Nav.Link as={NavLink} to="/books" exact>
-                Browse Books
+                Books
+              </Nav.Link>
+              <Nav.Link as={NavLink} to="/categories" exact>
+                Categories
               </Nav.Link>
             </Nav>
             <Nav>
