@@ -1,0 +1,22 @@
+.browse-products {
+  display: grid;
+  gap: 30px;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  @media (min-width: 400px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include md {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

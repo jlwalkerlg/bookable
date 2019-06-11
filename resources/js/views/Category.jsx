@@ -48,39 +48,16 @@ class Category extends Component {
                 </div>
                 <div className="category-products mb-3">
                   {new Array(20).fill(0).map((item, index) => (
-                    <div key={index} className="product-card category-product">
-                      <img
-                        src="https://images.gr-assets.com/books/1390173285l/1381.jpg"
-                        alt="The Odyssey"
-                        className="product-card__img"
-                      />
-                      <Form
-                        action="/"
-                        method="POST"
-                        onSubmit={this.toggleWishlist}
-                        className="float-right"
-                      >
-                        <Button
-                          variant="link"
-                          type="submit"
-                          className="link-secondary p-0"
-                        >
-                          <i className="material-icons text-danger">
-                            {inWishlist ? 'favorite' : 'favorite_border'}
-                          </i>
-                        </Button>
-                      </Form>
-                      <Link to="/books/1" className="product-card__title">
-                        The Odyssey
-                      </Link>
-                      <p className="product-card__author">
-                        <span className="text-secondary">by: </span>
-                        <Link to="/books/1">Homer</Link>
-                      </p>
-                      <p className="product-card__price">
-                        £{(10.0).toFixed(2)}
-                      </p>
-                    </div>
+                    <ProductCard
+                      key={index}
+                      image="https://images.gr-assets.com/books/1390173285l/1381.jpg"
+                      title="The Odyssey"
+                      author="Homer"
+                      price={10.0}
+                      wishlistButton
+                      inWishlist={inWishlist}
+                      toggleWishlist={this.toggleWishlist}
+                    />
                   ))}
                 </div>
                 <Pagination className="justify-content-center pagination-warning">
