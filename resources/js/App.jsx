@@ -15,6 +15,7 @@ import AuthorsShow from './views/authors/Show';
 import Categories from './views/categories/Categories';
 import CategoriesShow from './views/categories/Show';
 import Wishlist from './views/Wishlist';
+import Cart from './views/Cart';
 import UsersBooks from './views/users/Books';
 
 const App = ({ loading }) =>
@@ -30,6 +31,7 @@ const App = ({ loading }) =>
         <AppRoute exact path="/books" component={Books} />
         <AppRoute exact path="/authors/:id([0-9]+)" component={AuthorsShow} />
         <AppRoute exact path="/wishlist" component={Wishlist} />
+        <AppRoute exact path="/cart" component={Cart} />
         <AppRoute exact path="/categories" component={Categories} />
         <AppRoute
           exact

@@ -7,7 +7,8 @@ import {
   NavDropdown,
   Form,
   Button,
-  Container
+  Container,
+  Badge
 } from 'react-bootstrap';
 import { logout } from '../actions/user';
 
@@ -42,6 +43,14 @@ class NavBar extends Component {
           <Navbar.Brand as={NavLink} to="/" className="font-weight-bold">
             Bookable
           </Navbar.Brand>
+          <Nav className="d-md-none">
+            <Nav.Link as={NavLink} to="/cart" exact>
+              <i className="material-icons align-bottom">shopping_cart</i>
+              <Badge pill variant="warning" className="align-top">
+                1
+              </Badge>
+            </Nav.Link>
+          </Nav>
           <Navbar.Toggle aria-controls="siteNavMenu" />
           <Navbar.Collapse id="siteNavMenu">
             <Nav className="mr-auto">
@@ -57,24 +66,37 @@ class NavBar extends Component {
             </Nav>
             <Nav>
               {user.id ? (
-                <NavDropdown title="Jordan Walker" id="siteNavDropdown">
-                  <NavDropdown.Item as={NavLink} to="/user/1/books" exact>
-                    My Books
-                  </NavDropdown.Item>
-                  <NavDropdown.Item as={NavLink} to="/wishlist" exact>
-                    Wishlist
-                  </NavDropdown.Item>
-                  <Form inline onSubmit={this.logout}>
-                    <NavDropdown.Item
-                      as={Button}
-                      type="submit"
-                      variant="link"
-                      className="text-uppercase"
-                    >
-                      Logout
+                <>
+                  <NavDropdown title="Jordan Walker" id="siteNavDropdown">
+                    <NavDropdown.Item as={NavLink} to="/user/1/books" exact>
+                      My Books
                     </NavDropdown.Item>
-                  </Form>
-                </NavDropdown>
+                    <NavDropdown.Item as={NavLink} to="/wishlist" exact>
+                      Wishlist
+                    </NavDropdown.Item>
+                    <Form inline onSubmit={this.logout}>
+                      <NavDropdown.Item
+                        as={Button}
+                        type="submit"
+                        variant="link"
+                        className="text-uppercase"
+                      >
+                        Logout
+                      </NavDropdown.Item>
+                    </Form>
+                  </NavDropdown>
+                  <Nav.Link
+                    as={NavLink}
+                    to="/cart"
+                    exact
+                    className="d-none d-md-block"
+                  >
+                    <i className="material-icons align-bottom">shopping_cart</i>
+                    <Badge pill variant="warning" className="align-top">
+                      1
+                    </Badge>
+                  </Nav.Link>
+                </>
               ) : (
                 <>
                   <Nav.Link as={NavLink} to="/login" exact>
