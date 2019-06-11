@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Pagination, Form, Button } from 'react-bootstrap';
-import ProductCard from '../components/ProductCard';
+import { Container, Row, Col, Pagination, Form } from 'react-bootstrap';
+import ProductCard from '../../components/ProductCard';
 
-class Category extends Component {
+class Show extends Component {
   state = {
     inWishlist: false
   };
@@ -109,4 +109,4 @@ class Category extends Component {
   }
 }
 
-export default Category;
+export default Show;

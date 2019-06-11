@@ -11,7 +11,7 @@ import {
 import MediaQuery from 'react-responsive';
 import ProductCard from '../../components/ProductCard';
 
-class Browse extends Component {
+class Books extends Component {
   state = {
     inWishlist: false,
     categories: new Array(6).fill(0).map((item, index) => ({
@@ -198,4 +198,4 @@ class Browse extends Component {
   }
 }
 
-export default Browse;
+export default Books;
