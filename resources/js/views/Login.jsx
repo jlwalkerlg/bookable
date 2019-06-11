@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { Form, Button, Alert, Container } from 'react-bootstrap';
 import { login } from '../actions/user';
 
 class Login extends Component {
@@ -40,43 +40,45 @@ class Login extends Component {
     const { values, error } = this.state;
 
     return (
-      <div className="container container-narrow fullheight-with-nav d-flex justify-content-center flex-column">
-        {error && (
-          <Alert variant="danger">
-            There was an issue with the login attempt.
-          </Alert>
-        )}
-        <h1>Login</h1>
-        <Form action="/login" method="POST" onSubmit={this.login}>
-          {/* Email */}
-          <Form.Group controlId="email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              placeholder="Your email here..."
-              required
-              value={values.email}
-              onChange={this.handleChange}
-            />
-          </Form.Group>
+      <main className="bg-beige">
+        <Container className="container-narrow fullheight-with-nav d-flex justify-content-center flex-column">
+          {error && (
+            <Alert variant="danger">
+              There was an issue with the login attempt.
+            </Alert>
+          )}
+          <h1>Login</h1>
+          <Form action="/login" method="POST" onSubmit={this.login}>
+            {/* Email */}
+            <Form.Group controlId="email">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                placeholder="Your email here..."
+                required
+                value={values.email}
+                onChange={this.handleChange}
+              />
+            </Form.Group>
 
-          {/* Password */}
-          <Form.Group controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              name="password"
-              placeholder="Your password here..."
-              required
-              value={values.password}
-              onChange={this.handleChange}
-            />
-          </Form.Group>
+            {/* Password */}
+            <Form.Group controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                placeholder="Your password here..."
+                required
+                value={values.password}
+                onChange={this.handleChange}
+              />
+            </Form.Group>
 
-          <Button type="submit">Login</Button>
-        </Form>
-      </div>
+            <Button type="submit">Login</Button>
+          </Form>
+        </Container>
+      </main>
     );
   }
 }
