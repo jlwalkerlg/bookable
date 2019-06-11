@@ -14,8 +14,8 @@ import ProductCard from '../../components/ProductCard';
 class Browse extends Component {
   state = {
     inWishlist: false,
-    tags: new Array(6).fill(0).map((item, index) => ({
-      name: `tag #${index}`,
+    categories: new Array(6).fill(0).map((item, index) => ({
+      name: `Category #${index}`,
       checked: false
     })),
     filterOpen: null
@@ -26,12 +26,14 @@ class Browse extends Component {
     this.setState({ inWishlist: !this.state.inWishlist });
   };
 
-  toggleTag = e => {
-    const tagName = e.target.dataset.tagName;
-    const tags = this.state.tags.map(tag => {
-      return tag.name === tagName ? { ...tag, checked: !tag.checked } : tag;
+  toggleCategory = e => {
+    const categoryName = e.target.dataset.categoryName;
+    const categories = this.state.categories.map(category => {
+      return category.name === categoryName
+        ? { ...category, checked: !category.checked }
+        : category;
     });
-    this.setState({ tags });
+    this.setState({ categories });
   };
 
   toggleFilter = () => this.setState({ filterOpen: !this.state.filterOpen });
@@ -42,7 +44,7 @@ class Browse extends Component {
   };
 
   render() {
-    const { inWishlist, tags, filterOpen } = this.state;
+    const { inWishlist, categories, filterOpen } = this.state;
 
     return (
       <main className="section">
@@ -102,41 +104,29 @@ class Browse extends Component {
                         </Col>
                       </Form.Row>
 
-                      {/* Category */}
-                      <Form.Group controlId="category">
-                        <Form.Label>Category</Form.Label>
-                        <Form.Control as="select">
-                          <option value="philosophy">Philosophy</option>
-
-                          <option value="philosophy">Philosophy</option>
-                          <option value="philosophy">Philosophy</option>
-                          <option value="philosophy">Philosophy</option>
-                        </Form.Control>
-                      </Form.Group>
-
-                      {/* Tags */}
+                      {/* Categories */}
                       <div>
-                        <p className="d-inline-block mb-2">Tags</p>
+                        <p className="d-inline-block mb-2">Categories</p>
                         <Form.Group className="d-flex flex-wrap">
-                          {tags.map((tag, index) => (
+                          {categories.map((category, index) => (
                             <div key={index} className="mr-2">
                               <input
                                 type="checkbox"
                                 className="sr-only"
-                                id={`tag_${tag.name}`}
-                                onChange={this.toggleTag}
-                                data-tag-name={tag.name}
+                                id={`category_${category.name}`}
+                                onChange={this.toggleCategory}
+                                data-category-name={category.name}
                               />
                               <label
-                                htmlFor={`tag_${tag.name}`}
+                                htmlFor={`category_${category.name}`}
                                 className={
                                   'tag btn btn-sm rounded-pill ' +
-                                  (tag.checked
+                                  (category.checked
                                     ? 'btn-info'
                                     : 'btn-outline-info')
                                 }
                               >
-                                {tag.name}
+                                {category.name}
                               </label>
                             </div>
                           ))}

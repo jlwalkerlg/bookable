@@ -100,11 +100,6 @@ class Show extends Component {
                   <Link to="/category/1">Philosophy</Link>,{' '}
                   <Link to="/category/1">Adventure</Link>
                 </p>
-                <p>
-                  <span className="text-secondary">Tags: </span>
-                  <Link to="/category/1">mindful</Link>,{' '}
-                  <Link to="/category/1">long</Link>
-                </p>
                 <p className="font-weight-bold h2 mb-4">£19.99</p>
                 {/* Add To Cart */}
                 <Form action="/" method="POST" onSubmit={this.toggleCart}>
