@@ -92,3 +92,39 @@ $enable-gradients: true;
   background: $warning linear-gradient(180deg, lighten($warning, 7%), $warning)
     repeat-x;
 }
+
+.btn-reset {
+  font-weight: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+}
+
+.toggle-collapse-open {
+  animation: toggle-collapse-open 0.5s ease-out forwards;
+}
+
+@keyframes toggle-collapse-open {
+  0% {
+    transform: none;
+  }
+  100% {
+    transform: rotateZ(180deg);
+  }
+}
+
+.toggle-collapse-close {
+  animation: toggle-collapse-close 0.5s ease-out;
+  transform: none;
+}
+
+@keyframes toggle-collapse-close {
+  0% {
+    transform: rotateZ(180deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}

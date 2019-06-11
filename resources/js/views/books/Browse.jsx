@@ -1,5 +1,14 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Form, Button, Pagination } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Pagination,
+  Collapse
+} from 'react-bootstrap';
+import MediaQuery from 'react-responsive';
 import ProductCard from '../../components/ProductCard';
 
 class Browse extends Component {
@@ -8,7 +17,8 @@ class Browse extends Component {
     tags: new Array(6).fill(0).map((item, index) => ({
       name: `tag #${index}`,
       checked: false
-    }))
+    })),
+    filterOpen: null
   };
 
   toggleWishlist = e => {
@@ -24,90 +34,130 @@ class Browse extends Component {
     this.setState({ tags });
   };
 
+  toggleFilter = () => this.setState({ filterOpen: !this.state.filterOpen });
+
+  handleFilterSubmit = e => {
+    e.preventDefault();
+    this.setState({ filterOpen: false });
+  };
+
   render() {
-    const { inWishlist, tags } = this.state;
+    const { inWishlist, tags, filterOpen } = this.state;
 
     return (
       <main className="section">
         <Container>
           <Row>
-            <Col xs={12} sm={4} className="mb-4 mb-md-0">
-              <h2 className="h5 text-uppercase mb-3">Filter</h2>
-              <Form>
-                {/* Price */}
-                <Form.Row>
-                  <Col xs={6} sm={12} lg={6}>
-                    <Form.Group controlId="minPrice">
-                      <Form.Label>Min Price</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder="Min price"
-                        min="0"
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col xs={6} sm={12} lg={6}>
-                    <Form.Group controlId="maxPrice">
-                      <Form.Label>Min Price</Form.Label>
-                      <Form.Control
-                        type="number"
-                        placeholder="Min price"
-                        min="0"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Form.Row>
-
-                {/* Category */}
-                <Form.Group controlId="category">
-                  <Form.Label>Category</Form.Label>
-                  <Form.Control as="select">
-                    <option value="philosophy">Philosophy</option>
-                    <option value="philosophy">Philosophy</option>
-                    <option value="philosophy">Philosophy</option>
-                    <option value="philosophy">Philosophy</option>
-                  </Form.Control>
-                </Form.Group>
-
-                {/* Tags */}
-                <div>
-                  <p className="d-inline-block mb-2">Tags</p>
-                  <Form.Group className="d-flex flex-wrap">
-                    {tags.map((tag, index) => (
-                      <div key={index} className="mr-2">
-                        <input
-                          type="checkbox"
-                          className="sr-only"
-                          id={`tag_${tag.name}`}
-                          onChange={this.toggleTag}
-                          data-tag-name={tag.name}
-                        />
-                        <label
-                          htmlFor={`tag_${tag.name}`}
-                          className={
-                            'tag btn btn-sm rounded-pill ' +
-                            (tag.checked ? 'btn-info' : 'btn-outline-info')
-                          }
-                        >
-                          {tag.name}
-                        </label>
-                      </div>
-                    ))}
-                  </Form.Group>
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="warning"
-                  className="rounded-pill"
+            <Col xs={12} md={4} className="mb-4 mb-md-0">
+              <h2 className="h5 text-uppercase mb-3 d-none d-md-block">
+                Filter
+              </h2>
+              <h2 className="mb-3 d-md-none">
+                <button
+                  className="btn-reset h5 text-uppercase"
+                  aria-label="Toggle filter form"
+                  onClick={this.toggleFilter}
                 >
-                  Apply Filter
-                </Button>
-              </Form>
+                  Filter
+                  <i
+                    className={
+                      'material-icons align-top ' +
+                      (filterOpen === true ? 'toggle-collapse-open' : '') +
+                      (filterOpen === false ? 'toggle-collapse-close' : '')
+                    }
+                  >
+                    arrow_drop_down
+                  </i>
+                </button>
+              </h2>
+              <MediaQuery minWidth={768}>
+                {matches => (
+                  <Collapse in={filterOpen || matches}>
+                    <Form
+                      action="/"
+                      method="GET"
+                      onSubmit={this.handleFilterSubmit}
+                    >
+                      {/* Price */}
+                      <Form.Row>
+                        <Col xs={6} md={12} lg={6}>
+                          <Form.Group controlId="minPrice">
+                            <Form.Label>Min Price</Form.Label>
+                            <Form.Control
+                              type="number"
+                              placeholder="Min price"
+                              min="0"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col xs={6} md={12} lg={6}>
+                          <Form.Group controlId="maxPrice">
+                            <Form.Label>Min Price</Form.Label>
+                            <Form.Control
+                              type="number"
+                              placeholder="Min price"
+                              min="0"
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Form.Row>
+
+                      {/* Category */}
+                      <Form.Group controlId="category">
+                        <Form.Label>Category</Form.Label>
+                        <Form.Control as="select">
+                          <option value="philosophy">Philosophy</option>
+
+                          <option value="philosophy">Philosophy</option>
+                          <option value="philosophy">Philosophy</option>
+                          <option value="philosophy">Philosophy</option>
+                        </Form.Control>
+                      </Form.Group>
+
+                      {/* Tags */}
+                      <div>
+                        <p className="d-inline-block mb-2">Tags</p>
+                        <Form.Group className="d-flex flex-wrap">
+                          {tags.map((tag, index) => (
+                            <div key={index} className="mr-2">
+                              <input
+                                type="checkbox"
+                                className="sr-only"
+                                id={`tag_${tag.name}`}
+                                onChange={this.toggleTag}
+                                data-tag-name={tag.name}
+                              />
+                              <label
+                                htmlFor={`tag_${tag.name}`}
+                                className={
+                                  'tag btn btn-sm rounded-pill ' +
+                                  (tag.checked
+                                    ? 'btn-info'
+                                    : 'btn-outline-info')
+                                }
+                              >
+                                {tag.name}
+                              </label>
+                            </div>
+                          ))}
+                        </Form.Group>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        variant="warning"
+                        className="rounded-pill"
+                      >
+                        Apply Filter
+                      </Button>
+                    </Form>
+                  </Collapse>
+                )}
+              </MediaQuery>
             </Col>
-            <Col xs={12} sm={8}>
+            <Col xs={12} md={8}>
               <div className="d-flex justify-content-between align-items-center mb-3">
-                <h2 className="h5 text-uppercase mb-2 mb-sm-0">Books</h2>
+                <h2 className="h5 text-uppercase mb-2 mb-md-0">Books</h2>
                 <Form>
                   <Form.Group className="mb-0">
                     <Form.Label className="d-inline-block mr-2 font-size-7">
