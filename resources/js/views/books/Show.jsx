@@ -87,7 +87,7 @@ class Show extends Component {
                 </h1>
                 <p>
                   <span className="text-secondary">by: </span>
-                  <Link to="/">Charles Dickens</Link>
+                  <Link to="/authors/1">Charles Dickens</Link>
                 </p>
                 <p className="text-description">
                   To bitter, miserly Ebenezer Scrooge, Christmas is just another
@@ -291,7 +291,7 @@ class Show extends Component {
                   children's rights, education, and other social reforms...
                 </div>
                 <p className="font-weight-bold">
-                  <Link to="/">Read More...</Link>
+                  <Link to="/authors/1">Read More...</Link>
                 </p>
               </Col>
             </Row>

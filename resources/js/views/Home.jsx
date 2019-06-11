@@ -58,8 +58,9 @@ const Home = () => (
             <p className="h1 font-display font-weight-bold text-break">
               <Link to="/books/1">The Adventures of Huckleberry Finn</Link>
             </p>
-            <p className="text-secondary">
-              by: <Link to="/">Mark Twain</Link>
+            <p>
+              <span className="text-secondary">by:</span>{' '}
+              <Link to="/authors/1">Mark Twain</Link>
             </p>
             <p className="h2 font-weight-bold text-warning">£15.99</p>
           </Col>
@@ -163,19 +164,20 @@ const Home = () => (
               <span>Trending in</span> <Link to="/">Philosophy</Link>
             </h2>
           </Col>
-          <Col xs={12} md={6} className="mb-3 mb-md-0">
+          <Col xs={12} md={6} className="mb-3 mb-md-0 text-md-right">
             <img
               src="https://images.gr-assets.com/books/1522157426l/19063.jpg"
               alt="The Book Thief"
-              className="d-block mx-auto book-highlight"
+              className="book-highlight"
             />
           </Col>
           <Col xs={12} md={6} className="text-md-left">
             <p className="h1 font-display font-weight-bold text-break">
               <Link to="/books/1">The Book Thief</Link>
             </p>
-            <p className="text-secondary">
-              by: <Link to="/">Markus Zusak</Link>
+            <p>
+              <span className="text-secondary">by:</span>{' '}
+              <Link to="/authors/1">Markus Zusak</Link>
             </p>
             <p className="h2 font-weight-bold text-warning mb-4">£19.99</p>
             <p className="text-description">

@@ -41,7 +41,7 @@ const ProductCard = ({
       {author && (
         <p className="product-card__author">
           <span className="text-secondary">by: </span>
-          <Link to="/books/1">{author}</Link>
+          <Link to="/authors/1">{author}</Link>
         </p>
       )}
       <p className="product-card__price">£{price.toFixed(2)}</p>
