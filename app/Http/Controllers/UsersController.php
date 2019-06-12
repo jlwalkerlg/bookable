@@ -11,7 +11,7 @@ class UsersController extends Controller
     {
         $user = $request->user();
 
-        $wishlist = DB::table('wishlist_books')->join('books', 'wishlist_books.book_id', '=', 'books.id')->join('authors', 'books.author_id', '=', 'authors.id')->where('wishlist_books.user_id', $user->id)->select('books.*', 'authors.name as author')->get();
+        $wishlist = DB::table('wishlist_items')->join('books', 'wishlist_items.book_id', '=', 'books.id')->join('authors', 'books.author_id', '=', 'authors.id')->where('wishlist_items.user_id', $user->id)->select('books.*', 'authors.name as author')->get();
 
         $user->wishlist = $wishlist;
 

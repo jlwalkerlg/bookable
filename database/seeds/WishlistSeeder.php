@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\WishlistItem;
 
-class WishlistBooksSeeder extends Seeder
+class WishlistSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +14,7 @@ class WishlistBooksSeeder extends Seeder
     {
         $book_ids = [1381, 2956, 3836, 52036];
 
-        DB::table('wishlist_books')->insert(
+        WishlistItem::insert(
             array_map(function ($book_id) {
                 return [
                     'book_id' => $book_id,
