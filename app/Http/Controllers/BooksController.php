@@ -14,7 +14,7 @@ class BooksController extends Controller
      */
     private $orderByColumnMap = [
         'ratings' => 'books.ratings_count',
-        'avgrating' => 'books.avg_rating'
+        'avgrating' => 'avg_rating'
     ];
 
     /**
@@ -27,7 +27,7 @@ class BooksController extends Controller
         $offset = $request->get('offset');
         $orderBy = $request->get('order_by');
 
-        $query = DB::table('books')->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author');
+        $query = DB::table('books')->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
 
         if ($limit) {
             $query->limit($limit);
@@ -55,7 +55,6 @@ class BooksController extends Controller
      */
     private function getOrderByColumn($column)
     {
-        $column = $this->orderByColumnMap[$column] ?? $column;
-        return $column === 'books.avg_rating' ? DB::raw('books.ratings_sum/books.ratings_count') : $column;
+        return $this->orderByColumnMap[$column] ?? $column;
     }
 }
