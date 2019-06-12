@@ -20,7 +20,7 @@ import UsersBooks from './views/users/Books';
 
 const App = ({ loading }) =>
   loading ? (
-    <div className="fullheight">
+    <div className="vh-100">
       <Loading />
     </div>
   ) : (

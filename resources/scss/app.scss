@@ -27,14 +27,6 @@ $enable-gradients: true;
 @import './pages/_browse';
 @import './_helpers';
 
-.fullheight {
-  height: 100vh;
-}
-
-.fullheight-with-nav {
-  height: calc(100vh - 56px);
-}
-
 .container-narrow {
   max-width: 600px;
 }

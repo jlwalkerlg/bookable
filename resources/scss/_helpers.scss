@@ -1,3 +1,4 @@
+// Typography.
 .font-serif {
   font-family: $font-family-serif;
 }
@@ -27,8 +28,16 @@
   }
 }
 
+// Sizes.
+.vh-100-nav {
+  height: calc(100vh - 56px);
+}
+
+.min-vh-100-nav {
+  min-height: calc(100vh - 56px);
+}
+
+// Misc.
 .placeholder-inherit::placeholder {
-  // color: inherit;
   font-size: inherit;
-  // font-weight: inherit;
 }
