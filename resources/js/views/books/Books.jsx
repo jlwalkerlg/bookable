@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Pagination,
-  Collapse
-} from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Collapse } from 'react-bootstrap';
+import axios from 'axios';
 import MediaQuery from 'react-responsive';
 import ProductCard from '../../components/ProductCard';
+import URL from '../../utils/URL';
+import Loading from '../../components/Loading';
+import Pagination from '../../components/Pagination';
 
 class Books extends Component {
   state = {
@@ -18,8 +14,48 @@ class Books extends Component {
       name: `Category #${index}`,
       checked: false
     })),
-    filterOpen: null
+    filterOpen: null,
+    page: 1,
+    limit: 20,
+    books: null,
+    totalBooks: 0,
+    totalPages: 1,
+    loading: true
   };
+
+  async componentDidMount() {
+    const page = this.getCurrentPage();
+    this.setState({ page });
+    const { books, total } = await this.fetchBooks(page);
+    const totalPages = this.getTotalPages(total);
+    this.setState({ books, totalBooks: total, totalPages, loading: false });
+  }
+
+  async fetchBooks() {
+    const limit = this.state.limit;
+    const offset = this.getCurrentOffset();
+    const url =
+      `api/books?limit=${limit}` + (offset ? `&offset=${offset}` : '');
+    const response = await axios.get(url);
+    return response.data;
+  }
+
+  getCurrentPage() {
+    const queryString = this.props.location.search;
+    return URL.query(queryString).getParam('page') || 1;
+  }
+
+  getCurrentOffset() {
+    const page = this.getCurrentPage();
+    const limit = this.state.limit;
+    return (page - 1) * limit;
+  }
+
+  getTotalPages(totalBooks) {
+    const limit = this.state.limit;
+    const total = totalBooks || this.state.totalBooks;
+    return Math.ceil(total / limit);
+  }
 
   toggleWishlist = e => {
     e.preventDefault();
@@ -44,7 +80,15 @@ class Books extends Component {
   };
 
   render() {
-    const { inWishlist, categories, filterOpen } = this.state;
+    const {
+      inWishlist,
+      categories,
+      filterOpen,
+      books,
+      totalPages,
+      page,
+      loading
+    } = this.state;
 
     return (
       <main className="section">
@@ -163,33 +207,34 @@ class Books extends Component {
                   </Form.Group>
                 </Form>
               </div>
-              <div className="browse-products mb-4">
-                {new Array(20).fill(0).map((item, index) => (
-                  <ProductCard
-                    key={index}
-                    image="https://images.gr-assets.com/books/1329189714l/2165.jpg"
-                    title="The Old Man and the Sea"
-                    author="Ernest Hemingway"
-                    price={15.0}
-                    wishlistButton
-                    inWishlist={inWishlist}
-                    toggleWishlist={this.toggleWishlist}
+              {loading ? (
+                <Loading />
+              ) : (
+                <>
+                  <div className="browse-products mb-4">
+                    {books.map((book, index) => (
+                      <ProductCard
+                        key={index}
+                        bookId={book.id}
+                        image={book.large_image_url || book.image_url}
+                        title={book.title}
+                        author={book.author}
+                        authorId={book.author_id}
+                        price={15.0}
+                        wishlistButton
+                        inWishlist={inWishlist}
+                        toggleWishlist={this.toggleWishlist}
+                      />
+                    ))}
+                  </div>
+                  <Pagination
+                    totalPages={totalPages}
+                    currentPage={page}
+                    url="/books?page="
+                    className="justify-content-center pagination-warning"
                   />
-                ))}
-              </div>
-              <Pagination className="justify-content-center pagination-warning">
-                {[1, 2, 3, 4].map((page, index) => (
-                  <Pagination.Item
-                    key={index}
-                    active={page === 1}
-                    className="text-dark"
-                  >
-                    {page}
-                  </Pagination.Item>
-                ))}
-                <Pagination.Ellipsis disabled />
-                <Pagination.Item>20</Pagination.Item>
-              </Pagination>
+                </>
+              )}
             </Col>
           </Row>
         </Container>

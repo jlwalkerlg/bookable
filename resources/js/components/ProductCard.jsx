@@ -5,7 +5,9 @@ import { Form, Button } from 'react-bootstrap';
 const ProductCard = ({
   image,
   title,
+  bookId,
   author,
+  authorId,
   price,
   className,
   wishlistButton,
@@ -35,13 +37,13 @@ const ProductCard = ({
           </Button>
         </Form>
       )}
-      <Link to="/books/1" className="product-card__title">
+      <Link to={`/books/${bookId}`} className="product-card__title">
         {title}
       </Link>
       {author && (
         <p className="product-card__author">
           <span className="text-secondary">by: </span>
-          <Link to="/authors/1">{author}</Link>
+          <Link to={`/authors/${authorId}`}>{author}</Link>
         </p>
       )}
       <p className="product-card__price">£{price.toFixed(2)}</p>

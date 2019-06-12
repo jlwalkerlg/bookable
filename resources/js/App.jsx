@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import UserRoute from './routes/UserRoute';
 import GuestRoute from './routes/GuestRoute';
 import AppRoute from './routes/AppRoute';
-import Loading from './views/Loading';
+import Loading from './components/Loading';
 import Home from './views/Home';
 import Login from './views/Login';
 import Register from './views/Register';
@@ -20,7 +20,9 @@ import UsersBooks from './views/users/Books';
 
 const App = ({ loading }) =>
   loading ? (
-    <Loading />
+    <div className="fullheight">
+      <Loading />
+    </div>
   ) : (
     <BrowserRouter>
       <Switch>
