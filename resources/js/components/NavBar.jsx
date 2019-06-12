@@ -43,14 +43,16 @@ class NavBar extends Component {
           <Navbar.Brand as={NavLink} to="/" className="font-weight-bold">
             Bookable
           </Navbar.Brand>
-          <Nav className="d-md-none">
-            <Nav.Link as={NavLink} to="/cart" exact>
-              <i className="material-icons align-bottom">shopping_cart</i>
-              <Badge pill variant="warning" className="align-top">
-                1
-              </Badge>
-            </Nav.Link>
-          </Nav>
+          {user.id && (
+            <Nav className="d-md-none">
+              <Nav.Link as={NavLink} to="/cart" exact>
+                <i className="material-icons align-bottom">shopping_cart</i>
+                <Badge pill variant="warning" className="align-top">
+                  1
+                </Badge>
+              </Nav.Link>
+            </Nav>
+          )}
           <Navbar.Toggle aria-controls="siteNavMenu" />
           <Navbar.Collapse id="siteNavMenu">
             <Nav className="mr-auto">
