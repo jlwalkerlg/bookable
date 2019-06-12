@@ -32,8 +32,8 @@ const App = ({ loading }) =>
         <AppRoute exact path="/books/:id([0-9]+)" component={BooksShow} />
         <AppRoute exact path="/books" component={Books} />
         <AppRoute exact path="/authors/:id([0-9]+)" component={AuthorsShow} />
-        <AppRoute exact path="/wishlist" component={Wishlist} />
-        <AppRoute exact path="/cart" component={Cart} />
+        <UserRoute exact path="/wishlist" component={Wishlist} />
+        <UserRoute exact path="/cart" component={Cart} />
         <AppRoute exact path="/categories" component={Categories} />
         <AppRoute
           exact
