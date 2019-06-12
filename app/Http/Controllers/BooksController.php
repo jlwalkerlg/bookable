@@ -9,11 +9,12 @@ class BooksController extends Controller
 {
     private $orderColumnMap = [
         'ratings' => 'books.ratings_count',
-        'avgrating' => 'books.ratings_sum/books.ratings_count',
-        'price' => 'books.price'
+        'avgrating' => 'avg_rating'
     ];
 
     private $orderDirections = ['DESC', 'ASC'];
+
+    private $select = ['books.*', 'authors.name as author'];
 
     public function index(Request $request)
     {
@@ -34,11 +35,14 @@ class BooksController extends Controller
         if ($orderBy) {
             [$column, $direction] = explode('_', $orderBy);
             $column = $this->orderColumnMap[$column] ?? 'books.id';
+            if ($column === 'avg_rating') {
+                $this->select[] = DB::raw('books.ratings_sum/books.ratings_count as avg_rating');
+            }
             $direction = in_array(strtoupper($direction), $this->orderDirections) ? $direction : 'DESC';
             $query->orderBy($column, $direction);
         }
 
-        $books = $query->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author')->orderBy('books.id')->get();
+        $books = $query->join('authors', 'books.author_id', '=', 'authors.id')->select(...$this->select)->orderBy('books.id')->get();
 
         $count = count($books);
 
