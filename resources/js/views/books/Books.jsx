@@ -43,7 +43,6 @@ class Books extends Component {
 
   async fetchBooks() {
     const url = this.assembleUrl();
-    console.log(url);
     const response = await axios.get(url);
     return response.data;
   }
@@ -222,8 +221,8 @@ class Books extends Component {
                       onChange={this.handleSortChange}
                       className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
                     >
-                      <option value="ratings_desc">Total Ratings (desc)</option>
-                      <option value="ratings_asc">Total Ratings (asc)</option>
+                      <option value="ratings_desc">Ratings (desc)</option>
+                      <option value="ratings_asc">Ratings (asc)</option>
                       <option value="avgrating_desc">Avg Rating (desc)</option>
                       <option value="avgrating_asc">Avg Rating (asc)</option>
                       <option value="price_desc">Price (desc)</option>

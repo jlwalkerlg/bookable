@@ -7,22 +7,27 @@ use Illuminate\Support\Facades\DB;
 
 class BooksController extends Controller
 {
-    private $orderColumnMap = [
+    /**
+     * Mapping from requested columns to actual columns in database.
+     *
+     * @var array $orderByColumnMap
+     */
+    private $orderByColumnMap = [
         'ratings' => 'books.ratings_count',
-        'avgrating' => 'avg_rating'
+        'avgrating' => 'books.avg_rating'
     ];
 
-    private $orderDirections = ['DESC', 'ASC'];
-
-    private $select = ['books.*', 'authors.name as author'];
-
+    /**
+     * Fetch books from database according to request.
+     * @return array
+     */
     public function index(Request $request)
     {
         $limit = $request->get('limit');
         $offset = $request->get('offset');
         $orderBy = $request->get('order_by');
 
-        $query = DB::table('books');
+        $query = DB::table('books')->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author');
 
         if ($limit) {
             $query->limit($limit);
@@ -34,18 +39,23 @@ class BooksController extends Controller
 
         if ($orderBy) {
             [$column, $direction] = explode('_', $orderBy);
-            $column = $this->orderColumnMap[$column] ?? 'books.id';
-            if ($column === 'avg_rating') {
-                $this->select[] = DB::raw('books.ratings_sum/books.ratings_count as avg_rating');
-            }
-            $direction = in_array(strtoupper($direction), $this->orderDirections) ? $direction : 'DESC';
+            $column = $this->getOrderByColumn($column);
             $query->orderBy($column, $direction);
         }
 
-        $books = $query->join('authors', 'books.author_id', '=', 'authors.id')->select(...$this->select)->orderBy('books.id')->get();
-
+        $books = $query->get();
         $count = count($books);
 
         return compact('books', 'count');
+    }
+
+    /**
+     * Get column appropriate to requested column.
+     * @return string
+     */
+    private function getOrderByColumn($column)
+    {
+        $column = $this->orderByColumnMap[$column] ?? $column;
+        return $column === 'books.avg_rating' ? DB::raw('books.ratings_sum/books.ratings_count') : $column;
     }
 }
