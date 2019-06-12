@@ -31,6 +31,16 @@ class Books extends Component {
     this.setState({ books, totalBooks: total, totalPages, loading: false });
   }
 
+  async componentDidUpdate(prevProps) {
+    if (prevProps.location.search !== this.props.location.search) {
+      this.setState({ loading: true });
+      const page = this.getCurrentPage();
+      this.setState({ page });
+      const { books, total } = await this.fetchBooks(page);
+      this.setState({ books, totalBooks: total, loading: false });
+    }
+  }
+
   async fetchBooks() {
     const limit = this.state.limit;
     const offset = this.getCurrentOffset();
@@ -42,7 +52,7 @@ class Books extends Component {
 
   getCurrentPage() {
     const queryString = this.props.location.search;
-    return URL.query(queryString).getParam('page') || 1;
+    return parseInt(URL.query(queryString).getParam('page')) || 1;
   }
 
   getCurrentOffset() {
