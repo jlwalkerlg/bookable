@@ -11,17 +11,13 @@ const logoutUser = {
 };
 
 export const register = credentials => dispatch =>
-  axios.post('/api/register', credentials).then(response => {
-    const user = response.data;
-    dispatch(loginUser(user));
-    return user;
+  axios.post('/api/register', credentials).then(() => {
+    dispatch(oauthLogin()).then(user => dispatch(loginUser(user)));
   });
 
 export const login = credentials => dispatch =>
-  axios.post('/api/login', credentials).then(response => {
-    const user = response.data;
-    dispatch(loginUser(user));
-    return user;
+  axios.post('/api/login', credentials).then(() => {
+    dispatch(oauthLogin()).then(user => dispatch(loginUser(user)));
   });
 
 export const logout = () => dispatch =>
