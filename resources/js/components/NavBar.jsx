@@ -32,6 +32,7 @@ class NavBar extends Component {
 
   render() {
     const { user } = this.props;
+    const { cart } = user;
 
     return (
       <Navbar
@@ -48,7 +49,7 @@ class NavBar extends Component {
               <Nav.Link as={NavLink} to="/cart" exact>
                 <i className="material-icons align-bottom">shopping_cart</i>
                 <Badge pill variant="warning" className="align-top">
-                  1
+                  {cart.reduce((prev, current) => prev + current.quantity, 0)}
                 </Badge>
               </Nav.Link>
             </Nav>
@@ -95,7 +96,10 @@ class NavBar extends Component {
                   >
                     <i className="material-icons align-bottom">shopping_cart</i>
                     <Badge pill variant="warning" className="align-top">
-                      1
+                      {cart.reduce(
+                        (prev, current) => prev + current.quantity,
+                        0
+                      )}
                     </Badge>
                   </Nav.Link>
                 </>
@@ -117,8 +121,8 @@ class NavBar extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  user: state.user
+const mapStateToProps = ({ user }) => ({
+  user
 });
 
 const mapDispatchToProps = {

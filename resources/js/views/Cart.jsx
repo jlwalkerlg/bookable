@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Container,
@@ -17,6 +18,8 @@ class Cart extends Component {
   };
 
   render() {
+    const { cart } = this.props;
+
     return (
       <main className="section">
         <Container>
@@ -34,22 +37,24 @@ class Cart extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {new Array(6).fill(0).map((item, index) => (
+            {cart.map((book, index) => (
               <Row key={index} className="product-table__row">
                 <Col md={3}>
                   <Media>
                     <img
-                      src="https://images.gr-assets.com/books/1413215930s/656.jpg"
-                      alt="War and Peace"
+                      src={book.small_image_url}
+                      alt={book.title}
                       className="mr-2"
                     />
                     <Media.Body>
                       <p className="font-display h4">
-                        <Link to="/books/1">War and Peace</Link>
+                        <Link to={`/books/${book.id}`}>{book.title}</Link>
                       </p>
                       <p>
                         <span className="text-secondary">by: </span>
-                        <Link to="/">Leo Tolstoy</Link>
+                        <Link to={`/authors/${book.author_id}`}>
+                          {book.author}
+                        </Link>
                       </p>
                     </Media.Body>
                   </Media>
@@ -58,7 +63,7 @@ class Cart extends Component {
                   <p>£20.00</p>
                 </Col>
                 <Col md={3}>
-                  <p>2</p>
+                  <p>{book.quantity}</p>
                 </Col>
                 <Col md={3}>
                   <Form
@@ -81,27 +86,28 @@ class Cart extends Component {
             ))}
           </div>
           <div className="d-md-none">
-            {new Array(6).fill(0).map((item, index) => (
+            {cart.map((book, index) => (
               <Media key={index} className="product-table__row">
                 <img
-                  src="https://images.gr-assets.com/books/1413215930m/656.jpg"
-                  alt="War and Peace"
+                  src={book.image_url}
+                  alt={book.title}
                   className="mr-4 mr-md-2"
                 />
                 <Media.Body className="position-relative">
                   <p className="font-display h4">
-                    <Link to="/books/1">War and Peace</Link>
+                    <Link to={`/books/${book.id}`}>{book.title}</Link>
                   </p>
                   <p>
                     <span className="text-secondary">by: </span>
-                    <Link to="/">Leo Tolstoy</Link>
+                    <Link to={`/authors/${book.author_id}`}>{book.author}</Link>
                   </p>
                   <p className="text-warning">
                     <span className="text-secondary">Price: </span>
                     £20.00
                   </p>
                   <p className="text-info">
-                    <span className="text-secondary">Quantity:</span> 2
+                    <span className="text-secondary">Quantity:</span>{' '}
+                    {book.quantity}
                   </p>
                   <Form
                     action="/"
@@ -129,7 +135,10 @@ class Cart extends Component {
             </Card.Header>
             <Card.Body>
               <Card.Text>
-                Total items: <span className="font-weight-bold">3</span>
+                Total items:{' '}
+                <span className="font-weight-bold">
+                  {cart.reduce((prev, current) => prev + current.quantity, 0)}
+                </span>
               </Card.Text>
               <Card.Text>
                 Tax: <span className="font-weight-bold">£0.00</span>
@@ -147,4 +156,8 @@ class Cart extends Component {
   }
 }
 
-export default Cart;
+const mapStateToProps = ({ user }) => ({
+  cart: user.cart
+});
+
+export default connect(mapStateToProps)(Cart);
