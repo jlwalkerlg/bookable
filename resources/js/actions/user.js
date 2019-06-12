@@ -34,11 +34,7 @@ export const oauthLogin = () => dispatch =>
   axios
     .get('/api/user')
     .then(response => {
-      const user = {
-        id: response.data.id,
-        name: response.data.name,
-        email: response.data.email
-      };
+      const user = response.data;
       dispatch(loginUser(user));
       return user;
     })

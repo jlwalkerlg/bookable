@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
 
@@ -14,6 +15,8 @@ class Wishlist extends Component {
   };
 
   render() {
+    const { wishlist } = this.props;
+
     return (
       <main className="section">
         <Container>
@@ -28,22 +31,24 @@ class Wishlist extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {new Array(6).fill(0).map((item, index) => (
+            {wishlist.map((book, index) => (
               <Row key={index} className="product-table__row">
                 <Col md={6}>
                   <Media>
                     <img
-                      src="https://images.gr-assets.com/books/1413215930s/656.jpg"
-                      alt="War and Peace"
+                      src={book.small_image_url}
+                      alt={book.title}
                       className="mr-2"
                     />
                     <Media.Body>
                       <p className="font-display h4">
-                        <Link to="/books/1">War and Peace</Link>
+                        <Link to={`/books/${book.id}`}>{book.title}</Link>
                       </p>
                       <p>
                         <span className="text-secondary">by: </span>
-                        <Link to="/">Leo Tolstoy</Link>
+                        <Link to={`/authors/${book.author_id}`}>
+                          {book.author}
+                        </Link>
                       </p>
                     </Media.Body>
                   </Media>
@@ -89,20 +94,20 @@ class Wishlist extends Component {
             ))}
           </div>
           <div className="d-md-none">
-            {new Array(6).fill(0).map((item, index) => (
+            {wishlist.map((book, index) => (
               <Media key={index} className="product-table__row">
                 <img
-                  src="https://images.gr-assets.com/books/1413215930m/656.jpg"
-                  alt="War and Peace"
+                  src={book.image_url}
+                  alt={book.title}
                   className="mr-4 mr-md-2"
                 />
                 <Media.Body>
                   <p className="font-display h4">
-                    <Link to="/books/1">War and Peace</Link>
+                    <Link to={`/books/${book.id}`}>{book.title}</Link>
                   </p>
                   <p>
                     <span className="text-secondary">by: </span>
-                    <Link to="/">Leo Tolstoy</Link>
+                    <Link to={`/authors/${book.author_id}`}>{book.author}</Link>
                   </p>
                   <p>£20.00</p>
                   <Form
@@ -147,4 +152,8 @@ class Wishlist extends Component {
   }
 }
 
-export default Wishlist;
+const mapStateToProps = ({ user }) => ({
+  wishlist: user.wishlist
+});
+
+export default connect(mapStateToProps)(Wishlist);
