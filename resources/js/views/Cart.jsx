@@ -120,9 +120,9 @@ class Cart extends Component {
                     <span className="text-secondary">Price: </span>
                     £20.00
                   </p>
-                  <p className="text-info">
+                  <p>
                     <span className="text-secondary">Quantity:</span>{' '}
-                    {book.quantity}
+                    <span className="font-weight-bold">{book.quantity}</span>
                   </p>
                 </Media.Body>
               </Media>
