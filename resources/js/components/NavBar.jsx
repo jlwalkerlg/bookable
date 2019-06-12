@@ -70,7 +70,7 @@ class NavBar extends Component {
             <Nav>
               {user.id ? (
                 <>
-                  <NavDropdown title="Jordan Walker" id="siteNavDropdown">
+                  <NavDropdown title={user.name} id="siteNavDropdown">
                     <NavDropdown.Item as={NavLink} to="/user/1/books" exact>
                       My Books
                     </NavDropdown.Item>
