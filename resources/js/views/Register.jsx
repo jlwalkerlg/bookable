@@ -47,7 +47,7 @@ class Register extends Component {
 
     return (
       <main className="bg-beige">
-        <Container className="container-narrow min-vh-100-nav d-flex justify-content-center flex-column">
+        <Container className="section container-narrow min-vh-100-nav d-flex justify-content-center flex-column">
           <h1>Register</h1>
           <Form action="/register" method="POST" onSubmit={this.register}>
             {/* Name */}
