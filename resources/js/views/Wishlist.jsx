@@ -102,6 +102,21 @@ class Wishlist extends Component {
                   className="mr-4 mr-md-2"
                 />
                 <Media.Body>
+                  <Form
+                    action="/"
+                    method="POST"
+                    onSubmit={this.removeProductFromWishlist}
+                    className="float-right"
+                  >
+                    <Button
+                      variant="link"
+                      type="submit"
+                      aria-label="Remove from wishlist"
+                      className="text-danger pt-0"
+                    >
+                      <i className="material-icons">clear</i>
+                    </Button>
+                  </Form>
                   <p className="font-display h4">
                     <Link to={`/books/${book.id}`}>{book.title}</Link>
                   </p>
@@ -126,20 +141,6 @@ class Wishlist extends Component {
                         add_shopping_cart
                       </i>
                       Add To Cart
-                    </Button>
-                  </Form>
-                  <Form
-                    action="/"
-                    method="POST"
-                    onSubmit={this.removeProductFromWishlist}
-                    className="text-secondary"
-                  >
-                    <Button
-                      variant="link"
-                      type="submit"
-                      className="text-danger font-size-7 px-0"
-                    >
-                      Remove From Wishlist
                     </Button>
                   </Form>
                 </Media.Body>

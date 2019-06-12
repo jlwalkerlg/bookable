@@ -94,6 +94,21 @@ class Cart extends Component {
                   className="mr-4 mr-md-2"
                 />
                 <Media.Body className="position-relative">
+                  <Form
+                    action="/"
+                    method="POST"
+                    onSubmit={this.removeProductFromCart}
+                    className="float-right"
+                  >
+                    <Button
+                      variant="link"
+                      type="submit"
+                      aria-label="Remove from cart"
+                      className="text-danger pt-0"
+                    >
+                      <i className="material-icons">clear</i>
+                    </Button>
+                  </Form>
                   <p className="font-display h4">
                     <Link to={`/books/${book.id}`}>{book.title}</Link>
                   </p>
@@ -109,22 +124,6 @@ class Cart extends Component {
                     <span className="text-secondary">Quantity:</span>{' '}
                     {book.quantity}
                   </p>
-                  <Form
-                    action="/"
-                    method="POST"
-                    onSubmit={this.removeProductFromCart}
-                    className="mb-2 position-absolute"
-                    style={{ right: 0, top: 0 }}
-                  >
-                    <Button
-                      variant="link"
-                      type="submit"
-                      aria-label="Remove from cart"
-                      className="text-danger pt-0"
-                    >
-                      <i className="material-icons">clear</i>
-                    </Button>
-                  </Form>
                 </Media.Body>
               </Media>
             ))}
