@@ -7,25 +7,41 @@ use Illuminate\Support\Facades\DB;
 
 class BooksController extends Controller
 {
+    private $orderColumnMap = [
+        'ratings' => 'books.ratings_count',
+        'avgrating' => 'books.ratings_sum/books.ratings_count',
+        'price' => 'books.price'
+    ];
+
+    private $orderDirections = ['DESC', 'ASC'];
+
     public function index(Request $request)
     {
         $limit = $request->get('limit');
         $offset = $request->get('offset');
+        $orderBy = $request->get('order_by');
 
-        $books = DB::table('books');
+        $query = DB::table('books');
 
         if ($limit) {
-            $books->limit($limit);
+            $query->limit($limit);
         }
 
         if ($offset) {
-            $books->offset($offset);
+            $query->offset($offset);
         }
 
-        $books = $books->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author')->orderBy('books.id')->get();
+        if ($orderBy) {
+            [$column, $direction] = explode('_', $orderBy);
+            $column = $this->orderColumnMap[$column] ?? 'books.id';
+            $direction = in_array(strtoupper($direction), $this->orderDirections) ? $direction : 'DESC';
+            $query->orderBy($column, $direction);
+        }
 
-        $total = DB::table('books')->count();
+        $books = $query->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author')->orderBy('books.id')->get();
 
-        return compact('books', 'total');
+        $count = count($books);
+
+        return compact('books', 'count');
     }
 }

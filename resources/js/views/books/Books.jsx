@@ -9,62 +9,66 @@ import Pagination from '../../components/Pagination';
 
 class Books extends Component {
   state = {
+    loading: true,
+    filterOpen: null,
     inWishlist: false,
     categories: new Array(6).fill(0).map((item, index) => ({
       name: `Category #${index}`,
       checked: false
     })),
-    filterOpen: null,
-    page: 1,
-    limit: 20,
     books: null,
-    totalBooks: 0,
-    totalPages: 1,
-    loading: true
+    totalBooks: null,
+    totalPages: null,
+    page: null,
+    limit: 20,
+    orderBy: 'ratings_desc'
   };
 
-  async componentDidMount() {
-    const page = this.getCurrentPage();
-    this.setState({ page });
-    const { books, total } = await this.fetchBooks(page);
-    const totalPages = this.getTotalPages(total);
-    this.setState({ books, totalBooks: total, totalPages, loading: false });
+  componentDidMount() {
+    this.getBooks();
   }
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
-      this.setState({ loading: true });
-      const page = this.getCurrentPage();
-      this.setState({ page });
-      const { books, total } = await this.fetchBooks(page);
-      this.setState({ books, totalBooks: total, loading: false });
+      this.getBooks();
     }
   }
 
+  async getBooks() {
+    this.setState({ loading: true });
+    const { books, count } = await this.fetchBooks();
+    const totalPages = this.calcTotalPages(count, this.state.limit);
+    this.setState({ books, totalBooks: count, totalPages, loading: false });
+  }
+
   async fetchBooks() {
-    const limit = this.state.limit;
-    const offset = this.getCurrentOffset();
-    const url =
-      `api/books?limit=${limit}` + (offset ? `&offset=${offset}` : '');
+    const url = this.assembleUrl();
+    console.log(url);
     const response = await axios.get(url);
     return response.data;
   }
 
-  getCurrentPage() {
-    const queryString = this.props.location.search;
-    return parseInt(URL.query(queryString).getParam('page')) || 1;
+  assembleUrl() {
+    const { limit, orderBy } = this.state;
+    const offset = this.calcOffset();
+    return `/api/books?limit=${limit}&order_by=${orderBy}&offset=${offset}`;
   }
 
-  getCurrentOffset() {
+  calcOffset() {
+    const { limit } = this.state;
     const page = this.getCurrentPage();
-    const limit = this.state.limit;
     return (page - 1) * limit;
   }
 
-  getTotalPages(totalBooks) {
-    const limit = this.state.limit;
-    const total = totalBooks || this.state.totalBooks;
-    return Math.ceil(total / limit);
+  getCurrentPage() {
+    const queryString = this.props.location.search;
+    const page = parseInt(URL.query(queryString).getParam('page')) || 1;
+    this.setState({ page });
+    return page;
+  }
+
+  calcTotalPages(totalBooks, perPage) {
+    return Math.ceil(totalBooks / perPage);
   }
 
   toggleWishlist = e => {
@@ -87,6 +91,12 @@ class Books extends Component {
   handleFilterSubmit = e => {
     e.preventDefault();
     this.setState({ filterOpen: false });
+  };
+
+  handleSortChange = e => {
+    e.preventDefault();
+    const orderBy = e.target.value;
+    this.setState({ orderBy }, this.getBooks);
   };
 
   render() {
@@ -209,10 +219,15 @@ class Books extends Component {
                     </Form.Label>
                     <Form.Control
                       as="select"
+                      onChange={this.handleSortChange}
                       className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
                     >
-                      <option value="price_asc">Price (asc)</option>
+                      <option value="ratings_desc">Total Ratings (desc)</option>
+                      <option value="ratings_asc">Total Ratings (asc)</option>
+                      <option value="avgrating_desc">Avg Rating (desc)</option>
+                      <option value="avgrating_asc">Avg Rating (asc)</option>
                       <option value="price_desc">Price (desc)</option>
+                      <option value="price_asc">Price (asc)</option>
                     </Form.Control>
                   </Form.Group>
                 </Form>
