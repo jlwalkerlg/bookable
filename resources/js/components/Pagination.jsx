@@ -2,12 +2,17 @@ import React from 'react';
 import { Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const MyPagination = ({ totalPages, limit, currentPage, url, className }) => {
-  limit = limit || 5;
+const MyPagination = ({
+  totalPages,
+  limit = 5,
+  currentPage,
+  url,
+  className
+}) => {
   limit = limit < totalPages - 1 ? limit : totalPages;
 
-  const pages = [];
-  for (let i = 1; i <= limit; i++) {
+  const pages = [1];
+  for (let i = 2; i <= limit; i++) {
     pages.push(i);
   }
 
