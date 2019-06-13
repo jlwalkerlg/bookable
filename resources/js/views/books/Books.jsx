@@ -244,7 +244,7 @@ class Books extends Component {
                         title={book.title}
                         author={book.author}
                         authorId={book.author_id}
-                        price={15.0}
+                        price={book.price}
                         wishlistButton
                         inWishlist={inWishlist}
                         toggleWishlist={this.toggleWishlist}

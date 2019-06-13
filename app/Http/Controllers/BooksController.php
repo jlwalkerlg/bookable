@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Book;
 use Illuminate\Support\Facades\DB;
 
 class BooksController extends Controller
@@ -27,7 +28,7 @@ class BooksController extends Controller
         $offset = $request->get('offset');
         $orderBy = $request->get('order_by');
 
-        $query = DB::table('books')->join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
+        $query = Book::join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
 
         if ($limit) {
             $query->limit($limit);

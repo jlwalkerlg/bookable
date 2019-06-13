@@ -51,7 +51,7 @@ class Cart extends Component {
                         <Link to={`/books/${book.id}`}>{book.title}</Link>
                       </p>
                       <p>
-                        <span className="text-secondary">by: </span>
+                        <span className="text-secondary">by:</span>{' '}
                         <Link to={`/authors/${book.author_id}`}>
                           {book.author}
                         </Link>
@@ -60,7 +60,7 @@ class Cart extends Component {
                   </Media>
                 </Col>
                 <Col md={3}>
-                  <p>£20.00</p>
+                  <p>£{book.price.toFixed(2)}</p>
                 </Col>
                 <Col md={3}>
                   <p>{book.quantity}</p>
@@ -117,8 +117,8 @@ class Cart extends Component {
                     <Link to={`/authors/${book.author_id}`}>{book.author}</Link>
                   </p>
                   <p className="text-warning">
-                    <span className="text-secondary">Price: </span>
-                    £20.00
+                    <span className="text-secondary">Price:</span> £
+                    {book.price.toFixed(2)}
                   </p>
                   <p>
                     <span className="text-secondary">Quantity:</span>{' '}
@@ -144,7 +144,13 @@ class Cart extends Component {
               </Card.Text>
               <hr />
               <Card.Text>
-                Subtotal: <span className="font-weight-bold">£40.99</span>
+                Subtotal:{' '}
+                <span className="font-weight-bold">
+                  £
+                  {cart
+                    .reduce((prev, current) => prev + current.price, 0)
+                    .toFixed(2)}
+                </span>
               </Card.Text>
               <Button variant="warning">Proceed to checkout</Button>
             </Card.Body>

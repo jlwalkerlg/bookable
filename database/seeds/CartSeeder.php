@@ -13,7 +13,7 @@ class CartSeeder extends Seeder
      */
     public function run()
     {
-        $book_ids = [168668, 157993, 386162];
+        $book_ids = [7144, 168668, 157993];
 
         Cart::create(['user_id' => 1]);
 

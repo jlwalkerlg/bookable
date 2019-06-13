@@ -54,7 +54,7 @@ class Wishlist extends Component {
                   </Media>
                 </Col>
                 <Col md={3}>
-                  <p>£20.00</p>
+                  <p>£{book.price.toFixed(2)}</p>
                 </Col>
                 <Col md={3}>
                   <Form
