@@ -11,6 +11,10 @@ class Books extends Component {
   state = {
     loading: true,
     filterOpen: null,
+    filterParams: {
+      minPrice: '',
+      maxPrice: ''
+    },
     inWishlist: false,
     categories: new Array(6).fill(0).map((item, index) => ({
       name: `Category #${index}`,
@@ -48,9 +52,10 @@ class Books extends Component {
   }
 
   assembleUrl() {
-    const { limit, orderBy } = this.state;
+    const { limit, orderBy, filterParams } = this.state;
     const offset = this.calcOffset();
-    return `/api/books?limit=${limit}&order_by=${orderBy}&offset=${offset}`;
+    const { minPrice, maxPrice } = filterParams;
+    return `/api/books?limit=${limit}&order_by=${orderBy}&offset=${offset}&min_price=${minPrice}&max_price=${maxPrice}`;
   }
 
   calcOffset() {
@@ -89,6 +94,7 @@ class Books extends Component {
 
   handleFilterSubmit = e => {
     e.preventDefault();
+    this.getBooks();
     this.setState({ filterOpen: false });
   };
 
@@ -98,16 +104,27 @@ class Books extends Component {
     this.setState({ orderBy }, this.getBooks);
   };
 
+  handleFilterParamChange = e => {
+    const paramName = e.target.id;
+    const value = e.target.value;
+    const filterParams = this.state.filterParams;
+    this.setState({
+      filterParams: { ...filterParams, [paramName]: value }
+    });
+  };
+
   render() {
     const {
       inWishlist,
       categories,
       filterOpen,
+      filterParams,
       books,
       totalPages,
       page,
       loading
     } = this.state;
+    const { minPrice, maxPrice } = filterParams;
 
     return (
       <main className="section">
@@ -152,16 +169,22 @@ class Books extends Component {
                               type="number"
                               placeholder="Min price"
                               min="0"
+                              step="0.01"
+                              value={minPrice}
+                              onChange={this.handleFilterParamChange}
                             />
                           </Form.Group>
                         </Col>
                         <Col xs={6} md={12} lg={6}>
                           <Form.Group controlId="maxPrice">
-                            <Form.Label>Min Price</Form.Label>
+                            <Form.Label>Max Price</Form.Label>
                             <Form.Control
                               type="number"
-                              placeholder="Min price"
+                              placeholder="Max price"
                               min="0"
+                              step="0.01"
+                              value={maxPrice}
+                              onChange={this.handleFilterParamChange}
                             />
                           </Form.Group>
                         </Col>
