@@ -227,6 +227,8 @@ class Books extends Component {
                       <option value="avgrating_asc">Avg Rating (asc)</option>
                       <option value="price_desc">Price (desc)</option>
                       <option value="price_asc">Price (asc)</option>
+                      <option value="date_desc">Date (desc)</option>
+                      <option value="date_asc">Date (asc)</option>
                     </Form.Control>
                   </Form.Group>
                 </Form>
@@ -245,6 +247,7 @@ class Books extends Component {
                         author={book.author}
                         authorId={book.author_id}
                         price={book.price}
+                        date={book.publication_date}
                         wishlistButton
                         inWishlist={inWishlist}
                         toggleWishlist={this.toggleWishlist}
