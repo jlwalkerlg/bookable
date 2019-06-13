@@ -11,13 +11,16 @@ class Books extends Component {
   state = {
     loading: true,
     filterOpen: null,
-    filterParams: {
-      minPrice: '',
-      maxPrice: '',
-      minRating: '',
-      maxRating: '',
-      minDate: '',
-      maxDate: ''
+    queryParams: {
+      limit: 20,
+      offset: 0,
+      order_by: 'ratings_desc',
+      min_price: '',
+      max_price: '',
+      min_rating: '',
+      max_rating: '',
+      min_date: '',
+      max_date: ''
     },
     inWishlist: false,
     categories: new Array(6).fill(0).map((item, index) => ({
@@ -27,64 +30,71 @@ class Books extends Component {
     books: null,
     totalBooks: null,
     totalPages: null,
-    page: null,
-    limit: 20,
-    orderBy: 'ratings_desc'
+    page: null
   };
 
   componentDidMount() {
-    this.getBooks();
+    this.updateParams(this.getBooks);
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
-      this.getBooks();
+      this.updateParams(this.getBooks);
     }
+  }
+
+  updateParams(callback) {
+    const page = this.getCurrentPage();
+    const offset = this.calcOffset(page);
+    this.setState(
+      { page, queryParams: { ...this.state.queryParams, offset } },
+      callback
+    );
+  }
+
+  getCurrentPage() {
+    const queryString = this.props.location.search;
+    return parseInt(URL.query(queryString).getParam('page')) || 1;
+  }
+
+  calcOffset(page) {
+    const { limit } = this.state.queryParams;
+    return (page - 1) * limit;
   }
 
   async getBooks() {
     this.setState({ loading: true });
     const { books, count } = await this.fetchBooks();
-    const totalPages = this.calcTotalPages(count, this.state.limit);
+    const totalPages = this.calcTotalPages(count, this.state.queryParams.limit);
     this.setState({ books, totalBooks: count, totalPages, loading: false });
   }
 
   async fetchBooks() {
-    const url = this.assembleUrl();
-    const response = await axios.get(url);
+    const params = this.state.queryParams;
+    const response = await axios.get('/api/books', { params });
     return response.data;
-  }
-
-  assembleUrl() {
-    const { limit, orderBy, filterParams } = this.state;
-    const offset = this.calcOffset();
-    const {
-      minPrice,
-      maxPrice,
-      minRating,
-      maxRating,
-      minDate,
-      maxDate
-    } = filterParams;
-    return `/api/books?limit=${limit}&order_by=${orderBy}&offset=${offset}&min_price=${minPrice}&max_price=${maxPrice}&min_rating=${minRating}&max_rating=${maxRating}&min_date=${minDate}&max_date=${maxDate}`;
-  }
-
-  calcOffset() {
-    const { limit } = this.state;
-    const page = this.getCurrentPage();
-    return (page - 1) * limit;
-  }
-
-  getCurrentPage() {
-    const queryString = this.props.location.search;
-    const page = parseInt(URL.query(queryString).getParam('page')) || 1;
-    this.setState({ page });
-    return page;
   }
 
   calcTotalPages(totalBooks, perPage) {
     return Math.ceil(totalBooks / perPage);
   }
+
+  handleSortChange = e => {
+    this.handleQueryParamChange(e, this.getBooks);
+  };
+
+  handleQueryParamChange = (e, callback) => {
+    const paramName = e.target.id;
+    const value = e.target.value;
+    const queryParams = { ...this.state.queryParams, [paramName]: value };
+    this.setState({ queryParams }, callback);
+  };
+
+  handleFilterSubmit = e => {
+    e.preventDefault();
+    this.getBooks();
+    this.setState({ filterOpen: false });
+  };
 
   toggleWishlist = e => {
     e.preventDefault();
@@ -103,33 +113,12 @@ class Books extends Component {
 
   toggleFilter = () => this.setState({ filterOpen: !this.state.filterOpen });
 
-  handleFilterSubmit = e => {
-    e.preventDefault();
-    this.getBooks();
-    this.setState({ filterOpen: false });
-  };
-
-  handleSortChange = e => {
-    e.preventDefault();
-    const orderBy = e.target.value;
-    this.setState({ orderBy }, this.getBooks);
-  };
-
-  handleFilterParamChange = e => {
-    const paramName = e.target.id;
-    const value = e.target.value;
-    const filterParams = this.state.filterParams;
-    this.setState({
-      filterParams: { ...filterParams, [paramName]: value }
-    });
-  };
-
   render() {
     const {
       inWishlist,
       categories,
       filterOpen,
-      filterParams,
+      queryParams,
       books,
       totalPages,
       page,
@@ -173,28 +162,28 @@ class Books extends Component {
                       {/* Price */}
                       <Form.Row>
                         <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="minPrice">
+                          <Form.Group controlId="min_price">
                             <Form.Label>Min Price</Form.Label>
                             <Form.Control
                               type="number"
                               placeholder="Min price"
                               min="0"
                               step="0.01"
-                              value={filterParams.minPrice}
-                              onChange={this.handleFilterParamChange}
+                              value={queryParams.min_price}
+                              onChange={this.handleQueryParamChange}
                             />
                           </Form.Group>
                         </Col>
                         <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="maxPrice">
+                          <Form.Group controlId="max_price">
                             <Form.Label>Max Price</Form.Label>
                             <Form.Control
                               type="number"
                               placeholder="Max price"
                               min="0"
                               step="0.01"
-                              value={filterParams.maxPrice}
-                              onChange={this.handleFilterParamChange}
+                              value={queryParams.max_price}
+                              onChange={this.handleQueryParamChange}
                             />
                           </Form.Group>
                         </Col>
@@ -203,28 +192,28 @@ class Books extends Component {
                       {/* Rating */}
                       <Form.Row>
                         <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="minRating">
+                          <Form.Group controlId="min_rating">
                             <Form.Label>Min Rating</Form.Label>
                             <Form.Control
                               type="number"
                               placeholder="Min rating"
                               min="0"
                               max="5"
-                              value={filterParams.minRating}
-                              onChange={this.handleFilterParamChange}
+                              value={queryParams.min_rating}
+                              onChange={this.handleQueryParamChange}
                             />
                           </Form.Group>
                         </Col>
                         <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="maxRating">
+                          <Form.Group controlId="max_rating">
                             <Form.Label>Max Rating</Form.Label>
                             <Form.Control
                               type="number"
                               placeholder="Max rating"
                               min="0"
                               max="5"
-                              value={filterParams.maxRating}
-                              onChange={this.handleFilterParamChange}
+                              value={queryParams.max_rating}
+                              onChange={this.handleQueryParamChange}
                             />
                           </Form.Group>
                         </Col>
@@ -232,22 +221,22 @@ class Books extends Component {
 
                       {/* Date */}
                       <div>
-                        <Form.Group controlId="minDate">
+                        <Form.Group controlId="min_date">
                           <Form.Label>Min Date</Form.Label>
                           <Form.Control
                             type="date"
                             placeholder="Min date"
-                            value={filterParams.minDate}
-                            onChange={this.handleFilterParamChange}
+                            value={queryParams.min_date}
+                            onChange={this.handleQueryParamChange}
                           />
                         </Form.Group>
-                        <Form.Group controlId="maxDate">
+                        <Form.Group controlId="max_date">
                           <Form.Label>Max Date</Form.Label>
                           <Form.Control
                             type="date"
                             placeholder="Max date"
-                            value={filterParams.maxDate}
-                            onChange={this.handleFilterParamChange}
+                            value={queryParams.max_date}
+                            onChange={this.handleQueryParamChange}
                           />
                         </Form.Group>
                       </div>
@@ -297,7 +286,7 @@ class Books extends Component {
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="h5 text-uppercase mb-2 mb-md-0">Books</h2>
                 <Form>
-                  <Form.Group className="mb-0">
+                  <Form.Group className="mb-0" controlId="order_by">
                     <Form.Label className="d-inline-block mr-2 font-size-7">
                       Sort by:
                     </Form.Label>
