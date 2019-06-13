@@ -12,6 +12,6 @@ class GoodreadsSeeder extends Seeder
      */
     public function run()
     {
-        DB::unprepared(file_get_contents(__DIR__ . '/goodreads_2019-06-10.sql'));
+        DB::unprepared(file_get_contents(__DIR__ . '/bookable_2019-06-13.sql'));
     }
 }

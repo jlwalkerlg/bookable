@@ -25,6 +25,7 @@ class CreateBooksTable extends Migration
             $table->integer('num_pages');
             $table->integer('ratings_sum');
             $table->integer('ratings_count');
+            $table->decimal('price', 5, 2);
             $table->unsignedBigInteger('author_id')->nullable();
 
             $table->foreign('author_id')->references('id')->on('authors');
