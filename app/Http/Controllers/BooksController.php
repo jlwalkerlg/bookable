@@ -31,6 +31,8 @@ class BooksController extends Controller
         $orderBy = $request->get('order_by');
         $minPrice = $request->get('min_price');
         $maxPrice = $request->get('max_price');
+        $minDate = $request->get('min_date');
+        $maxDate = $request->get('max_date');
         $minRating = $request->get('min_rating');
         $maxRating = $request->get('max_rating');
 
@@ -42,6 +44,16 @@ class BooksController extends Controller
 
         if ($maxPrice) {
             $query->where('books.price', '<=', $maxPrice);
+        }
+
+        if ($minDate) {
+            $minDate = unixtojd((new \DateTime($minDate))->getTimestamp());
+            $query->where('books.publication_date', '>=', $minDate);
+        }
+
+        if ($maxDate) {
+            $maxDate = unixtojd((new \DateTime($maxDate))->getTimestamp());
+            $query->where('books.publication_date', '<=', $maxDate);
         }
 
         if ($minRating) {

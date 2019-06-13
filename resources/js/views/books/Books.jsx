@@ -15,7 +15,9 @@ class Books extends Component {
       minPrice: '',
       maxPrice: '',
       minRating: '',
-      maxRating: ''
+      maxRating: '',
+      minDate: '',
+      maxDate: ''
     },
     inWishlist: false,
     categories: new Array(6).fill(0).map((item, index) => ({
@@ -56,8 +58,15 @@ class Books extends Component {
   assembleUrl() {
     const { limit, orderBy, filterParams } = this.state;
     const offset = this.calcOffset();
-    const { minPrice, maxPrice, minRating, maxRating } = filterParams;
-    return `/api/books?limit=${limit}&order_by=${orderBy}&offset=${offset}&min_price=${minPrice}&max_price=${maxPrice}&min_rating=${minRating}&max_rating=${maxRating}`;
+    const {
+      minPrice,
+      maxPrice,
+      minRating,
+      maxRating,
+      minDate,
+      maxDate
+    } = filterParams;
+    return `/api/books?limit=${limit}&order_by=${orderBy}&offset=${offset}&min_price=${minPrice}&max_price=${maxPrice}&min_rating=${minRating}&max_rating=${maxRating}&min_date=${minDate}&max_date=${maxDate}`;
   }
 
   calcOffset() {
@@ -126,7 +135,6 @@ class Books extends Component {
       page,
       loading
     } = this.state;
-    const { minPrice, maxPrice, minRating, maxRating } = filterParams;
 
     return (
       <main className="section">
@@ -172,7 +180,7 @@ class Books extends Component {
                               placeholder="Min price"
                               min="0"
                               step="0.01"
-                              value={minPrice}
+                              value={filterParams.minPrice}
                               onChange={this.handleFilterParamChange}
                             />
                           </Form.Group>
@@ -185,7 +193,7 @@ class Books extends Component {
                               placeholder="Max price"
                               min="0"
                               step="0.01"
-                              value={maxPrice}
+                              value={filterParams.maxPrice}
                               onChange={this.handleFilterParamChange}
                             />
                           </Form.Group>
@@ -202,7 +210,7 @@ class Books extends Component {
                               placeholder="Min rating"
                               min="0"
                               max="5"
-                              value={minRating}
+                              value={filterParams.minRating}
                               onChange={this.handleFilterParamChange}
                             />
                           </Form.Group>
@@ -215,12 +223,34 @@ class Books extends Component {
                               placeholder="Max rating"
                               min="0"
                               max="5"
-                              value={maxRating}
+                              value={filterParams.maxRating}
                               onChange={this.handleFilterParamChange}
                             />
                           </Form.Group>
                         </Col>
                       </Form.Row>
+
+                      {/* Date */}
+                      <div>
+                        <Form.Group controlId="minDate">
+                          <Form.Label>Min Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            placeholder="Min date"
+                            value={filterParams.minDate}
+                            onChange={this.handleFilterParamChange}
+                          />
+                        </Form.Group>
+                        <Form.Group controlId="maxDate">
+                          <Form.Label>Max Date</Form.Label>
+                          <Form.Control
+                            type="date"
+                            placeholder="Max date"
+                            value={filterParams.maxDate}
+                            onChange={this.handleFilterParamChange}
+                          />
+                        </Form.Group>
+                      </div>
 
                       {/* Categories */}
                       <div>
