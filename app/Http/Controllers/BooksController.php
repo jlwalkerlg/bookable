@@ -15,7 +15,8 @@ class BooksController extends Controller
      */
     private $orderByColumnMap = [
         'ratings' => 'books.ratings_count',
-        'avgrating' => 'avg_rating'
+        'avgrating' => 'avg_rating',
+        'price' => 'books.price'
     ];
 
     /**
