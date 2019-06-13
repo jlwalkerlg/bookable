@@ -18,8 +18,8 @@ class CreateAuthorsTable extends Migration
             $table->string('name', 255);
             $table->text('about');
             $table->string('hometown', 255);
-            $table->string('birth_date', 10)->nullable();
-            $table->string('death_date', 10)->nullable();
+            $table->date('birth_date')->nullable();
+            $table->date('death_date')->nullable();
             $table->string('image_url', 255);
             $table->string('small_image_url', 255);
             $table->string('large_image_url', 255);

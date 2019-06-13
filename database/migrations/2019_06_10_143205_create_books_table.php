@@ -17,14 +17,14 @@ class CreateBooksTable extends Migration
             $table->bigIncrements('id');
             $table->string('title', 255);
             $table->text('description');
-            $table->string('publication_date', 10);
+            $table->unsignedInteger('publication_date');
             $table->string('publisher', 255);
             $table->string('image_url', 255);
             $table->string('small_image_url', 255);
             $table->string('large_image_url', 255)->nullable();
-            $table->integer('num_pages');
-            $table->integer('ratings_sum');
-            $table->integer('ratings_count');
+            $table->unsignedInteger('num_pages');
+            $table->unsignedInteger('ratings_sum');
+            $table->unsignedInteger('ratings_count');
             $table->decimal('price', 5, 2);
             $table->unsignedBigInteger('author_id')->nullable();
 
