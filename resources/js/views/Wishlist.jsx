@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
+import { removeBookFromWishlist } from '../actions/user';
 
 class Wishlist extends Component {
   addProductToCart = e => {
@@ -9,9 +10,10 @@ class Wishlist extends Component {
     console.log('hi');
   };
 
-  removeProductFromWishlist = e => {
+  removeFromWishlist = e => {
     e.preventDefault();
-    console.log('hi');
+    const bookId = parseInt(e.target.dataset.bookId);
+    this.props.removeBookFromWishlist(bookId);
   };
 
   render() {
@@ -78,7 +80,8 @@ class Wishlist extends Component {
                   <Form
                     action="/"
                     method="POST"
-                    onSubmit={this.removeProductFromWishlist}
+                    data-book-id={book.id}
+                    onSubmit={this.removeFromWishlist}
                     className="text-secondary"
                   >
                     <Button
@@ -105,7 +108,8 @@ class Wishlist extends Component {
                   <Form
                     action="/"
                     method="POST"
-                    onSubmit={this.removeProductFromWishlist}
+                    data-book-id={book.id}
+                    onSubmit={this.removeFromWishlist}
                     className="float-right"
                   >
                     <Button
@@ -157,4 +161,11 @@ const mapStateToProps = ({ user }) => ({
   wishlist: user.wishlist
 });
 
-export default connect(mapStateToProps)(Wishlist);
+const mapDispatchToProps = {
+  removeBookFromWishlist
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Wishlist);
