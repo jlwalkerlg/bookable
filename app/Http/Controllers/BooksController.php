@@ -31,15 +31,27 @@ class BooksController extends Controller
         $orderBy = $request->get('order_by');
         $minPrice = $request->get('min_price');
         $maxPrice = $request->get('max_price');
+        $minRating = $request->get('min_rating');
+        $maxRating = $request->get('max_rating');
 
         $query = Book::join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
 
         if ($minPrice) {
-            $query->where('price', '>=', $minPrice);
+            $query->where('books.price', '>=', $minPrice);
         }
 
         if ($maxPrice) {
-            $query->where('price', '<=', $maxPrice);
+            $query->where('books.price', '<=', $maxPrice);
+        }
+
+        if ($minRating) {
+            $col = DB::raw('books.ratings_sum/books.ratings_count');
+            $query->where($col, '>=', $minRating);
+        }
+
+        if ($maxRating) {
+            $col = DB::raw('books.ratings_sum/books.ratings_count');
+            $query->where($col, '<=', $maxRating);
         }
 
         $count = (clone $query)->count();
