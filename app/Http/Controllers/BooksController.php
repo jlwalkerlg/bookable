@@ -32,6 +32,8 @@ class BooksController extends Controller
 
         $query = Book::join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
 
+        $count = (clone $query)->count();
+
         if ($limit) {
             $query->limit($limit);
         }
@@ -47,7 +49,6 @@ class BooksController extends Controller
         }
 
         $books = $query->get();
-        $count = count($books);
 
         return compact('books', 'count');
     }
