@@ -1,4 +1,9 @@
-import { USER_LOGIN, USER_LOGOUT } from './types';
+import {
+  USER_LOGIN,
+  USER_LOGOUT,
+  WISHLIST_ADD,
+  WISHLIST_REMOVE
+} from './types';
 import axios from 'axios';
 
 const loginUser = user => ({
@@ -35,3 +40,13 @@ export const oauthLogin = () => dispatch =>
       return user;
     })
     .catch(error => error);
+
+export const addBookToWishlist = bookId => ({
+  type: WISHLIST_ADD,
+  bookId
+});
+
+export const removeBookFromWishlist = bookId => ({
+  type: WISHLIST_REMOVE,
+  bookId
+});

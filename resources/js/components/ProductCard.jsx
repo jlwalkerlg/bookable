@@ -2,21 +2,23 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
+import { addBookToWishlist, removeBookFromWishlist } from '../actions/user';
 
 class ProductCard extends Component {
-  state = {
-    isInWishlist: null
-  };
-
-  componentDidMount() {
-    const isInWishlist = this.inWishlist();
-    this.setState({ isInWishlist });
-  }
-
   inWishlist() {
     const { bookId, wishlist } = this.props;
     return !!wishlist.filter(book => book.id === bookId).length;
   }
+
+  addToWishlist = e => {
+    e.preventDefault();
+    this.props.addBookToWishlist(this.props.bookId);
+  };
+
+  removeFromWishlist = e => {
+    e.preventDefault();
+    this.props.removeBookFromWishlist(this.props.bookId);
+  };
 
   render() {
     const {
@@ -30,7 +32,7 @@ class ProductCard extends Component {
       wishlistButton
     } = this.props;
 
-    const { isInWishlist } = this.state;
+    const inWishlist = this.inWishlist();
 
     return (
       <div className={`product-card ${className || ''}`}>
@@ -39,7 +41,7 @@ class ProductCard extends Component {
           <Form
             action="/"
             method="POST"
-            // onSubmit={(toggleWishlist)}
+            onSubmit={inWishlist ? this.removeFromWishlist : this.addToWishlist}
             className="float-right"
           >
             <Button
@@ -47,11 +49,11 @@ class ProductCard extends Component {
               type="submit"
               className="link-secondary p-0"
               aria-label={
-                isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'
+                inWishlist ? 'Remove from wishlist' : 'Add to wishlist'
               }
             >
               <i className="material-icons text-danger">
-                {isInWishlist ? 'favorite' : 'favorite_border'}
+                {inWishlist ? 'favorite' : 'favorite_border'}
               </i>
             </Button>
           </Form>
@@ -75,4 +77,12 @@ const mapStateToProps = ({ user }) => ({
   wishlist: user.wishlist || []
 });
 
-export default connect(mapStateToProps)(ProductCard);
+const mapDispatchToProps = {
+  addBookToWishlist,
+  removeBookFromWishlist
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProductCard);
