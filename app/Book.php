@@ -11,4 +11,9 @@ class Book extends Model
     protected $casts = [
         'price' => 'float'
     ];
+
+    public function getPublicationDateAttribute($value)
+    {
+        return date('d M Y', jdtounix($value));
+    }
 }
