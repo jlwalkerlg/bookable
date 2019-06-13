@@ -22,7 +22,6 @@ class Books extends Component {
       min_date: '',
       max_date: ''
     },
-    inWishlist: false,
     categories: new Array(6).fill(0).map((item, index) => ({
       name: `Category #${index}`,
       checked: false
@@ -96,11 +95,6 @@ class Books extends Component {
     this.setState({ filterOpen: false });
   };
 
-  toggleWishlist = e => {
-    e.preventDefault();
-    this.setState({ inWishlist: !this.state.inWishlist });
-  };
-
   toggleCategory = e => {
     const categoryName = e.target.dataset.categoryName;
     const categories = this.state.categories.map(category => {
@@ -115,7 +109,6 @@ class Books extends Component {
 
   render() {
     const {
-      inWishlist,
       categories,
       filterOpen,
       queryParams,
@@ -323,8 +316,6 @@ class Books extends Component {
                         price={book.price}
                         date={book.publication_date}
                         wishlistButton
-                        inWishlist={inWishlist}
-                        toggleWishlist={this.toggleWishlist}
                       />
                     ))}
                   </div>
