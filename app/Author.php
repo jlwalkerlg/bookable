@@ -15,11 +15,11 @@ class Author extends Model
 
     public function getBirthDateAttribute($value)
     {
-        return (new \DateTime($value))->format('d M Y');
+        return $value ? (new \DateTime($value))->format('d M Y') : null;
     }
 
     public function getDeathDateAttribute($value)
     {
-        return (new \DateTime($value))->format('d M Y');
+        return $value ? (new \DateTime($value))->format('d M Y') : null;
     }
 }
