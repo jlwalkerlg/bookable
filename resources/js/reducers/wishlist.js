@@ -11,7 +11,7 @@ function wishlistReducer(state = [], action) {
     case WISHLIST_REMOVE:
       return state.filter(book => book.id !== action.id);
     case WISHLIST_HYDRATE:
-      return [...state, ...action.books];
+      return action.books;
     default:
       return state;
   }
