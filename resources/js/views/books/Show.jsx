@@ -77,16 +77,6 @@ class Show extends Component {
     this.setState({ quantity });
   };
 
-  toggleCart = e => {
-    e.preventDefault();
-    this.setState({ inCart: !this.state.inCart });
-  };
-
-  toggleWishlist = e => {
-    e.preventDefault();
-    this.setState({ inWishlist: !this.state.inWishlist });
-  };
-
   handleRating = e => {
     const rating = 5 - parseInt(e.target.dataset.index);
     if (rating === this.state.rating) {
@@ -215,7 +205,11 @@ class Show extends Component {
                 <Form
                   action="/"
                   method="POST"
-                  onSubmit={this.toggleWishlist}
+                  onSubmit={
+                    inWishlist
+                      ? e => this.removeFromWishlist(e, book.id)
+                      : e => this.addToWishlist(e, book)
+                  }
                   className="mb-3"
                 >
                   <Button

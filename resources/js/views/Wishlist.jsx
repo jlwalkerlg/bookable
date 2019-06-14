@@ -11,10 +11,9 @@ class Wishlist extends Component {
     this.props.addToCart(book);
   };
 
-  removeFromCart = e => {
+  removeFromCart = (e, id) => {
     e.preventDefault();
-    const bookId = parseInt(e.target.dataset.bookId);
-    this.props.removeFromCart(bookId);
+    this.props.removeFromCart(id);
   };
 
   removeFromWishlist = e => {
@@ -46,6 +45,7 @@ class Wishlist extends Component {
             </Row>
             {wishlist.map((book, index) => {
               const inCart = this.inCart(book.id);
+              const { author } = book;
 
               return (
                 <Row key={index} className="product-table__row">
@@ -62,8 +62,8 @@ class Wishlist extends Component {
                         </p>
                         <p>
                           <span className="text-secondary">by: </span>
-                          <Link to={`/authors/${book.author_id}`}>
-                            {book.author}
+                          <Link to={`/authors/${author.id}`}>
+                            {author.name}
                           </Link>
                         </p>
                       </Media.Body>
@@ -76,10 +76,9 @@ class Wishlist extends Component {
                     <Form
                       action="/"
                       method="POST"
-                      data-book-id={book.id}
                       onSubmit={
                         inCart
-                          ? this.removeFromCart
+                          ? e => this.removeFromCart(e, book.id)
                           : e => this.addToCart(e, book)
                       }
                       className="mb-2"
@@ -121,6 +120,7 @@ class Wishlist extends Component {
           <div className="d-md-none">
             {wishlist.map((book, index) => {
               const inCart = this.inCart(book.id);
+              const { author } = book;
 
               return (
                 <Media key={index} className="product-table__row">
@@ -151,18 +151,15 @@ class Wishlist extends Component {
                     </p>
                     <p>
                       <span className="text-secondary">by: </span>
-                      <Link to={`/authors/${book.author_id}`}>
-                        {book.author}
-                      </Link>
+                      <Link to={`/authors/${author.id}`}>{author.name}</Link>
                     </p>
                     <p>£20.00</p>
                     <Form
                       action="/"
                       method="POST"
-                      data-book-id={book.id}
                       onSubmit={
                         inCart
-                          ? this.removeFromCart
+                          ? e => this.removeFromCart(e, book.id)
                           : e => this.addToCart(e, book)
                       }
                       className="mb-2"
