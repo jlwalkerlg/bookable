@@ -12,4 +12,14 @@ class Author extends Model
     {
         return $this->hasMany('App\Book');
     }
+
+    public function getBirthDateAttribute($value)
+    {
+        return (new \DateTime($value))->format('d M Y');
+    }
+
+    public function getDeathDateAttribute($value)
+    {
+        return (new \DateTime($value))->format('d M Y');
+    }
 }
