@@ -1,13 +1,13 @@
 {
   "private": true,
   "scripts": {
-    "dev": "npm run development",
+    "dev": "webpack --progress",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "npm run development -- --watch",
-    "watch-poll": "npm run watch -- --watch-poll",
     "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
     "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "npm run dev -- --watch",
+    "watch-poll": "npm run watch -- --watch-poll"
   },
   "dependencies": {
     "axios": "^0.19.0",
@@ -28,15 +28,23 @@
     "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.2.0",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.2.0",
     "@babel/preset-react": "^7.0.0",
-    "cross-env": "^5.1",
+    "babel-loader": "^8.0.4",
+    "css-loader": "^2.0.0",
+    "file-loader": "^2.0.0",
     "jquery": "^3.2",
-    "laravel-mix": "^4.0.7",
     "lodash": "^4.17.5",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
     "popper.js": "^1.12",
-    "resolve-url-loader": "^2.3.1",
-    "sass": "^1.15.2",
-    "sass-loader": "^7.1.0"
+    "resolve-url-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.14"
   }
 }

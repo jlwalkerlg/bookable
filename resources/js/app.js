@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import App from './App.jsx';
 import store from './store';
 import init from './init';
+import '../scss/app.scss';
 
 init();
 
