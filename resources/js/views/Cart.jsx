@@ -54,8 +54,8 @@ class Cart extends Component {
                       </p>
                       <p>
                         <span className="text-secondary">by:</span>{' '}
-                        <Link to={`/authors/${book.author_id}`}>
-                          {book.author}
+                        <Link to={`/authors/${book.author.id}`}>
+                          {book.author.name}
                         </Link>
                       </p>
                     </Media.Body>
@@ -118,7 +118,9 @@ class Cart extends Component {
                   </p>
                   <p>
                     <span className="text-secondary">by: </span>
-                    <Link to={`/authors/${book.author_id}`}>{book.author}</Link>
+                    <Link to={`/authors/${book.author.id}`}>
+                      {book.author.name}
+                    </Link>
                   </p>
                   <p className="text-warning">
                     <span className="text-secondary">Price:</span> £

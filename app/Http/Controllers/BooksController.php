@@ -36,7 +36,7 @@ class BooksController extends Controller
         $minRating = $request->get('min_rating');
         $maxRating = $request->get('max_rating');
 
-        $query = Book::join('authors', 'books.author_id', '=', 'authors.id')->select('books.*', 'authors.name as author', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
+        $query = Book::select('books.*', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
 
         if ($minPrice) {
             $query->where('books.price', '>=', $minPrice);
@@ -82,7 +82,7 @@ class BooksController extends Controller
             $query->orderBy($column, $direction);
         }
 
-        $books = $query->get();
+        $books = $query->with('author:id,name')->get();
 
         return compact('books', 'count');
     }
@@ -94,5 +94,14 @@ class BooksController extends Controller
     private function getOrderByColumn($column)
     {
         return $this->orderByColumnMap[$column] ?? $column;
+    }
+
+    /**
+     * Return data about a specific book.
+     * @return array
+     */
+    public function show($id)
+    {
+        return Book::where('id', $id)->with('author.books')->first();
     }
 }

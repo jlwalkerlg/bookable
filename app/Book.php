@@ -16,4 +16,9 @@ class Book extends Model
     {
         return date('d M Y', jdtounix($value));
     }
+
+    public function author()
+    {
+        return $this->belongsTo('App\Author');
+    }
 }

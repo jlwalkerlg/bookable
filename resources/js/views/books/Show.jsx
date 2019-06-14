@@ -4,11 +4,14 @@ import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import Slider from 'react-slick';
+import axios from 'axios';
 import Stars from '../../components/Stars';
 import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
 import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
+import Loading from '../../components/Loading';
+import ProductCard from '../../components/ProductCard';
 
 const slickOptions = {
   infinite: true,
@@ -39,14 +42,39 @@ const slickOptions = {
 
 class Show extends Component {
   state = {
+    loading: true,
+    book: null,
     quantity: 1,
-    inCart: false,
-    inWishlist: false,
     rating: 0
   };
 
+  async componentDidMount() {
+    const book = await this.fetchBook();
+    this.setState({ book, loading: false });
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.setState({ loading: true });
+      const book = await this.fetchBook();
+      this.setState({ book, loading: false });
+    }
+  }
+
+  async fetchBook() {
+    const bookId = this.props.match.params.id;
+    try {
+      const result = await axios.get(`/api/books/${bookId}`);
+      const book = result.data;
+      return book;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   changeQuantity = e => {
-    this.setState({ quantity: e.target.value });
+    const quantity = parseInt(e.target.value);
+    this.setState({ quantity });
   };
 
   toggleCart = e => {
@@ -68,8 +96,52 @@ class Show extends Component {
     }
   };
 
+  addToWishlist(e, book) {
+    e.preventDefault();
+    this.props.addToWishlist(book);
+  }
+
+  addToCart(e, book) {
+    e.preventDefault();
+    const { quantity } = this.state;
+    this.props.addToCart({ ...book, quantity });
+  }
+
+  removeFromWishlist(e, id) {
+    e.preventDefault();
+    this.props.removeFromWishlist(id);
+  }
+
+  removeFromCart(e, id) {
+    e.preventDefault();
+    this.props.removeFromCart(id);
+  }
+
+  inWishlist(id) {
+    const { wishlist } = this.props;
+    return !!wishlist.filter(book => book.id === id).length;
+  }
+
+  inCart(id) {
+    const { cart } = this.props;
+    return !!cart.filter(book => book.id === id).length;
+  }
+
   render() {
-    const { quantity, inCart, inWishlist, rating } = this.state;
+    const { loading } = this.state;
+
+    if (loading)
+      return (
+        <div className="vh-100-nav">
+          <Loading />
+        </div>
+      );
+
+    const { book, quantity, rating } = this.state;
+    const { author } = book;
+
+    const inWishlist = this.inWishlist(book.id);
+    const inCart = this.inCart(book.id);
 
     return (
       <main>
@@ -79,33 +151,36 @@ class Show extends Component {
             <Row>
               <Col xs={12} md={4} className="mb-3 mb-md-0">
                 <img
-                  src="https://images.gr-assets.com/books/1406512317l/5326.jpg"
-                  alt="A Christmas Carol"
+                  src={book.large_image_url}
+                  alt={book.title}
                   className="d-block mx-auto mr-md-0 book-highlight"
                 />
               </Col>
               <Col xs={12} md={8} className="text-center text-md-left">
                 <h1 className="h1 font-display font-weight-bold">
-                  A Christmas Carol
+                  {book.title}
                 </h1>
                 <p>
                   <span className="text-secondary">by: </span>
-                  <Link to="/authors/1">Charles Dickens</Link>
+                  <Link to={`/authors/${author.id}`}>{author.name}</Link>
                 </p>
-                <p className="text-description">
-                  To bitter, miserly Ebenezer Scrooge, Christmas is just another
-                  day. But all that changes when the ghost of his long-dead
-                  business partner appears, warning Scrooge to change his ways
-                  before it's too late.
-                </p>
+                <p className="text-description">{book.description}</p>
                 <p>
                   <span className="text-secondary">Categories: </span>
                   <Link to="/category/1">Philosophy</Link>,{' '}
                   <Link to="/category/1">Adventure</Link>
                 </p>
-                <p className="font-weight-bold h2 mb-4">£19.99</p>
+                <p className="font-weight-bold h2 mb-4">£{book.price}</p>
                 {/* Add To Cart */}
-                <Form action="/" method="POST" onSubmit={this.toggleCart}>
+                <Form
+                  action="/"
+                  method="POST"
+                  onSubmit={
+                    inCart
+                      ? e => this.removeFromCart(e, book.id)
+                      : e => this.addToCart(e, book)
+                  }
+                >
                   <div className="d-inline-block mr-3">
                     {/* Quantity */}
                     <Form.Group controlId="quantity" className="mb-3">
@@ -195,26 +270,7 @@ class Show extends Component {
               <Col xs={12} md={8} className="font-serif font-size-7">
                 <section id="overview" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Overview</h3>
-                  <p>
-                    'If I had my way, every idiot who goes around with Merry
-                    Christmas on his lips, would be boiled with his own pudding,
-                    and buried with a stake of holly through his heart. Merry
-                    Christmas? Bah humbug!'
-                    <br />
-                    <br />
-                    Introduction and Afterword by Joe Wheeler
-                    <br />
-                    To bitter, miserly Ebenezer Scrooge, Christmas is just
-                    another day. But all that changes when the ghost of his
-                    long-dead business partner appears, warning Scrooge to
-                    change his ways before it's too late. <br />
-                    <br />
-                    Part of the Focus on the Family Great Stories collection,
-                    this edition features an in-depth introduction and
-                    discussion questions by Joe Wheeler to provide greater
-                    understanding for today's reader. "A Christmas Carol"
-                    captures the heart of the holidays like no other novel.
-                  </p>
+                  <p>{book.description}</p>
                 </section>
                 <section id="details" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Details</h3>
@@ -225,10 +281,11 @@ class Show extends Component {
                     </li>
                     <li>
                       <span className="font-weight-bold">Publish Date:</span>{' '}
-                      1990
+                      {book.publication_date}
                     </li>
                     <li>
-                      <span className="font-weight-bold">Page Count:</span> 4000
+                      <span className="font-weight-bold">Page Count:</span>{' '}
+                      {book.num_pages}
                     </li>
                   </ul>
                 </section>
@@ -269,32 +326,12 @@ class Show extends Component {
             </Row>
             <Row>
               <Col xs={12} md={4} className="text-md-right mb-4 mb-md-0">
-                <img
-                  src="https://images.gr-assets.com/authors/1387078070p5/239579.jpg"
-                  alt="Charles Dickens"
-                />
+                <img src={author.image_url} alt={author.name} />
               </Col>
               <Col xs={12} md={8} className="text-md-left">
-                <div className="mb-3">
-                  <b>Charles John Huffam Dickens</b> was a writer and social
-                  critic who created some of the world's best-known fictional
-                  characters and is regarded as the greatest novelist of the
-                  Victorian era. His works enjoyed unprecedented popularity
-                  during his lifetime, and by the twentieth century critics and
-                  scholars had recognised him as a literary genius. His novels
-                  and short stories enjoy lasting popularity.
-                  <br />
-                  <br />
-                  Dickens left school to work in a factory when his father was
-                  incarcerated in a debtors' prison. Despite his lack of formal
-                  education, he edited a weekly journal for 20 years, wrote 15
-                  novels, five novellas, hundreds of short stories and
-                  non-fiction articles, lectured and performed extensively, was
-                  an indefatigable letter writer, and campaigned vigorously for
-                  children's rights, education, and other social reforms...
-                </div>
+                <div className="mb-3">{author.about}</div>
                 <p className="font-weight-bold">
-                  <Link to="/authors/1">Read More...</Link>
+                  <Link to={`/authors/${author.id}`}>Read More...</Link>
                 </p>
               </Col>
             </Row>
@@ -304,18 +341,15 @@ class Show extends Component {
         <article className="section text-center">
           <Container>
             <h2 className="heading mb-4">
-              <span>Other Books by</span> <Link to="/">Charles Dickens</Link>
+              <span>Other Books by</span>{' '}
+              <Link to={`/authors/${author.id}`}>{author.name}</Link>
             </h2>
             <Slider {...slickOptions} className="text-center">
-              {new Array(15).fill(0).map((item, index) => (
-                <TempProductCard
-                  key={index}
-                  image="https://images.gr-assets.com/books/1344922523m/1953.jpg"
-                  title="A Tale of Two Cities"
-                  author="Charles Dickens"
-                  price={14.99}
-                />
-              ))}
+              {author.books
+                .filter(item => item.id !== book.id)
+                .map((item, index) => (
+                  <ProductCard key={index} book={item} />
+                ))}
             </Slider>
           </Container>
         </article>

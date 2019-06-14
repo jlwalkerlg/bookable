@@ -22,14 +22,15 @@ class ProductCard extends Component {
   };
 
   render() {
-    const { book, className, wishlistButton } = this.props;
+    const { book, className, wishlistButton, size } = this.props;
+    const { author } = book;
 
     const inWishlist = this.inWishlist();
 
     return (
       <div className={`product-card ${className || ''}`}>
         <img
-          src={book.large_image_url || book.image_url}
+          src={book[(size ? `${size}_` : '') + 'image_url']}
           alt={book.title}
           className="product-card__img"
         />
@@ -61,10 +62,10 @@ class ProductCard extends Component {
         <Link to={`/books/${book.id}`} className="product-card__title">
           {book.title}
         </Link>
-        {book.author && (
+        {author && (
           <p className="product-card__author">
             <span className="text-secondary">by: </span>
-            <Link to={`/authors/${book.author_id}`}>{book.author}</Link>
+            <Link to={`/authors/${author.id}`}>{author.name}</Link>
           </p>
         )}
         <p className="product-card__price">£{book.price.toFixed(2)}</p>
