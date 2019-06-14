@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -442,6 +443,20 @@ class Show extends Component {
     );
   }
 }
+
+Show.propTypes = {
+  wishlist: PropTypes.array.isRequired,
+  cart: PropTypes.array.isRequired,
+  addToCart: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired,
+  addToWishlist: PropTypes.func.isRequired,
+  removeFromWishlist: PropTypes.func.isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      id: PropTypes.string.isRequired
+    }).isRequired
+  }).isRequired
+};
 
 const mapStateToProps = ({ wishlist, cart }) => ({
   wishlist,

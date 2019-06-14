@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Container, Row, Col, Form, Button, Collapse } from 'react-bootstrap';
 import axios from 'axios';
 import MediaQuery from 'react-responsive';
@@ -329,5 +330,11 @@ class Books extends Component {
     );
   }
 }
+
+Books.propTypes = {
+  location: PropTypes.shape({
+    search: PropTypes.string.isRequired
+  }).isRequired
+};
 
 export default Books;

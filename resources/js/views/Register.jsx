@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Form, Button, Container } from 'react-bootstrap';
@@ -116,6 +117,13 @@ class Register extends Component {
     );
   }
 }
+
+Register.propTypes = {
+  register: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired
+};
 
 const mapDispatchToProps = {
   register

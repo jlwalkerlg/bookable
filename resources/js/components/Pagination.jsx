@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -43,6 +44,14 @@ const MyPagination = ({
       )}
     </Pagination>
   );
+};
+
+MyPagination.propTypes = {
+  totalPages: PropTypes.number.isRequired,
+  limit: PropTypes.number,
+  currentPage: PropTypes.number.isRequired,
+  url: PropTypes.string.isRequired,
+  className: PropTypes.string
 };
 
 export default MyPagination;

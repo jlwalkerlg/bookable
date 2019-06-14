@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -166,6 +167,11 @@ class Cart extends Component {
     );
   }
 }
+
+Cart.propTypes = {
+  cart: PropTypes.array.isRequired,
+  removeFromCart: PropTypes.func.isRequired
+};
 
 const mapStateToProps = ({ cart }) => ({
   cart

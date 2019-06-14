@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import ProductCard from './ProductCard';
 
 const TempProductCard = ({ title, author, image, price, ...props }) => {
@@ -12,6 +13,13 @@ const TempProductCard = ({ title, author, image, price, ...props }) => {
   };
 
   return <ProductCard book={book} {...props} />;
+};
+
+TempProductCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  author: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+  price: PropTypes.number.isRequired
 };
 
 export default TempProductCard;

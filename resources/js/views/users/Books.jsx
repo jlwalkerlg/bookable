@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Container,
   Row,
@@ -205,5 +206,11 @@ class Books extends Component {
     );
   }
 }
+
+Books.propTypes = {
+  location: PropTypes.shape({
+    search: PropTypes.string.isRequired
+  }).isRequired
+};
 
 export default Books;

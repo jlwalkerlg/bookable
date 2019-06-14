@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Stars = ({ rating, editable, ...props }) => {
   return (
@@ -17,6 +18,11 @@ const Stars = ({ rating, editable, ...props }) => {
       ))}
     </span>
   );
+};
+
+Stars.propTypes = {
+  rating: PropTypes.number.isRequired,
+  editable: PropTypes.bool
 };
 
 export default Stars;

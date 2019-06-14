@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
@@ -188,6 +189,14 @@ class Wishlist extends Component {
     );
   }
 }
+
+Wishlist.propTypes = {
+  wishlist: PropTypes.array.isRequired,
+  cart: PropTypes.array.isRequired,
+  removeFromWishlist: PropTypes.func.isRequired,
+  addToCart: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired
+};
 
 const mapStateToProps = ({ wishlist, cart }) => ({
   wishlist,
