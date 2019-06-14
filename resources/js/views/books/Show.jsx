@@ -120,7 +120,7 @@ class Show extends Component {
   }
 
   render() {
-    const { loading } = this.state;
+    const { loading, book, quantity, rating } = this.state;
 
     if (loading)
       return (
@@ -129,7 +129,6 @@ class Show extends Component {
         </div>
       );
 
-    const { book, quantity, rating } = this.state;
     const { author } = book;
 
     const inWishlist = this.inWishlist(book.id);

@@ -36,7 +36,7 @@ class BooksController extends Controller
         $minRating = $request->get('min_rating');
         $maxRating = $request->get('max_rating');
 
-        $query = Book::select('books.*', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
+        $query = Book::select('books.*');
 
         if ($minPrice) {
             $query->where('books.price', '>=', $minPrice);

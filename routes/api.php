@@ -20,4 +20,6 @@ Route::post('/register', 'ApiAuthController@register');
 Route::get('/user', 'UsersController@index')->middleware('auth:api');
 
 Route::get('/books', 'BooksController@index');
-Route::get('/books/{book}', 'BooksController@show');
+Route::get('/books/{id}', 'BooksController@show');
+
+Route::get('/authors/{id}', 'AuthorsController@show');

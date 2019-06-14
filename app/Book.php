@@ -12,9 +12,16 @@ class Book extends Model
         'price' => 'float'
     ];
 
+    protected $appends = ['avg_rating'];
+
     public function getPublicationDateAttribute($value)
     {
         return date('d M Y', jdtounix($value));
+    }
+
+    public function getAvgRatingAttribute()
+    {
+        return $this->attributes['ratings_sum'] / $this->attributes['ratings_count'];
     }
 
     public function author()
