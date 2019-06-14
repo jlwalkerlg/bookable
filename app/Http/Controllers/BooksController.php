@@ -15,7 +15,6 @@ class BooksController extends Controller
      */
     private $orderByColumnMap = [
         'ratings' => 'books.ratings_count',
-        'avgrating' => 'avg_rating',
         'price' => 'books.price',
         'date' => 'books.publication_date',
     ];
@@ -36,55 +35,53 @@ class BooksController extends Controller
         $minRating = $request->get('min_rating');
         $maxRating = $request->get('max_rating');
 
-        $booksQuery = Book::select('books.*', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
+        $query = Book::select('books.*');
 
         if ($minPrice) {
-            $booksQuery->where('books.price', '>=', $minPrice);
+            $query->where('books.price', '>=', $minPrice);
         }
 
         if ($maxPrice) {
-            $booksQuery->where('books.price', '<=', $maxPrice);
+            $query->where('books.price', '<=', $maxPrice);
         }
 
         if ($minDate) {
             $minDate = unixtojd((new \DateTime($minDate))->getTimestamp());
-            $booksQuery->where('books.publication_date', '>=', $minDate);
+            $query->where('books.publication_date', '>=', $minDate);
         }
 
         if ($maxDate) {
             $maxDate = unixtojd((new \DateTime($maxDate))->getTimestamp());
-            $booksQuery->where('books.publication_date', '<=', $maxDate);
+            $query->where('books.publication_date', '<=', $maxDate);
         }
 
-        $countQuery = (clone $booksQuery);
-
         if ($minRating) {
-            $countQuery->where(DB::raw('books.ratings_sum/books.ratings_count'), '>=', $minRating);
-            $booksQuery->having('avg_rating', '>=', $minRating);
+            $col = DB::raw('books.ratings_sum/books.ratings_count');
+            $query->where($col, '>=', $minRating);
         }
 
         if ($maxRating) {
-            $countQuery->where(DB::raw('books.ratings_sum/books.ratings_count'), '<=', $maxRating);
-            $booksQuery->having('avg_rating', '<=', $maxRating);
+            $col = DB::raw('books.ratings_sum/books.ratings_count');
+            $query->where($col, '<=', $maxRating);
         }
 
-        $count = $countQuery->count();
+        $count = (clone $query)->count();
 
         if ($limit) {
-            $booksQuery->limit($limit);
+            $query->limit($limit);
         }
 
         if ($offset) {
-            $booksQuery->offset($offset);
+            $query->offset($offset);
         }
 
         if ($orderBy) {
             [$column, $direction] = explode('_', $orderBy);
             $column = $this->getOrderByColumn($column);
-            $booksQuery->orderBy($column, $direction);
+            $query->orderBy($column, $direction);
         }
 
-        $books = $booksQuery->with('author:id,name')->get();
+        $books = $query->with('author:id,name')->get();
 
         return compact('books', 'count');
     }
@@ -95,7 +92,7 @@ class BooksController extends Controller
      */
     private function getOrderByColumn($column)
     {
-        return $this->orderByColumnMap[$column] ?? $column;
+        return $column === 'avgrating' ? DB::raw('books.ratings_sum/books.ratings_count') : ($this->orderByColumnMap[$column] ?? $column);
     }
 
     /**
