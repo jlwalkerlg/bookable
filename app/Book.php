@@ -19,9 +19,9 @@ class Book extends Model
         return date('d M Y', jdtounix($value));
     }
 
-    public function getAvgRatingAttribute()
+    public function getAvgRatingAttribute($value)
     {
-        return $this->attributes['ratings_sum'] / $this->attributes['ratings_count'];
+        return $value ?? $this->attributes['ratings_sum'] / $this->attributes['ratings_count'];
     }
 
     public function author()

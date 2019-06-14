@@ -36,53 +36,55 @@ class BooksController extends Controller
         $minRating = $request->get('min_rating');
         $maxRating = $request->get('max_rating');
 
-        $query = Book::select('books.*');
+        $booksQuery = Book::select('books.*', DB::raw('books.ratings_sum/books.ratings_count as avg_rating'));
 
         if ($minPrice) {
-            $query->where('books.price', '>=', $minPrice);
+            $booksQuery->where('books.price', '>=', $minPrice);
         }
 
         if ($maxPrice) {
-            $query->where('books.price', '<=', $maxPrice);
+            $booksQuery->where('books.price', '<=', $maxPrice);
         }
 
         if ($minDate) {
             $minDate = unixtojd((new \DateTime($minDate))->getTimestamp());
-            $query->where('books.publication_date', '>=', $minDate);
+            $booksQuery->where('books.publication_date', '>=', $minDate);
         }
 
         if ($maxDate) {
             $maxDate = unixtojd((new \DateTime($maxDate))->getTimestamp());
-            $query->where('books.publication_date', '<=', $maxDate);
+            $booksQuery->where('books.publication_date', '<=', $maxDate);
         }
 
+        $countQuery = (clone $booksQuery);
+
         if ($minRating) {
-            $col = DB::raw('books.ratings_sum/books.ratings_count');
-            $query->where($col, '>=', $minRating);
+            $countQuery->where(DB::raw('books.ratings_sum/books.ratings_count'), '>=', $minRating);
+            $booksQuery->having('avg_rating', '>=', $minRating);
         }
 
         if ($maxRating) {
-            $col = DB::raw('books.ratings_sum/books.ratings_count');
-            $query->where($col, '<=', $maxRating);
+            $countQuery->where(DB::raw('books.ratings_sum/books.ratings_count'), '<=', $maxRating);
+            $booksQuery->having('avg_rating', '<=', $maxRating);
         }
 
-        $count = (clone $query)->count();
+        $count = $countQuery->count();
 
         if ($limit) {
-            $query->limit($limit);
+            $booksQuery->limit($limit);
         }
 
         if ($offset) {
-            $query->offset($offset);
+            $booksQuery->offset($offset);
         }
 
         if ($orderBy) {
             [$column, $direction] = explode('_', $orderBy);
             $column = $this->getOrderByColumn($column);
-            $query->orderBy($column, $direction);
+            $booksQuery->orderBy($column, $direction);
         }
 
-        $books = $query->with('author:id,name')->get();
+        $books = $booksQuery->with('author:id,name')->get();
 
         return compact('books', 'count');
     }
