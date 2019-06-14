@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
-import { removeBookFromWishlist } from '../actions/user';
+import { removeFromWishlist } from '../actions/wishlist';
 
 class Wishlist extends Component {
   addProductToCart = e => {
@@ -13,7 +13,7 @@ class Wishlist extends Component {
   removeFromWishlist = e => {
     e.preventDefault();
     const bookId = parseInt(e.target.dataset.bookId);
-    this.props.removeBookFromWishlist(bookId);
+    this.props.removeFromWishlist(bookId);
   };
 
   render() {
@@ -157,12 +157,12 @@ class Wishlist extends Component {
   }
 }
 
-const mapStateToProps = ({ user }) => ({
-  wishlist: user.wishlist
+const mapStateToProps = ({ wishlist }) => ({
+  wishlist
 });
 
 const mapDispatchToProps = {
-  removeBookFromWishlist
+  removeFromWishlist
 };
 
 export default connect(

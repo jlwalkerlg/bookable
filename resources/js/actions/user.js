@@ -1,9 +1,6 @@
-import {
-  USER_LOGIN,
-  USER_LOGOUT,
-  WISHLIST_ADD,
-  WISHLIST_REMOVE
-} from './types';
+import { USER_LOGIN, USER_LOGOUT } from './types';
+import { hydrateWishlist } from './wishlist';
+import { hydrateCart } from './cart';
 import axios from 'axios';
 
 const loginUser = user => ({
@@ -35,18 +32,10 @@ export const oauthLogin = () => dispatch =>
   axios
     .get('/api/user')
     .then(response => {
-      const user = response.data;
+      const { user, wishlist, cart } = response.data;
       dispatch(loginUser(user));
+      dispatch(hydrateWishlist(wishlist));
+      dispatch(hydrateCart(cart));
       return user;
     })
     .catch(error => error);
-
-export const addBookToWishlist = bookId => ({
-  type: WISHLIST_ADD,
-  bookId
-});
-
-export const removeBookFromWishlist = bookId => ({
-  type: WISHLIST_REMOVE,
-  bookId
-});

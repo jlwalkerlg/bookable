@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import { addBookToWishlist, removeBookFromWishlist } from '../actions/user';
+import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
 
 class ProductCard extends Component {
   inWishlist() {
@@ -12,12 +12,12 @@ class ProductCard extends Component {
 
   addToWishlist = e => {
     e.preventDefault();
-    this.props.addBookToWishlist(this.props.bookId);
+    this.props.addToWishlist({ id: this.props.bookId });
   };
 
   removeFromWishlist = e => {
     e.preventDefault();
-    this.props.removeBookFromWishlist(this.props.bookId);
+    this.props.removeFromWishlist(this.props.bookId);
   };
 
   render() {
@@ -73,13 +73,13 @@ class ProductCard extends Component {
   }
 }
 
-const mapStateToProps = ({ user }) => ({
-  wishlist: user.wishlist || []
+const mapStateToProps = ({ wishlist }) => ({
+  wishlist
 });
 
 const mapDispatchToProps = {
-  addBookToWishlist,
-  removeBookFromWishlist
+  addToWishlist,
+  removeFromWishlist
 };
 
 export default connect(
