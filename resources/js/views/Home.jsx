@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import Slider from 'react-slick';
-import ProductCard from '../components/ProductCard';
+import TempProductCard from '../components/TempProductCard';
 import SlickArrow from '../components/SlickArrow';
 
 const slickOptions = {
@@ -104,7 +104,7 @@ const Home = () => (
         </h2>
         <Slider {...slickOptions} className="text-center">
           {new Array(15).fill(0).map((item, index) => (
-            <ProductCard
+            <TempProductCard
               key={index}
               image="https://images.gr-assets.com/books/1440319389m/4981.jpg"
               title="Slaughterhouse-Five"
@@ -124,7 +124,7 @@ const Home = () => (
       <Container>
         <div className="d-flex justify-content-center flex-wrap">
           {new Array(8).fill(0).map((item, index) => (
-            <ProductCard
+            <TempProductCard
               key={index}
               image="https://images.gr-assets.com/books/1546091617m/15823480.jpg"
               title="Anna Karenina"
@@ -144,7 +144,7 @@ const Home = () => (
         </h2>
         <Slider {...slickOptions} className="text-center">
           {new Array(15).fill(0).map((item, index) => (
-            <ProductCard
+            <TempProductCard
               key={index}
               image="https://images.gr-assets.com/books/1546112331m/3836.jpg"
               title="Don Quixote"

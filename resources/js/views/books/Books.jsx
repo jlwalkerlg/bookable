@@ -306,17 +306,7 @@ class Books extends Component {
                 <>
                   <div className="browse-products mb-4">
                     {books.map((book, index) => (
-                      <ProductCard
-                        key={index}
-                        bookId={book.id}
-                        image={book.large_image_url || book.image_url}
-                        title={book.title}
-                        author={book.author}
-                        authorId={book.author_id}
-                        price={book.price}
-                        date={book.publication_date}
-                        wishlistButton
-                      />
+                      <ProductCard key={index} book={book} wishlistButton />
                     ))}
                   </div>
                   <Pagination

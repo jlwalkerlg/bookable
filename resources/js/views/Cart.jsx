@@ -10,11 +10,13 @@ import {
   Media,
   Card
 } from 'react-bootstrap';
+import { removeFromCart } from '../actions/cart';
 
 class Cart extends Component {
-  removeProductFromCart = e => {
+  removeFromCart = e => {
     e.preventDefault();
-    console.log('hi');
+    const bookId = parseInt(e.target.dataset.bookId);
+    this.props.removeFromCart(bookId);
   };
 
   render() {
@@ -69,7 +71,8 @@ class Cart extends Component {
                   <Form
                     action="/"
                     method="POST"
-                    onSubmit={this.removeProductFromCart}
+                    data-book-id={book.id}
+                    onSubmit={this.removeFromCart}
                     className="mb-2"
                   >
                     <Button
@@ -97,7 +100,8 @@ class Cart extends Component {
                   <Form
                     action="/"
                     method="POST"
-                    onSubmit={this.removeProductFromCart}
+                    data-book-id={book.id}
+                    onSubmit={this.removeFromCart}
                     className="float-right"
                   >
                     <Button
@@ -165,4 +169,11 @@ const mapStateToProps = ({ cart }) => ({
   cart
 });
 
-export default connect(mapStateToProps)(Cart);
+const mapDispatchToProps = {
+  removeFromCart
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Cart);

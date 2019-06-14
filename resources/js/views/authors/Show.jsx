@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
-import ProductCard from '../../components/ProductCard';
+import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
 
 const slickOptions = {
@@ -214,7 +214,7 @@ const Show = () => {
         </h2>
         <div className="d-flex flex-wrap justify-content-center">
           {new Array(6).fill(0).map((book, index) => (
-            <ProductCard
+            <TempProductCard
               key={index}
               image="https://images.gr-assets.com/books/1360206420m/11870085.jpg"
               title="The Fault in Our Stars"

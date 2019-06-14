@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import Slider from 'react-slick';
 import Stars from '../../components/Stars';
-import ProductCard from '../../components/ProductCard';
+import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
+import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
+import { addToCart, removeFromCart } from '../../actions/cart';
 
 const slickOptions = {
   infinite: true,
@@ -305,7 +308,7 @@ class Show extends Component {
             </h2>
             <Slider {...slickOptions} className="text-center">
               {new Array(15).fill(0).map((item, index) => (
-                <ProductCard
+                <TempProductCard
                   key={index}
                   image="https://images.gr-assets.com/books/1344922523m/1953.jpg"
                   title="A Tale of Two Cities"
@@ -324,7 +327,7 @@ class Show extends Component {
             </h2>
             <Slider {...slickOptions} className="text-center">
               {new Array(15).fill(0).map((item, index) => (
-                <ProductCard
+                <TempProductCard
                   key={index}
                   image="https://images.gr-assets.com/books/1483412266m/865.jpg"
                   title="The Alchemist"
@@ -403,4 +406,19 @@ class Show extends Component {
   }
 }
 
-export default Show;
+const mapStateToProps = ({ wishlist, cart }) => ({
+  wishlist,
+  cart
+});
+
+const mapDispatchToProps = {
+  addToCart,
+  removeFromCart,
+  addToWishlist,
+  removeFromWishlist
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Show);

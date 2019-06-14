@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Pagination, Form } from 'react-bootstrap';
-import ProductCard from '../../components/ProductCard';
+import TempProductCard from '../../components/TempProductCard';
 
 class Show extends Component {
   state = {
@@ -48,7 +48,7 @@ class Show extends Component {
                 </div>
                 <div className="category-products mb-3">
                   {new Array(20).fill(0).map((item, index) => (
-                    <ProductCard
+                    <TempProductCard
                       key={index}
                       image="https://images.gr-assets.com/books/1390173285l/1381.jpg"
                       title="The Odyssey"
