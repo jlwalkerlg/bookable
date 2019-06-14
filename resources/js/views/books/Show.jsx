@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import Slider from 'react-slick';
 import axios from 'axios';
+import sanitize from '../../utils/sanitize';
 import Stars from '../../components/Stars';
 import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
@@ -154,7 +155,10 @@ class Show extends Component {
                   <span className="text-secondary">by: </span>
                   <Link to={`/authors/${author.id}`}>{author.name}</Link>
                 </p>
-                <p className="text-description">{book.description}</p>
+                <p
+                  className="text-description"
+                  dangerouslySetInnerHTML={sanitize.markup(book.description)}
+                />
                 <p>
                   <span className="text-secondary">Categories: </span>
                   <Link to="/category/1">Philosophy</Link>,{' '}
@@ -264,7 +268,9 @@ class Show extends Component {
               <Col xs={12} md={8} className="font-serif font-size-7">
                 <section id="overview" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Overview</h3>
-                  <p>{book.description}</p>
+                  <p
+                    dangerouslySetInnerHTML={sanitize.markup(book.description)}
+                  />
                 </section>
                 <section id="details" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Details</h3>
@@ -323,7 +329,10 @@ class Show extends Component {
                 <img src={author.image_url} alt={author.name} />
               </Col>
               <Col xs={12} md={8} className="text-md-left">
-                <div className="mb-3">{author.about}</div>
+                <div
+                  className="mb-3"
+                  dangerouslySetInnerHTML={sanitize.markup(author.about)}
+                />
                 <p className="font-weight-bold">
                   <Link to={`/authors/${author.id}`}>Read More...</Link>
                 </p>
