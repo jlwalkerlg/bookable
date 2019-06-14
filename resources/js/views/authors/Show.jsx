@@ -59,6 +59,18 @@ class Show extends Component {
         </div>
       );
 
+    const totalRatingsCount = author.books.reduce(
+      (prev, current) => prev + current.ratings_count,
+      0
+    );
+
+    const totalRatingsSum = author.books.reduce(
+      (prev, current) => prev + current.ratings_sum,
+      0
+    );
+
+    const avgRating = (totalRatingsSum / totalRatingsCount).toFixed(2);
+
     const highestRated = author.books.reduce((prev, current) =>
       prev.avg_rating > current.avg_rating ? prev : current
     );
@@ -91,11 +103,12 @@ class Show extends Component {
                   {author.hometown}
                 </p>
                 <p className="mb-1 font-size-7">
-                  <span className="font-weight-bold">Average rating:</span> 4.32
+                  <span className="font-weight-bold">Average rating:</span>{' '}
+                  {avgRating}
                 </p>
                 <p className="font-size-7">
                   <span className="font-weight-bold">Number of ratings:</span>{' '}
-                  1314341242
+                  {totalRatingsCount}
                 </p>
                 <p
                   className="text-description text-justify text-md-left"
