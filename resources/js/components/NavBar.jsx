@@ -34,7 +34,7 @@ class NavBar extends Component {
   render() {
     const { user, cart } = this.props;
 
-    const totalCartItems = cart.reduce(
+    const totalCartItems = cart.cart_items.reduce(
       (prev, current) => prev + current.quantity,
       0
     );
@@ -125,7 +125,7 @@ class NavBar extends Component {
 
 NavBar.propTypes = {
   user: PropTypes.object.isRequired,
-  cart: PropTypes.array.isRequired,
+  cart: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired,
   history: PropTypes.shape({
     push: PropTypes.func.isRequired

@@ -40,7 +40,7 @@ class Cart extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {cart.map((item, index) => {
+            {cart.cart_items.map((item, index) => {
               const book = item.book;
 
               return (
@@ -94,7 +94,7 @@ class Cart extends Component {
             })}
           </div>
           <div className="d-md-none">
-            {cart.map((item, index) => {
+            {cart.cart_items.map((item, index) => {
               const book = item.book;
 
               return (
@@ -151,7 +151,10 @@ class Cart extends Component {
               <Card.Text>
                 Total items:{' '}
                 <span className="font-weight-bold">
-                  {cart.reduce((prev, current) => prev + current.quantity, 0)}
+                  {cart.cart_items.reduce(
+                    (prev, current) => prev + current.quantity,
+                    0
+                  )}
                 </span>
               </Card.Text>
               <Card.Text>
@@ -162,7 +165,7 @@ class Cart extends Component {
                 Subtotal:{' '}
                 <span className="font-weight-bold">
                   £
-                  {cart
+                  {cart.cart_items
                     .reduce((prev, current) => prev + current.book.price, 0)
                     .toFixed(2)}
                 </span>
@@ -177,7 +180,7 @@ class Cart extends Component {
 }
 
 Cart.propTypes = {
-  cart: PropTypes.array.isRequired,
+  cart: PropTypes.object.isRequired,
   removeFromCart: PropTypes.func.isRequired
 };
 

@@ -48,8 +48,8 @@ class User extends Authenticatable
         return $this->wishlistItems()->create(['book_id' => $book->id]);
     }
 
-    public function cartItems()
+    public function cart()
     {
-        return $this->hasManyThrough('App\CartItem', 'App\Cart');
+        return $this->hasOne('App\Cart');
     }
 }
