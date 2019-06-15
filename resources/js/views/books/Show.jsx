@@ -114,9 +114,9 @@ class Show extends Component {
     return !!wishlist.filter(item => item.book_id === bookId).length;
   }
 
-  inCart(id) {
+  inCart(bookId) {
     const { cart } = this.props;
-    return !!cart.filter(book => book.id === id).length;
+    return !!cart.filter(item => item.book_id === bookId).length;
   }
 
   render() {

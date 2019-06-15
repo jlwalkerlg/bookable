@@ -40,100 +40,108 @@ class Cart extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {cart.map((book, index) => (
-              <Row key={index} className="product-table__row">
-                <Col md={3}>
-                  <Media>
-                    <img
-                      src={book.small_image_url}
-                      alt={book.title}
-                      className="mr-2"
-                    />
-                    <Media.Body>
-                      <p className="font-display h4">
-                        <Link to={`/books/${book.id}`}>{book.title}</Link>
-                      </p>
-                      <p>
-                        <span className="text-secondary">by:</span>{' '}
-                        <Link to={`/authors/${book.author.id}`}>
-                          {book.author.name}
-                        </Link>
-                      </p>
-                    </Media.Body>
-                  </Media>
-                </Col>
-                <Col md={3}>
-                  <p>£{book.price.toFixed(2)}</p>
-                </Col>
-                <Col md={3}>
-                  <p>{book.quantity}</p>
-                </Col>
-                <Col md={3}>
-                  <Form
-                    action="/"
-                    method="POST"
-                    data-book-id={book.id}
-                    onSubmit={this.removeFromCart}
-                    className="mb-2"
-                  >
-                    <Button
-                      variant="link"
-                      type="submit"
-                      aria-label="Remove from cart"
-                      className="text-danger mr-2"
+            {cart.map((item, index) => {
+              const book = item.book;
+
+              return (
+                <Row key={index} className="product-table__row">
+                  <Col md={3}>
+                    <Media>
+                      <img
+                        src={book.small_image_url}
+                        alt={book.title}
+                        className="mr-2"
+                      />
+                      <Media.Body>
+                        <p className="font-display h4">
+                          <Link to={`/books/${book.id}`}>{book.title}</Link>
+                        </p>
+                        <p>
+                          <span className="text-secondary">by:</span>{' '}
+                          <Link to={`/authors/${book.author.id}`}>
+                            {book.author.name}
+                          </Link>
+                        </p>
+                      </Media.Body>
+                    </Media>
+                  </Col>
+                  <Col md={3}>
+                    <p>£{book.price.toFixed(2)}</p>
+                  </Col>
+                  <Col md={3}>
+                    <p>{item.quantity}</p>
+                  </Col>
+                  <Col md={3}>
+                    <Form
+                      action="/"
+                      method="POST"
+                      data-book-id={book.id}
+                      onSubmit={this.removeFromCart}
+                      className="mb-2"
                     >
-                      <i className="material-icons align-top mr-1">clear</i>
-                    </Button>
-                  </Form>
-                </Col>
-              </Row>
-            ))}
+                      <Button
+                        variant="link"
+                        type="submit"
+                        aria-label="Remove from cart"
+                        className="text-danger mr-2"
+                      >
+                        <i className="material-icons align-top mr-1">clear</i>
+                      </Button>
+                    </Form>
+                  </Col>
+                </Row>
+              );
+            })}
           </div>
           <div className="d-md-none">
-            {cart.map((book, index) => (
-              <Media key={index} className="product-table__row">
-                <img
-                  src={book.image_url}
-                  alt={book.title}
-                  className="mr-4 mr-md-2"
-                />
-                <Media.Body className="position-relative">
-                  <Form
-                    action="/"
-                    method="POST"
-                    data-book-id={book.id}
-                    onSubmit={this.removeFromCart}
-                    className="float-right"
-                  >
-                    <Button
-                      variant="link"
-                      type="submit"
-                      aria-label="Remove from cart"
-                      className="text-danger pt-0"
+            {cart.map((item, index) => {
+              const book = item.book;
+
+              return (
+                <Media key={index} className="product-table__row">
+                  <img
+                    src={book.image_url}
+                    alt={book.title}
+                    className="mr-4 mr-md-2"
+                  />
+                  <Media.Body className="position-relative">
+                    <Form
+                      action="/"
+                      method="POST"
+                      data-book-id={book.id}
+                      onSubmit={this.removeFromCart}
+                      className="float-right"
                     >
-                      <i className="material-icons">clear</i>
-                    </Button>
-                  </Form>
-                  <p className="font-display h4">
-                    <Link to={`/books/${book.id}`}>{book.title}</Link>
-                  </p>
-                  <p>
-                    <span className="text-secondary">by: </span>
-                    <Link to={`/authors/${book.author.id}`}>
-                      {book.author.name}
-                    </Link>
-                  </p>
-                  <p className="text-warning">
-                    <span className="text-secondary">Price:</span> £
-                    {book.price.toFixed(2)}
-                  </p>
-                  <p>
-                    <span className="text-secondary">Quantity:</span>{' '}
-                    <span className="font-weight-bold">{book.quantity}</span>
-                  </p>
-                </Media.Body>
-              </Media>
-            ))}
+                      <Button
+                        variant="link"
+                        type="submit"
+                        aria-label="Remove from cart"
+                        className="text-danger pt-0"
+                      >
+                        <i className="material-icons">clear</i>
+                      </Button>
+                    </Form>
+                    <p className="font-display h4">
+                      <Link to={`/books/${book.id}`}>{book.title}</Link>
+                    </p>
+                    <p>
+                      <span className="text-secondary">by: </span>
+                      <Link to={`/authors/${book.author.id}`}>
+                        {book.author.name}
+                      </Link>
+                    </p>
+                    <p className="text-warning">
+                      <span className="text-secondary">Price:</span> £
+                      {book.price.toFixed(2)}
+                    </p>
+                    <p>
+                      <span className="text-secondary">Quantity:</span>{' '}
+                      <span className="font-weight-bold">{item.quantity}</span>
+                    </p>
+                  </Media.Body>
+                </Media>
+              );
+            })}
           </div>
           <Card>
             <Card.Header as="p" className="h5 text-uppercase">
@@ -155,7 +163,7 @@ class Cart extends Component {
                 <span className="font-weight-bold">
                   £
                   {cart
-                    .reduce((prev, current) => prev + current.price, 0)
+                    .reduce((prev, current) => prev + current.book.price, 0)
                     .toFixed(2)}
                 </span>
               </Card.Text>

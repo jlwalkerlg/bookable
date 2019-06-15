@@ -13,7 +13,7 @@ export const removeFromCart = id => ({
   id
 });
 
-export const hydrateCart = books => ({
+export const hydrateCart = items => ({
   type: CART_HYDRATE,
-  books
+  items
 });

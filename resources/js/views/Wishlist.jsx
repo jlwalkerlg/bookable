@@ -23,8 +23,8 @@ class Wishlist extends Component {
     this.props.removeFromWishlist(bookId);
   };
 
-  inCart = id => {
-    return !!this.props.cart.filter(book => book.id === id).length;
+  inCart = bookId => {
+    return !!this.props.cart.filter(item => item.book_id === bookId).length;
   };
 
   render() {

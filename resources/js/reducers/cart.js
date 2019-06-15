@@ -7,7 +7,7 @@ function cartReducer(state = [], action) {
     case CART_REMOVE:
       return state.filter(book => book.id !== action.id);
     case CART_HYDRATE:
-      return action.books;
+      return action.items;
     default:
       return state;
   }
