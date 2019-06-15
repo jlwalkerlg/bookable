@@ -37,4 +37,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function wishlistItems()
+    {
+        return $this->hasMany('App\WishlistItem');
+    }
+
+    public function addToWishlist(Book $book)
+    {
+        return $this->wishlistItems()->create(['book_id' => $book->id]);
+    }
 }
