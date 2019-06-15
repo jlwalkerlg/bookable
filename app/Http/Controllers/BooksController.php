@@ -9,17 +9,6 @@ use Illuminate\Support\Facades\DB;
 class BooksController extends Controller
 {
     /**
-     * Mapping from requested columns to actual columns in database.
-     *
-     * @var array $orderByColumnMap
-     */
-    private $orderByColumnMap = [
-        'ratings' => 'books.ratings_count',
-        'price' => 'books.price',
-        'date' => 'books.publication_date',
-    ];
-
-    /**
      * Fetch books from database according to request.
      * @return array
      */
@@ -34,6 +23,7 @@ class BooksController extends Controller
         $maxDate = $request->get('max_date');
         $minRating = $request->get('min_rating');
         $maxRating = $request->get('max_rating');
+        $publisher = $request->get('publisher');
 
         $query = Book::select('books.*');
 
@@ -65,6 +55,10 @@ class BooksController extends Controller
             $query->where($col, '<=', $maxRating);
         }
 
+        if ($publisher) {
+            $query->where('publisher', $publisher);
+        }
+
         $count = (clone $query)->count();
 
         if ($limit) {
@@ -92,7 +86,15 @@ class BooksController extends Controller
      */
     private function getOrderByColumn($column)
     {
-        return $column === 'avgrating' ? DB::raw('books.ratings_sum/books.ratings_count') : ($this->orderByColumnMap[$column] ?? $column);
+        $columnMap = [
+            'ratings' => 'books.ratings_count',
+            'price' => 'books.price',
+            'date' => 'books.publication_date',
+            'avgrating' => DB::raw('books.ratings_sum/books.ratings_count'),
+            'random' => DB::RAW('RAND()')
+        ];
+
+        return $columnMap[$column] ?? $column;
     }
 
     /**
