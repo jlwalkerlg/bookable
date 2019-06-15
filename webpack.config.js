@@ -1,5 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WebpackNotifierPlugin = require('webpack-notifier');
 
 module.exports = {
   mode: 'development',
@@ -12,6 +13,7 @@ module.exports = {
   },
   devtool: 'cheap-module-eval-source-map', // Generates source maps.
   plugins: [
+    new WebpackNotifierPlugin(),
     new MiniCssExtractPlugin({
       filename: 'css/app.css'
     })
