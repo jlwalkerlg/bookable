@@ -6,7 +6,7 @@ const addBook = book => ({
   book
 });
 
-export const removeFromWishlist = id => ({
+const removeBook = id => ({
   type: WISHLIST_REMOVE,
   id
 });
@@ -22,4 +22,10 @@ export const addToWishlist = book => dispatch =>
       book_id: book.id
     })
     .then(() => dispatch(addBook(book)))
+    .catch(err => console.log(err));
+
+export const removeFromWishlist = id => dispatch =>
+  axios
+    .delete(`/api/wishlist/${id}`)
+    .then(() => dispatch(removeBook(id)))
     .catch(err => console.log(err));

@@ -25,3 +25,4 @@ Route::get('/books/{id}', 'BooksController@show');
 Route::get('/authors/{id}', 'AuthorsController@show');
 
 Route::post('/wishlist', 'WishlistItemsController@store')->middleware('auth:api');
+Route::delete('/wishlist/{book}', 'WishlistItemsController@delete')->middleware('auth:api');
