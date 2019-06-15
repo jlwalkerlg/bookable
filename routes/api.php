@@ -26,3 +26,4 @@ Route::post('/wishlist-items', 'WishlistItemsController@store')->middleware('aut
 Route::delete('/wishlist-items/{item}', 'WishlistItemsController@delete')->middleware('can:delete,item');
 
 Route::post('/carts/{cart}/cart-items', 'CartItemsController@store')->middleware('can:update,cart');
+Route::delete('/carts/{cart}/cart-items/{item}', 'CartItemsController@delete')->middleware('can:update,cart');

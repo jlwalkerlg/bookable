@@ -7,7 +7,7 @@ const addItem = item => ({
   item
 });
 
-export const removeFromCart = id => ({
+const removeItem = id => ({
   type: CART_REMOVE,
   id
 });
@@ -25,5 +25,15 @@ export const addToCart = (book, quantity = 1) => dispatch => {
       quantity
     })
     .then(response => dispatch(addItem(response.data)))
+    .catch(err => console.log(err));
+};
+
+export const removeFromCart = bookId => dispatch => {
+  const item = store
+    .getState()
+    .cart.cart_items.filter(item => item.book_id === bookId)[0];
+  return axios
+    .delete(`/api/carts/${item.cart_id}/cart-items/${item.id}`)
+    .then(() => dispatch(removeItem(item.id)))
     .catch(err => console.log(err));
 };
