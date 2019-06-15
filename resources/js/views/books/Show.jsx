@@ -96,7 +96,7 @@ class Show extends Component {
   addToCart(e, book) {
     e.preventDefault();
     const { quantity } = this.state;
-    this.props.addToCart({ ...book, quantity });
+    this.props.addToCart(book, quantity);
   }
 
   removeFromWishlist(e, bookId) {
@@ -115,8 +115,10 @@ class Show extends Component {
   }
 
   inCart(bookId) {
-    const { cart } = this.props;
-    return !!cart.filter(item => item.book_id === bookId).length;
+    const { cart_items } = this.props.cart;
+    return (
+      cart_items && !!cart_items.filter(item => item.book_id === bookId).length
+    );
   }
 
   render() {
@@ -445,7 +447,7 @@ class Show extends Component {
 
 Show.propTypes = {
   wishlist: PropTypes.array.isRequired,
-  cart: PropTypes.array.isRequired,
+  cart: PropTypes.object.isRequired,
   addToCart: PropTypes.func.isRequired,
   removeFromCart: PropTypes.func.isRequired,
   addToWishlist: PropTypes.func.isRequired,

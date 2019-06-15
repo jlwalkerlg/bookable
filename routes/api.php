@@ -22,5 +22,7 @@ Route::get('/books/{id}', 'BooksController@show');
 
 Route::get('/authors/{id}', 'AuthorsController@show');
 
-Route::post('/wishlist-item', 'WishlistItemsController@store')->middleware('auth');
-Route::delete('/wishlist-item/{item}', 'WishlistItemsController@delete')->middleware('can:delete,item');
+Route::post('/wishlist-items', 'WishlistItemsController@store')->middleware('auth');
+Route::delete('/wishlist-items/{item}', 'WishlistItemsController@delete')->middleware('can:delete,item');
+
+Route::post('/carts/{cart}/cart-items', 'CartItemsController@store')->middleware('can:update,cart');

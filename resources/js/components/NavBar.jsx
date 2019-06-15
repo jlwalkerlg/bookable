@@ -33,11 +33,11 @@ class NavBar extends Component {
 
   render() {
     const { user, cart } = this.props;
+    const { cart_items } = cart;
 
-    const totalCartItems = cart.cart_items.reduce(
-      (prev, current) => prev + current.quantity,
-      0
-    );
+    const totalCartItems = cart_items
+      ? cart.cart_items.reduce((prev, current) => prev + current.quantity, 0)
+      : null;
 
     return (
       <Navbar

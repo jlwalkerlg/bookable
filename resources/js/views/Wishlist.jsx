@@ -24,7 +24,10 @@ class Wishlist extends Component {
   };
 
   inCart = bookId => {
-    return !!this.props.cart.filter(item => item.book_id === bookId).length;
+    const { cart_items } = this.props.cart;
+    return (
+      cart_items && !!cart_items.filter(item => item.book_id === bookId).length
+    );
   };
 
   render() {
@@ -194,7 +197,7 @@ class Wishlist extends Component {
 
 Wishlist.propTypes = {
   wishlist: PropTypes.array.isRequired,
-  cart: PropTypes.array.isRequired,
+  cart: PropTypes.object.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
   addToCart: PropTypes.func.isRequired,
   removeFromCart: PropTypes.func.isRequired

@@ -10,7 +10,7 @@ class WishlistItemsController extends Controller
 {
     public function store(Request $request)
     {
-        $book = Book::findOrFail($request->get('book_id'));
+        $book = Book::findOrFail($request->post('book_id'));
         $wishlistItem = $request->user()->addToWishlist($book);
         return $wishlistItem->load('book.author');
     }
