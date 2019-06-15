@@ -22,6 +22,7 @@ class CreateCartItemsTable extends Migration
 
             $table->foreign('cart_id')->references('id')->on('carts');
             $table->foreign('book_id')->references('id')->on('books');
+            $table->unique(['book_id', 'cart_id']);
         });
     }
 

@@ -22,7 +22,9 @@ class CartSeeder extends Seeder
                 return [
                     'quantity' => rand(1, 3),
                     'cart_id' => 1,
-                    'book_id' => $book_id
+                    'book_id' => $book_id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ];
             }, $book_ids)
         );
