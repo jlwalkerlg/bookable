@@ -1,15 +1,15 @@
 import { CART_ADD, CART_HYDRATE, CART_REMOVE } from '../actions/types';
 
-function cartReducer(state = [], action) {
+function cartReducer(cart = [], action) {
   switch (action.type) {
     case CART_ADD:
-      return [...state, action.book];
+      return [...cart, action.book];
     case CART_REMOVE:
-      return state.filter(book => book.id !== action.id);
+      return cart.filter(book => book.id !== action.id);
     case CART_HYDRATE:
-      return action.cart;
+      return action.books;
     default:
-      return state;
+      return cart;
   }
 }
 
