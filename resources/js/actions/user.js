@@ -36,6 +36,5 @@ export const oauthLogin = () => dispatch =>
       dispatch(loginUser(user));
       dispatch(hydrateWishlist(wishlist));
       dispatch(hydrateCart(cart));
-      return user;
     })
     .catch(error => error);

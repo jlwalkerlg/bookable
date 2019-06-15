@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,5 +22,5 @@ Route::get('/books/{id}', 'BooksController@show');
 
 Route::get('/authors/{id}', 'AuthorsController@show');
 
-Route::post('/wishlist', 'WishlistItemsController@store')->middleware('auth:api');
-Route::delete('/wishlist/{book}', 'WishlistItemsController@delete')->middleware('auth:api');
+Route::post('/wishlist-item', 'WishlistItemsController@store')->middleware('auth:api');
+Route::delete('/wishlist-item/{book}', 'WishlistItemsController@delete')->middleware('auth:api');

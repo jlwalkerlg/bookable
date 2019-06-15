@@ -8,8 +8,8 @@ import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
 class ProductCard extends Component {
   inWishlist() {
     const { wishlist } = this.props;
-    const id = this.props.book.id;
-    return !!wishlist.filter(book => book.id === id).length;
+    const bookId = this.props.book.id;
+    return !!wishlist.filter(item => item.book_id === bookId).length;
   }
 
   addToWishlist = (e, book) => {
@@ -17,9 +17,9 @@ class ProductCard extends Component {
     this.props.addToWishlist(book);
   };
 
-  removeFromWishlist = (e, id) => {
+  removeFromWishlist = (e, bookId) => {
     e.preventDefault();
-    this.props.removeFromWishlist(id);
+    this.props.removeFromWishlist(bookId);
   };
 
   render() {

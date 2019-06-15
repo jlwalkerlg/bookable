@@ -7,11 +7,11 @@ import {
 function wishlistReducer(state = [], action) {
   switch (action.type) {
     case WISHLIST_ADD:
-      return [...state, action.book];
+      return [...state, action.item];
     case WISHLIST_REMOVE:
-      return state.filter(book => book.id !== action.id);
+      return state.filter(item => item.book_id !== action.bookId);
     case WISHLIST_HYDRATE:
-      return action.books;
+      return action.items;
     default:
       return state;
   }

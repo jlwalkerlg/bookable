@@ -44,7 +44,8 @@ class Wishlist extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {wishlist.map((book, index) => {
+            {wishlist.map((item, index) => {
+              const book = item.book;
               const inCart = this.inCart(book.id);
               const { author } = book;
 
@@ -119,7 +120,8 @@ class Wishlist extends Component {
             })}
           </div>
           <div className="d-md-none">
-            {wishlist.map((book, index) => {
+            {wishlist.map((item, index) => {
+              const book = item.book;
               const inCart = this.inCart(book.id);
               const { author } = book;
 

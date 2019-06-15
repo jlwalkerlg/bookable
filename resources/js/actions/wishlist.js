@@ -1,31 +1,31 @@
 import axios from 'axios';
 import { WISHLIST_ADD, WISHLIST_REMOVE, WISHLIST_HYDRATE } from './types';
 
-const addBook = book => ({
+const addBook = item => ({
   type: WISHLIST_ADD,
-  book
+  item
 });
 
-const removeBook = id => ({
+const removeBook = bookId => ({
   type: WISHLIST_REMOVE,
-  id
+  bookId
 });
 
-export const hydrateWishlist = books => ({
+export const hydrateWishlist = items => ({
   type: WISHLIST_HYDRATE,
-  books
+  items
 });
 
 export const addToWishlist = book => dispatch =>
   axios
-    .post('/api/wishlist', {
+    .post('/api/wishlist-item', {
       book_id: book.id
     })
-    .then(() => dispatch(addBook(book)))
+    .then(response => dispatch(addBook(response.data)))
     .catch(err => console.log(err));
 
-export const removeFromWishlist = id => dispatch =>
+export const removeFromWishlist = bookId => dispatch =>
   axios
-    .delete(`/api/wishlist/${id}`)
-    .then(() => dispatch(removeBook(id)))
+    .delete(`/api/wishlist-item/${bookId}`)
+    .then(() => dispatch(removeBook(bookId)))
     .catch(err => console.log(err));

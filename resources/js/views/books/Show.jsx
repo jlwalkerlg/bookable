@@ -99,9 +99,9 @@ class Show extends Component {
     this.props.addToCart({ ...book, quantity });
   }
 
-  removeFromWishlist(e, id) {
+  removeFromWishlist(e, bookId) {
     e.preventDefault();
-    this.props.removeFromWishlist(id);
+    this.props.removeFromWishlist(bookId);
   }
 
   removeFromCart(e, id) {
@@ -109,9 +109,9 @@ class Show extends Component {
     this.props.removeFromCart(id);
   }
 
-  inWishlist(id) {
+  inWishlist(bookId) {
     const { wishlist } = this.props;
-    return !!wishlist.filter(book => book.id === id).length;
+    return !!wishlist.filter(item => item.book_id === bookId).length;
   }
 
   inCart(id) {
