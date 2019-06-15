@@ -23,4 +23,4 @@ Route::get('/books/{id}', 'BooksController@show');
 Route::get('/authors/{id}', 'AuthorsController@show');
 
 Route::post('/wishlist-item', 'WishlistItemsController@store')->middleware('auth:api');
-Route::delete('/wishlist-item/{book}', 'WishlistItemsController@delete')->middleware('auth:api');
+Route::delete('/wishlist-item/{item}', 'WishlistItemsController@delete')->middleware('auth:api', 'can:delete,item');

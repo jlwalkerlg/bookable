@@ -1,14 +1,15 @@
 import axios from 'axios';
+import store from '../store';
 import { WISHLIST_ADD, WISHLIST_REMOVE, WISHLIST_HYDRATE } from './types';
 
-const addBook = item => ({
+const addItem = item => ({
   type: WISHLIST_ADD,
   item
 });
 
-const removeBook = bookId => ({
+const removeItem = id => ({
   type: WISHLIST_REMOVE,
-  bookId
+  id
 });
 
 export const hydrateWishlist = items => ({
@@ -21,11 +22,15 @@ export const addToWishlist = book => dispatch =>
     .post('/api/wishlist-item', {
       book_id: book.id
     })
-    .then(response => dispatch(addBook(response.data)))
+    .then(response => dispatch(addItem(response.data)))
     .catch(err => console.log(err));
 
-export const removeFromWishlist = bookId => dispatch =>
-  axios
-    .delete(`/api/wishlist-item/${bookId}`)
-    .then(() => dispatch(removeBook(bookId)))
+export const removeFromWishlist = bookId => dispatch => {
+  const item = store
+    .getState()
+    .wishlist.filter(item => item.book_id === bookId)[0];
+  return axios
+    .delete(`/api/wishlist-item/${item.id}`)
+    .then(() => dispatch(removeItem(item.id)))
     .catch(err => console.log(err));
+};

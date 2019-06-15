@@ -9,7 +9,7 @@ function wishlistReducer(state = [], action) {
     case WISHLIST_ADD:
       return [...state, action.item];
     case WISHLIST_REMOVE:
-      return state.filter(item => item.book_id !== action.bookId);
+      return state.filter(item => item.id !== action.id);
     case WISHLIST_HYDRATE:
       return action.items;
     default:

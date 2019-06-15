@@ -17,8 +17,8 @@ class WishlistItemPolicy
      * @param  \App\WishlistItem  $wishlistItem
      * @return mixed
      */
-    public function delete(User $user, WishlistItem $wishlistItem)
+    public function delete(User $user, WishlistItem $item)
     {
-        return $user->id === $wishlistItem->user_id;
+        return $user->id === $item->user_id;
     }
 }
