@@ -12,15 +12,15 @@
 */
 
 Route::post('/login', 'ApiAuthController@login')->name('login');
-Route::post('/logout', 'ApiAuthController@logout')->middleware('auth:api');
+Route::post('/logout', 'ApiAuthController@logout')->middleware('auth');
 Route::post('/register', 'ApiAuthController@register');
 
-Route::get('/user', 'UsersController@index')->middleware('auth:api');
+Route::get('/user', 'UsersController@index')->middleware('auth');
 
 Route::get('/books', 'BooksController@index');
 Route::get('/books/{id}', 'BooksController@show');
 
 Route::get('/authors/{id}', 'AuthorsController@show');
 
-Route::post('/wishlist-item', 'WishlistItemsController@store')->middleware('auth:api');
-Route::delete('/wishlist-item/{item}', 'WishlistItemsController@delete')->middleware('auth:api', 'can:delete,item');
+Route::post('/wishlist-item', 'WishlistItemsController@store')->middleware('auth');
+Route::delete('/wishlist-item/{item}', 'WishlistItemsController@delete')->middleware('can:delete,item');
