@@ -14,10 +14,9 @@ import {
 import { removeFromCart } from '../actions/cart';
 
 class Cart extends Component {
-  removeFromCart = e => {
+  removeFromCart = (e, book) => {
     e.preventDefault();
-    const bookId = parseInt(e.target.dataset.bookId);
-    this.props.removeFromCart(bookId);
+    this.props.removeFromCart(book);
   };
 
   render() {
@@ -76,7 +75,7 @@ class Cart extends Component {
                       action="/"
                       method="POST"
                       data-book-id={book.id}
-                      onSubmit={this.removeFromCart}
+                      onSubmit={e => this.removeFromCart(e, book)}
                       className="mb-2"
                     >
                       <Button
@@ -109,7 +108,7 @@ class Cart extends Component {
                       action="/"
                       method="POST"
                       data-book-id={book.id}
-                      onSubmit={this.removeFromCart}
+                      onSubmit={e => this.removeFromCart(e, book)}
                       className="float-right"
                     >
                       <Button

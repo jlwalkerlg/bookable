@@ -28,10 +28,10 @@ export const addToCart = (book, quantity = 1) => dispatch => {
     .catch(err => console.log(err));
 };
 
-export const removeFromCart = bookId => dispatch => {
+export const removeFromCart = book => dispatch => {
   const item = store
     .getState()
-    .cart.cart_items.filter(item => item.book_id === bookId)[0];
+    .cart.cart_items.filter(item => item.book_id === book.id)[0];
   return axios
     .delete(`/api/carts/${item.cart_id}/cart-items/${item.id}`)
     .then(() => dispatch(removeItem(item.id)))

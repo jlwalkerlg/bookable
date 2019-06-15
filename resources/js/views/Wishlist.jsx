@@ -12,9 +12,9 @@ class Wishlist extends Component {
     this.props.addToCart(book);
   };
 
-  removeFromCart = (e, id) => {
+  removeFromCart = (e, book) => {
     e.preventDefault();
-    this.props.removeFromCart(id);
+    this.props.removeFromCart(book);
   };
 
   removeFromWishlist = e => {
@@ -83,7 +83,7 @@ class Wishlist extends Component {
                       method="POST"
                       onSubmit={
                         inCart
-                          ? e => this.removeFromCart(e, book.id)
+                          ? e => this.removeFromCart(e, book)
                           : e => this.addToCart(e, book)
                       }
                       className="mb-2"
@@ -165,7 +165,7 @@ class Wishlist extends Component {
                       method="POST"
                       onSubmit={
                         inCart
-                          ? e => this.removeFromCart(e, book.id)
+                          ? e => this.removeFromCart(e, book)
                           : e => this.addToCart(e, book)
                       }
                       className="mb-2"
