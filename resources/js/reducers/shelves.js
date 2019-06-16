@@ -1,4 +1,4 @@
-import { SHELVES_ADD, SHELVES_HYDRATE } from '../actions/types';
+import { SHELVES_ADD, SHELVES_REMOVE, SHELVES_HYDRATE } from '../actions/types';
 
 function shelvesReducer(shelves = [], action) {
   switch (action.type) {
@@ -6,6 +6,17 @@ function shelvesReducer(shelves = [], action) {
       return shelves.map(shelf =>
         shelf.id === action.shelf.id
           ? { ...shelf, shelf_items: [...shelf.shelf_items, action.item] }
+          : shelf
+      );
+    case SHELVES_REMOVE:
+      return shelves.map(shelf =>
+        shelf.id === action.shelf.id
+          ? {
+              ...shelf,
+              shelf_items: shelf.shelf_items.filter(
+                item => item.id !== action.item.id
+              )
+            }
           : shelf
       );
     case SHELVES_HYDRATE:

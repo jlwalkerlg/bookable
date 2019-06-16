@@ -20,7 +20,7 @@ import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
 import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
-import { addToShelf } from '../../actions/shelves';
+import { addToShelf, removeFromShelf } from '../../actions/shelves';
 import Loading from '../../components/Loading';
 import ProductCard from '../../components/ProductCard';
 
@@ -130,9 +130,9 @@ class Show extends Component {
     );
   }
 
-  inShelf(shelfId, bookId) {
+  getItemFromShelf(shelfId, bookId) {
     const shelf = this.props.shelves.filter(shelf => shelf.id === shelfId)[0];
-    return !!shelf.shelf_items.filter(item => item.book_id === bookId).length;
+    return shelf.shelf_items.filter(item => item.book_id === bookId)[0];
   }
 
   addToShelf(e, shelf, book) {
@@ -140,15 +140,10 @@ class Show extends Component {
     this.props.addToShelf(shelf, book);
   }
 
-  // removeFromShelf(e, shelfId, book) {
-  //   e.preventDefault();
-  //   const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
-  //   const books = shelf.books.filter(shelved => shelved.id !== book.id);
-  //   const shelves = this.state.shelves.map(shelf =>
-  //     shelf.id === shelfId ? { ...shelf, books } : shelf
-  //   );
-  //   this.setState({ ...this.state, shelves });
-  // }
+  removeFromShelf(e, shelf, item) {
+    e.preventDefault();
+    this.props.removeFromShelf(shelf, item);
+  }
 
   render() {
     const { loading, book, quantity, rating } = this.state;
@@ -270,7 +265,7 @@ class Show extends Component {
 
                   <Dropdown.Menu>
                     {shelves.map((shelf, index) => {
-                      const inShelf = this.inShelf(shelf.id, book.id);
+                      const item = this.getItemFromShelf(shelf.id, book.id);
 
                       return (
                         <Form
@@ -278,8 +273,8 @@ class Show extends Component {
                           action={`/api/shelves/${shelf.id}/shelf-items`}
                           method="POST"
                           onSubmit={
-                            inShelf
-                              ? e => this.removeFromShelf(e, shelf, book)
+                            item
+                              ? e => this.removeFromShelf(e, shelf, item)
                               : e => this.addToShelf(e, shelf, book)
                           }
                         >
@@ -289,9 +284,7 @@ class Show extends Component {
                           >
                             {shelf.name}
                             <i className="material-icons">
-                              {inShelf
-                                ? 'check_box'
-                                : 'check_box_outline_blank'}
+                              {item ? 'check_box' : 'check_box_outline_blank'}
                             </i>
                           </Dropdown.Item>
                         </Form>
@@ -524,6 +517,7 @@ Show.propTypes = {
   addToCart: PropTypes.func.isRequired,
   removeFromCart: PropTypes.func.isRequired,
   addToShelf: PropTypes.func.isRequired,
+  removeFromShelf: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired
@@ -542,7 +536,8 @@ const mapDispatchToProps = {
   removeFromWishlist,
   addToCart,
   removeFromCart,
-  addToShelf
+  addToShelf,
+  removeFromShelf
 };
 
 export default connect(
