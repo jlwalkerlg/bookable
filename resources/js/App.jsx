@@ -16,7 +16,7 @@ import Categories from './views/categories/Categories';
 import CategoriesShow from './views/categories/Show';
 import Wishlist from './views/Wishlist';
 import Cart from './views/Cart';
-import UsersBooks from './views/users/Books';
+import Shelves from './views/Shelves';
 
 const App = ({ loading }) =>
   loading ? (
@@ -40,11 +40,8 @@ const App = ({ loading }) =>
           path="/category/:id([0-9]+)"
           component={CategoriesShow}
         />
-        <UserRoute
-          exact
-          path="/user/:id([0-9]+)/books"
-          component={UsersBooks}
-        />
+        <UserRoute exact path="/shelves" component={Shelves} />
+        <UserRoute exact path="/shelves/:id([0-9]+)" component={Shelves} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>

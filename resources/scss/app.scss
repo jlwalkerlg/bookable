@@ -121,3 +121,8 @@ $enable-gradients: true;
     transform: rotateZ(360deg);
   }
 }
+
+.sub-nav-link.active {
+  color: $dark;
+  font-weight: 700;
+}
