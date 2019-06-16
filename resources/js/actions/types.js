@@ -13,4 +13,5 @@ export const CART_ADD = 'CART_ADD';
 export const CART_REMOVE = 'CART_REMOVE';
 export const CART_HYDRATE = 'CART_HYDRATE';
 
+export const SHELVES_ADD = 'SHELVES_ADD';
 export const SHELVES_HYDRATE = 'SHELVES_HYDRATE';

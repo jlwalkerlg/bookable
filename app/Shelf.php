@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class Shelf extends Model
 {
@@ -13,5 +14,12 @@ class Shelf extends Model
     public function shelfItems()
     {
         return $this->hasMany('App\ShelfItem');
+    }
+
+    public function addItem(Request $request)
+    {
+        return $this->shelfItems()->create([
+            'book_id' => $request->post('book_id')
+        ]);
     }
 }

@@ -20,6 +20,7 @@ import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
 import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
+import { addToShelf } from '../../actions/shelves';
 import Loading from '../../components/Loading';
 import ProductCard from '../../components/ProductCard';
 
@@ -55,19 +56,7 @@ class Show extends Component {
     loading: true,
     book: null,
     quantity: 1,
-    rating: 0,
-    shelves: [
-      {
-        id: 1,
-        name: 'Read',
-        books: []
-      },
-      {
-        id: 2,
-        name: 'To Read',
-        books: []
-      }
-    ]
+    rating: 0
   };
 
   async componentDidMount() {
@@ -142,32 +131,28 @@ class Show extends Component {
   }
 
   inShelf(shelfId, bookId) {
-    const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
-    return !!shelf.books.filter(book => book.id === bookId).length;
+    const shelf = this.props.shelves.filter(shelf => shelf.id === shelfId)[0];
+    return !!shelf.shelf_items.filter(item => item.book_id === bookId).length;
   }
 
-  addToShelf(e, shelfId, book) {
+  addToShelf(e, shelf, book) {
     e.preventDefault();
-    const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
-    const books = [...shelf.books, book];
-    const shelves = this.state.shelves.map(shelf =>
-      shelf.id === shelfId ? { ...shelf, books } : shelf
-    );
-    this.setState({ ...this.state, shelves });
+    this.props.addToShelf(shelf, book);
   }
 
-  removeFromShelf(e, shelfId, book) {
-    e.preventDefault();
-    const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
-    const books = shelf.books.filter(shelved => shelved.id !== book.id);
-    const shelves = this.state.shelves.map(shelf =>
-      shelf.id === shelfId ? { ...shelf, books } : shelf
-    );
-    this.setState({ ...this.state, shelves });
-  }
+  // removeFromShelf(e, shelfId, book) {
+  //   e.preventDefault();
+  //   const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
+  //   const books = shelf.books.filter(shelved => shelved.id !== book.id);
+  //   const shelves = this.state.shelves.map(shelf =>
+  //     shelf.id === shelfId ? { ...shelf, books } : shelf
+  //   );
+  //   this.setState({ ...this.state, shelves });
+  // }
 
   render() {
-    const { loading, book, quantity, rating, shelves } = this.state;
+    const { loading, book, quantity, rating } = this.state;
+    const { shelves } = this.props;
 
     if (loading)
       return (
@@ -286,15 +271,16 @@ class Show extends Component {
                   <Dropdown.Menu>
                     {shelves.map((shelf, index) => {
                       const inShelf = this.inShelf(shelf.id, book.id);
+
                       return (
                         <Form
                           key={index}
-                          action={`/api/shelves/${shelf.id}`}
+                          action={`/api/shelves/${shelf.id}/shelf-items`}
                           method="POST"
                           onSubmit={
                             inShelf
-                              ? e => this.removeFromShelf(e, shelf.id, book)
-                              : e => this.addToShelf(e, shelf.id, book)
+                              ? e => this.removeFromShelf(e, shelf, book)
+                              : e => this.addToShelf(e, shelf, book)
                           }
                         >
                           <Dropdown.Item
@@ -532,10 +518,12 @@ class Show extends Component {
 Show.propTypes = {
   wishlist: PropTypes.array.isRequired,
   cart: PropTypes.object.isRequired,
-  addToCart: PropTypes.func.isRequired,
-  removeFromCart: PropTypes.func.isRequired,
+  shelves: PropTypes.array.isRequired,
   addToWishlist: PropTypes.func.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
+  addToCart: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired,
+  addToShelf: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired
@@ -543,16 +531,18 @@ Show.propTypes = {
   }).isRequired
 };
 
-const mapStateToProps = ({ wishlist, cart }) => ({
+const mapStateToProps = ({ wishlist, cart, shelves }) => ({
   wishlist,
-  cart
+  cart,
+  shelves
 });
 
 const mapDispatchToProps = {
+  addToWishlist,
+  removeFromWishlist,
   addToCart,
   removeFromCart,
-  addToWishlist,
-  removeFromWishlist
+  addToShelf
 };
 
 export default connect(
