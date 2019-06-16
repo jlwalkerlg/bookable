@@ -15,7 +15,7 @@ class CartSeeder extends Seeder
     {
         $book_ids = [7144, 168668, 157993];
 
-        Cart::create(['user_id' => 1]);
+        Cart::create(['id' => 1, 'user_id' => 1]);
 
         CartItem::insert(
             array_map(function ($book_id) {

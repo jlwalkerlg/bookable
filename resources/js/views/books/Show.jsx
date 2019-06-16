@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Container, Row, Col, Form, Button, Media } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Media,
+  Dropdown
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import Slider from 'react-slick';
@@ -47,7 +55,19 @@ class Show extends Component {
     loading: true,
     book: null,
     quantity: 1,
-    rating: 0
+    rating: 0,
+    shelves: [
+      {
+        id: 1,
+        name: 'Read',
+        books: []
+      },
+      {
+        id: 2,
+        name: 'To Read',
+        books: []
+      }
+    ]
   };
 
   async componentDidMount() {
@@ -121,8 +141,33 @@ class Show extends Component {
     );
   }
 
+  inShelf(shelfId, bookId) {
+    const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
+    return !!shelf.books.filter(book => book.id === bookId).length;
+  }
+
+  addToShelf(e, shelfId, book) {
+    e.preventDefault();
+    const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
+    const books = [...shelf.books, book];
+    const shelves = this.state.shelves.map(shelf =>
+      shelf.id === shelfId ? { ...shelf, books } : shelf
+    );
+    this.setState({ ...this.state, shelves });
+  }
+
+  removeFromShelf(e, shelfId, book) {
+    e.preventDefault();
+    const shelf = this.state.shelves.filter(shelf => shelf.id === shelfId)[0];
+    const books = shelf.books.filter(shelved => shelved.id !== book.id);
+    const shelves = this.state.shelves.map(shelf =>
+      shelf.id === shelfId ? { ...shelf, books } : shelf
+    );
+    this.setState({ ...this.state, shelves });
+  }
+
   render() {
-    const { loading, book, quantity, rating } = this.state;
+    const { loading, book, quantity, rating, shelves } = this.state;
 
     if (loading)
       return (
@@ -232,6 +277,42 @@ class Show extends Component {
                     {inWishlist ? 'Remove From Wishlist' : 'Add To Wishlist'}
                   </Button>
                 </Form>
+                {/* Add To Shelf */}
+                <Dropdown>
+                  <Dropdown.Toggle variant="info" id="addToShelf">
+                    Add To Shelf
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    {shelves.map((shelf, index) => {
+                      const inShelf = this.inShelf(shelf.id, book.id);
+                      return (
+                        <Form
+                          key={index}
+                          action={`/api/shelves/${shelf.id}`}
+                          method="POST"
+                          onSubmit={
+                            inShelf
+                              ? e => this.removeFromShelf(e, shelf.id, book)
+                              : e => this.addToShelf(e, shelf.id, book)
+                          }
+                        >
+                          <Dropdown.Item
+                            as="button"
+                            className="d-flex justify-content-between align-items-center"
+                          >
+                            {shelf.name}
+                            <i className="material-icons">
+                              {inShelf
+                                ? 'check_box'
+                                : 'check_box_outline_blank'}
+                            </i>
+                          </Dropdown.Item>
+                        </Form>
+                      );
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
               </Col>
             </Row>
           </Container>
