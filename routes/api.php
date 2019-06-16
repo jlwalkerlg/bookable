@@ -18,9 +18,9 @@ Route::post('/register', 'ApiAuthController@register');
 Route::get('/user', 'UsersController@index')->middleware('auth');
 
 Route::get('/books', 'BooksController@index');
-Route::get('/books/{id}', 'BooksController@show');
+Route::get('/books/{book}', 'BooksController@show');
 
-Route::get('/authors/{id}', 'AuthorsController@show');
+Route::get('/authors/{author}', 'AuthorsController@show');
 
 Route::post('/wishlist-items', 'WishlistItemsController@store')->middleware('auth');
 Route::delete('/wishlist-items/{item}', 'WishlistItemsController@delete')->middleware('can:delete,item');

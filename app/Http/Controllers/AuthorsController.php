@@ -6,8 +6,8 @@ use App\Author;
 
 class AuthorsController extends Controller
 {
-    public function show($id)
+    public function show(Author $author)
     {
-        return Author::where('id', $id)->with('books')->first();
+        return $author->load('books');
     }
 }

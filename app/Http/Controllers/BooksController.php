@@ -91,7 +91,7 @@ class BooksController extends Controller
             'price' => 'books.price',
             'date' => 'books.publication_date',
             'avgrating' => DB::raw('books.ratings_sum/books.ratings_count'),
-            'random' => DB::RAW('RAND()')
+            'random' => DB::raw('RAND()')
         ];
 
         return $columnMap[$column] ?? $column;
@@ -101,8 +101,8 @@ class BooksController extends Controller
      * Return data about a specific book.
      * @return array
      */
-    public function show($id)
+    public function show(Book $book)
     {
-        return Book::where('id', $id)->with('author.books')->first();
+        return $book->load('author.books');
     }
 }
