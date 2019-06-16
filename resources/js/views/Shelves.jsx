@@ -18,22 +18,24 @@ import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 
 class Shelves extends Component {
-  state = {
-    loading: true,
-    perPage: 10,
-    currentPage: null,
-    shelfId: null,
-    items: []
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {
-    const items = this.getShelfItems();
-    this.setState({ items, loading: false });
+    const currentPage = this.getCurrentPage();
+    const shelfId = this.getShelfId();
+    const items = this.getShelfItems(shelfId);
+
+    this.state = {
+      loading: false,
+      perPage: 10,
+      currentPage,
+      shelfId,
+      items
+    };
   }
 
-  getShelfItems() {
+  getShelfItems(shelfId) {
     const { shelves } = this.props;
-    const shelfId = this.getShelfId();
     return shelfId
       ? shelves.filter(shelf => shelf.id === shelfId)[0].shelf_items
       : shelves.reduce(
@@ -47,15 +49,21 @@ class Shelves extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (prevProps.location.search !== this.props.location.search) {
+      this.setState({ loading: true });
+      const currentPage = this.getCurrentPage();
+      this.setState({ currentPage, loading: false });
+    }
     if (prevProps.match.params.id !== this.props.match.params.id) {
-      const items = this.getShelfItems();
-      this.setState({ items, loading: false });
+      this.setState({ loading: true });
+      const shelfId = this.getShelfId();
+      const items = this.getShelfItems(shelfId);
+      this.setState({ shelfId, items, loading: false });
     }
   }
 
   calcOffset() {
-    const { perPage } = this.state;
-    const currentPage = this.getCurrentPage();
+    const { perPage, currentPage } = this.state;
     return (currentPage - 1) * perPage;
   }
 
@@ -72,12 +80,10 @@ class Shelves extends Component {
 
   render() {
     const { shelves } = this.props;
-    const { loading, perPage } = this.state;
+    const { loading, perPage, currentPage, shelfId } = this.state;
 
-    const offset = this.calcOffset();
     const totalPages = this.getTotalPages();
-    const currentPage = this.getCurrentPage();
-    const shelfId = this.getShelfId();
+    const offset = this.calcOffset();
     const items = this.state.items.slice(offset, offset + perPage + 1);
 
     return (
