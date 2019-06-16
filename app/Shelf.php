@@ -9,4 +9,9 @@ class Shelf extends Model
     protected $table = 'shelves';
 
     protected $fillable = ['name', 'user_id'];
+
+    public function shelfItems()
+    {
+        return $this->hasMany('App\ShelfItem');
+    }
 }

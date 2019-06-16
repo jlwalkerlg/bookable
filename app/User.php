@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasOne('App\Cart');
     }
+
+    public function shelves()
+    {
+        return $this->hasMany('App\Shelf');
+    }
 }

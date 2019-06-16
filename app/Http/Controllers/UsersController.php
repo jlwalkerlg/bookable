@@ -11,6 +11,7 @@ class UsersController extends Controller
         $user = $request->user();
         $wishlist = $user->wishlistItems()->with('book.author')->get();
         $cart = $user->cart()->with('cartItems.book.author')->latest()->first();
-        return compact('user', 'wishlist', 'cart');
+        $shelves = $user->shelves()->with('shelfItems.book.author')->get();
+        return compact('user', 'wishlist', 'cart', 'shelves');
     }
 }
