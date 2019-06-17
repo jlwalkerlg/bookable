@@ -18,7 +18,7 @@ class Shelf extends Model
 
     public function addItem(Request $request)
     {
-        return $this->shelfItems()->create([
+        return $this->shelfItems()->updateOrCreate([
             'book_id' => $request->post('book_id')
         ]);
     }

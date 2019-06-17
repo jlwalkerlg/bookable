@@ -21,9 +21,10 @@ class ReviewsController extends Controller
 
         $review = (new Review)->fill($attributes);
 
-        DB::transaction(function () use ($review, $attributes) {
+        DB::transaction(function () use ($request, $review, $attributes) {
             $book = Book::findOrFail($attributes['book_id']);
             $book->addReview($review);
+            $request->user()->shelves()->where('name', 'Read')->first()->addItem($request);
             $review->save();
         });
 
