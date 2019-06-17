@@ -37,8 +37,11 @@ class ReviewsController extends Controller
             'rating' => 'required|int|min:1|max:5',
         ]);
 
-        $review->fill($attributes)->save();
+        DB::transaction(function () use ($review, $attributes) {
+            $review->book->updateReview($review, $attributes['rating']);
+            $review->fill($attributes)->save();
+        });
 
-        return $review;
+        return $review->load('user:id,name');
     }
 }

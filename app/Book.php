@@ -42,4 +42,10 @@ class Book extends Model
         $this->ratings_count++;
         return $this->save();
     }
+
+    public function updateReview(Review $review, $newRating)
+    {
+        $this->ratings_sum += ($newRating - $review->rating);
+        return $this->save();
+    }
 }
