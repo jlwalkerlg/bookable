@@ -57,7 +57,6 @@ class Show extends Component {
     book: null,
     quantity: 1,
     review: {
-      id: null,
       rating: 0,
       review: ''
     },
@@ -74,7 +73,7 @@ class Show extends Component {
     if (prevProps.match.params.id !== this.props.match.params.id) {
       this.setState({ loading: true });
       const book = await this.fetchBook();
-      const review = this.getUserReview(book) || this.state.review;
+      const review = this.getUserReview(book) || { rating: 0, review: '' };
       this.setState({ book, review, loading: false });
     }
   }
@@ -126,6 +125,7 @@ class Show extends Component {
       const reviews = [newReview, ...book.reviews];
       this.setState({
         book: { ...this.state.book, reviews },
+        review: newReview,
         editReview: false
       });
     } catch (err) {
