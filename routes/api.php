@@ -32,3 +32,4 @@ Route::post('/shelves/{shelf}/shelf-items', 'ShelfItemsController@store')->middl
 Route::delete('/shelves/{shelf}/shelf-items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item,shelf');
 
 Route::post('/reviews', 'ReviewsController@store')->middleware('auth');
+Route::patch('/reviews/{review}', 'ReviewsController@update')->middleware('can:update,review');

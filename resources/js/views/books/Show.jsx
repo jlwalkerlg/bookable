@@ -56,20 +56,26 @@ class Show extends Component {
     loading: true,
     book: null,
     quantity: 1,
-    rating: 0,
-    review: ''
+    review: {
+      id: null,
+      rating: 0,
+      review: ''
+    },
+    editReview: false
   };
 
   async componentDidMount() {
     const book = await this.fetchBook();
-    this.setState({ book, loading: false });
+    const review = this.getUserReview(book) || this.state.review;
+    this.setState({ book, review, loading: false });
   }
 
   async componentDidUpdate(prevProps) {
     if (prevProps.match.params.id !== this.props.match.params.id) {
       this.setState({ loading: true });
       const book = await this.fetchBook();
-      this.setState({ book, loading: false });
+      const review = this.getUserReview(book) || this.state.review;
+      this.setState({ book, review, loading: false });
     }
   }
 
@@ -84,6 +90,11 @@ class Show extends Component {
     }
   }
 
+  getUserReview(book) {
+    const { user } = this.props;
+    return book.reviews.filter(review => review.user_id === user.id)[0];
+  }
+
   changeQuantity = e => {
     const quantity = parseInt(e.target.value);
     this.setState({ quantity });
@@ -92,33 +103,34 @@ class Show extends Component {
   handleRatingChange = e => {
     const rating = 5 - parseInt(e.target.dataset.index);
     if (rating === this.state.rating) {
-      this.setState({ rating: 0 });
+      this.setState({ review: { ...this.state.review, rating: 0 } });
     } else {
-      this.setState({ rating });
+      this.setState({ review: { ...this.state.review, rating } });
     }
   };
 
   handleReviewChange = e => {
     const review = e.target.value;
-    this.setState({ review });
+    this.setState({ review: { ...this.state.review, review } });
   };
 
-  handleReviewSubmit = e => {
+  handleReviewSubmit = async e => {
     e.preventDefault();
-    const { review, rating, book } = this.state;
-    axios
-      .post(`/api/reviews`, {
-        review,
-        rating,
-        book_id: book.id
-      })
-      .then(response => {
-        const review = response.data;
-        const { book } = this.state;
-        const reviews = [review, ...book.reviews];
-        this.setState({ book: { ...book, reviews } });
-      })
-      .catch(err => console.log(err));
+    const { review, book } = this.state;
+    const params = { ...review, book_id: book.id };
+    try {
+      const response = review.id
+        ? await axios.patch(`/api/reviews/${review.id}`, params)
+        : await axios.post(`/api/reviews`, params);
+      const newReview = response.data;
+      const reviews = [newReview, ...book.reviews];
+      this.setState({
+        book: { ...this.state.book, reviews },
+        editReview: false
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   addToWishlist(e, book) {
@@ -169,9 +181,12 @@ class Show extends Component {
     this.props.removeFromShelf(shelf, item);
   }
 
+  toggleEditReview = () =>
+    this.setState({ editReview: !this.state.editReview });
+
   render() {
-    const { loading, book, quantity, rating, review } = this.state;
-    const { shelves } = this.props;
+    const { loading, book, quantity, review, editReview } = this.state;
+    const { user, shelves } = this.props;
 
     if (loading)
       return (
@@ -469,60 +484,110 @@ class Show extends Component {
           <Container>
             <h3 className="text-uppercase mb-3 h6">Reviews</h3>
             <section className="mb-5">
-              <Form onSubmit={this.handleReviewSubmit}>
-                <Form.Group>
-                  <Form.Label>Your rating:</Form.Label>{' '}
-                  <Stars
-                    rating={rating}
-                    editable
-                    onClick={this.handleRatingChange}
-                  />
-                </Form.Group>
-                <Form.Group controlId="review">
-                  <Form.Label srOnly>Your review</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows="3"
-                    placeholder="Write a review for this book..."
-                    value={review}
-                    onChange={this.handleReviewChange}
-                    className="placeholder-inherit"
-                  />
-                </Form.Group>
-                <Button
-                  variant="warning"
-                  type="submit"
-                  className="rounded-pill"
-                >
-                  Submit Review
-                </Button>
-              </Form>
+              {(!review.id || editReview) && (
+                <Form onSubmit={this.handleReviewSubmit}>
+                  <Form.Group>
+                    <Form.Label>Your rating:</Form.Label>{' '}
+                    <Stars
+                      rating={review.rating}
+                      editable
+                      onClick={this.handleRatingChange}
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="review">
+                    <Form.Label srOnly>Your review</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows="3"
+                      placeholder="Write a review for this book..."
+                      value={review.review}
+                      onChange={this.handleReviewChange}
+                      className="placeholder-inherit"
+                    />
+                  </Form.Group>
+                  <Button
+                    variant={review.id ? 'info' : 'warning'}
+                    type="submit"
+                    className="rounded-pill d-inline-block"
+                  >
+                    {review.id ? 'Edit Review' : 'Submit Review'}
+                  </Button>
+                  {editReview && (
+                    <Button
+                      variant="link"
+                      className="ml-3 d-inline-block"
+                      onClick={this.toggleEditReview}
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </Form>
+              )}
+              {review.id && !editReview && (
+                <div>
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <p className="text-secondary">Your review:</p>
+                    <Button
+                      variant="outline-info"
+                      size="sm"
+                      onClick={this.toggleEditReview}
+                    >
+                      Edit Review
+                    </Button>
+                  </div>
+                  <Media>
+                    <img
+                      src="https://via.placeholder.com/150/92c952"
+                      alt={`${user.name} profile picture`}
+                      width="70"
+                      height="70"
+                      className="mr-3"
+                    />
+                    <Media.Body>
+                      <div className="d-md-flex">
+                        <p className="mb-2 mr-auto">
+                          <span className="h6 mr-2 d-block d-md-inline-block">
+                            {user.name}
+                          </span>
+                          <span className="mr-2">rated it</span>
+                          <Stars rating={review.rating || 0} />
+                        </p>
+                        <p className="text-secondary">{review.created_at}</p>
+                      </div>
+                      <p>{review.review}</p>
+                    </Media.Body>
+                  </Media>
+                  <hr />
+                </div>
+              )}
             </section>
             <section>
-              {book.reviews.map((review, index) => (
-                <Media key={index}>
-                  <img
-                    src="https://via.placeholder.com/150/92c952"
-                    alt={`${review.user.name} profile picture`}
-                    width="70"
-                    height="70"
-                    className="mr-3"
-                  />
-                  <Media.Body>
-                    <div className="d-md-flex">
-                      <p className="mb-2 mr-auto">
-                        <span className="h6 mr-2 d-block d-md-inline-block">
-                          {review.user.name}
-                        </span>
-                        <span className="mr-2">rated it</span>
-                        <Stars rating={review.rating || 0} />
-                      </p>
-                      <p className="text-secondary">{review.created_at}</p>
-                    </div>
-                    <p>{review.review}</p>
-                  </Media.Body>
-                </Media>
-              ))}
+              {book.reviews
+                .filter(review => review.user_id !== user.id)
+                .map((review, index) => (
+                  <Media key={index}>
+                    <img
+                      src="https://via.placeholder.com/150/92c952"
+                      alt={`${review.user.name} profile picture`}
+                      width="70"
+                      height="70"
+                      className="mr-3"
+                    />
+                    <Media.Body>
+                      <div className="d-md-flex">
+                        <p className="mb-2 mr-auto">
+                          <span className="h6 mr-2 d-block d-md-inline-block">
+                            {review.user.name}
+                          </span>
+                          <span className="mr-2">rated it</span>
+                          <Stars rating={review.rating || 0} />
+                        </p>
+                        <p className="text-secondary">{review.created_at}</p>
+                      </div>
+                      <p>{review.review}</p>
+                    </Media.Body>
+                  </Media>
+                ))}
             </section>
           </Container>
         </article>
@@ -532,6 +597,7 @@ class Show extends Component {
 }
 
 Show.propTypes = {
+  user: PropTypes.object.isRequired,
   wishlist: PropTypes.array.isRequired,
   cart: PropTypes.object.isRequired,
   shelves: PropTypes.array.isRequired,
@@ -548,7 +614,8 @@ Show.propTypes = {
   }).isRequired
 };
 
-const mapStateToProps = ({ wishlist, cart, shelves }) => ({
+const mapStateToProps = ({ user, wishlist, cart, shelves }) => ({
+  user,
   wishlist,
   cart,
   shelves

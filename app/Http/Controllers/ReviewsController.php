@@ -19,4 +19,16 @@ class ReviewsController extends Controller
 
         return Review::create($attributes)->load('user:id,name');
     }
+
+    public function update(Request $request, Review $review)
+    {
+        $attributes = $request->validate([
+            'review' => 'string|max:20000',
+            'rating' => 'required|int|min:1|max:5',
+        ]);
+
+        $review->fill($attributes)->save();
+
+        return $review;
+    }
 }
