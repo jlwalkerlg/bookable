@@ -103,6 +103,6 @@ class BooksController extends Controller
      */
     public function show(Book $book)
     {
-        return $book->load('author.books');
+        return $book->load('author.books', 'reviews.user:id,name');
     }
 }

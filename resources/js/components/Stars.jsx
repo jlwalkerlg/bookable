@@ -13,6 +13,9 @@ const Stars = ({ rating, editable, ...props }) => {
             5 - index === rating ? ' active' : ''
           }`}
         >
+          {editable && (
+            <input type="radio" value={index + 1} className="sr-only" />
+          )}
           &#9734;
         </span>
       ))}

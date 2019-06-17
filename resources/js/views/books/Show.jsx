@@ -56,7 +56,8 @@ class Show extends Component {
     loading: true,
     book: null,
     quantity: 1,
-    rating: 0
+    rating: 0,
+    review: ''
   };
 
   async componentDidMount() {
@@ -88,13 +89,36 @@ class Show extends Component {
     this.setState({ quantity });
   };
 
-  handleRating = e => {
+  handleRatingChange = e => {
     const rating = 5 - parseInt(e.target.dataset.index);
     if (rating === this.state.rating) {
       this.setState({ rating: 0 });
     } else {
       this.setState({ rating });
     }
+  };
+
+  handleReviewChange = e => {
+    const review = e.target.value;
+    this.setState({ review });
+  };
+
+  handleReviewSubmit = e => {
+    e.preventDefault();
+    const { review, rating, book } = this.state;
+    axios
+      .post(`/api/reviews`, {
+        review,
+        rating,
+        book_id: book.id
+      })
+      .then(response => {
+        const review = response.data;
+        const { book } = this.state;
+        const reviews = [review, ...book.reviews];
+        this.setState({ book: { ...book, reviews } });
+      })
+      .catch(err => console.log(err));
   };
 
   addToWishlist(e, book) {
@@ -146,7 +170,7 @@ class Show extends Component {
   }
 
   render() {
-    const { loading, book, quantity, rating } = this.state;
+    const { loading, book, quantity, rating, review } = this.state;
     const { shelves } = this.props;
 
     if (loading)
@@ -445,17 +469,23 @@ class Show extends Component {
           <Container>
             <h3 className="text-uppercase mb-3 h6">Reviews</h3>
             <section className="mb-5">
-              <p>
-                Your rating:{' '}
-                <Stars rating={rating} editable onClick={this.handleRating} />
-              </p>
-              <Form>
+              <Form onSubmit={this.handleReviewSubmit}>
+                <Form.Group>
+                  <Form.Label>Your rating:</Form.Label>{' '}
+                  <Stars
+                    rating={rating}
+                    editable
+                    onClick={this.handleRatingChange}
+                  />
+                </Form.Group>
                 <Form.Group controlId="review">
                   <Form.Label srOnly>Your review</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows="3"
                     placeholder="Write a review for this book..."
+                    value={review}
+                    onChange={this.handleReviewChange}
                     className="placeholder-inherit"
                   />
                 </Form.Group>
@@ -469,37 +499,30 @@ class Show extends Component {
               </Form>
             </section>
             <section>
-              <Media>
-                <img
-                  src="https://via.placeholder.com/150/92c952"
-                  alt="Jordan Walker profile picture"
-                  width="70"
-                  height="70"
-                  className="mr-3"
-                />
-                <Media.Body>
-                  <div className="d-md-flex">
-                    <p className="mb-2 mr-auto">
-                      <span className="h6 mr-2 d-block d-md-inline-block">
-                        Jordan Walker
-                      </span>
-                      <span className="mr-2">rated it</span>
-                      <Stars rating={3} />
-                    </p>
-                    <p className="text-secondary">Dec 19 2018</p>
-                  </div>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Iusto eum tempore ipsa! Eum eos libero eaque, explicabo
-                    aliquam, possimus voluptas consequatur dolore ullam
-                    assumenda fugiat quibusdam ad molestias excepturi officia,
-                    autem tempore dolores delectus quo voluptatum animi maiores.
-                    Quaerat cum libero, at animi perspiciatis, eos quisquam,
-                    porro unde nobis magnam nesciunt. Veniam voluptatem repellat
-                    inventore vel consequuntur vero possimus aliquam!
-                  </p>
-                </Media.Body>
-              </Media>
+              {book.reviews.map((review, index) => (
+                <Media key={index}>
+                  <img
+                    src="https://via.placeholder.com/150/92c952"
+                    alt={`${review.user.name} profile picture`}
+                    width="70"
+                    height="70"
+                    className="mr-3"
+                  />
+                  <Media.Body>
+                    <div className="d-md-flex">
+                      <p className="mb-2 mr-auto">
+                        <span className="h6 mr-2 d-block d-md-inline-block">
+                          {review.user.name}
+                        </span>
+                        <span className="mr-2">rated it</span>
+                        <Stars rating={review.rating || 0} />
+                      </p>
+                      <p className="text-secondary">{review.created_at}</p>
+                    </div>
+                    <p>{review.review}</p>
+                  </Media.Body>
+                </Media>
+              ))}
             </section>
           </Container>
         </article>
