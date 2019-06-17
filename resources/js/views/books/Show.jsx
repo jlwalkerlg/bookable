@@ -123,8 +123,14 @@ class Show extends Component {
         : await axios.post(`/api/reviews`, params);
       const newReview = response.data;
       const reviews = [newReview, ...book.reviews];
+      const newBook = {
+        ...book,
+        ratings_count: review.id ? book.ratings_count : book.ratings_count + 1,
+        ratings_sum: book.rating_sum - review.rating + newReview.rating,
+        reviews
+      };
       this.setState({
-        book: { ...this.state.book, reviews },
+        book: newBook,
         review: newReview,
         editReview: false
       });

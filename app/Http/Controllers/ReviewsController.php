@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Review;
+use Illuminate\Support\Facades\DB;
+use App\Book;
 
 class ReviewsController extends Controller
 {
@@ -17,7 +19,15 @@ class ReviewsController extends Controller
 
         $attributes['user_id'] = $request->user()->id;
 
-        return Review::create($attributes)->load('user:id,name');
+        $review = (new Review)->fill($attributes);
+
+        DB::transaction(function () use ($review, $attributes) {
+            $book = Book::findOrFail($attributes['book_id']);
+            $book->addReview($review);
+            $review->save();
+        });
+
+        return $review->load('user:id,name');
     }
 
     public function update(Request $request, Review $review)

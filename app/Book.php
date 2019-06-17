@@ -14,6 +14,8 @@ class Book extends Model
 
     protected $appends = ['avg_rating'];
 
+    public $timestamps = false;
+
     public function getPublicationDateAttribute($value)
     {
         return date('d M Y', jdtounix($value));
@@ -32,5 +34,12 @@ class Book extends Model
     public function reviews()
     {
         return $this->hasMany('App\Review');
+    }
+
+    public function addReview(Review $review)
+    {
+        $this->ratings_sum += $review->rating;
+        $this->ratings_count++;
+        return $this->save();
     }
 }
