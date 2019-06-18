@@ -38,14 +38,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function wishlistItems()
+    public function wishlist()
     {
-        return $this->hasMany('App\WishlistItem');
-    }
-
-    public function addToWishlist(Book $book)
-    {
-        return $this->wishlistItems()->create(['book_id' => $book->id]);
+        return $this->hasOne('App\Wishlist');
     }
 
     public function cart()

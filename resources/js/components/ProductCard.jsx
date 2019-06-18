@@ -8,8 +8,9 @@ import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
 class ProductCard extends Component {
   inWishlist() {
     const { wishlist } = this.props;
+    const { items } = wishlist;
     const bookId = this.props.book.id;
-    return !!wishlist.filter(item => item.book_id === bookId).length;
+    return items && !!items.filter(item => item.book_id === bookId).length;
   }
 
   addToWishlist = (e, book) => {
@@ -76,7 +77,7 @@ class ProductCard extends Component {
 }
 
 ProductCard.propTypes = {
-  wishlist: PropTypes.array.isRequired,
+  wishlist: PropTypes.object.isRequired,
   addToWishlist: PropTypes.func.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
   book: PropTypes.object.isRequired,

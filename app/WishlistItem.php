@@ -8,7 +8,7 @@ class WishlistItem extends Model
 {
     protected $table = 'wishlist_items';
 
-    protected $fillable = ['book_id', 'user_id'];
+    protected $fillable = ['book_id', 'wishlist_id'];
 
     public function book()
     {

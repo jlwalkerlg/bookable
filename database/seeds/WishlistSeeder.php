@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\WishlistItem;
+use App\Wishlist;
 
 class WishlistSeeder extends Seeder
 {
@@ -12,13 +13,15 @@ class WishlistSeeder extends Seeder
      */
     public function run()
     {
+        $wishlist = Wishlist::create(['user_id' => 1]);
+
         $book_ids = [1381, 2956, 3836, 52036];
 
         WishlistItem::insert(
-            array_map(function ($book_id) {
+            array_map(function ($book_id) use ($wishlist) {
                 return [
                     'book_id' => $book_id,
-                    'user_id' => 1,
+                    'wishlist_id' => $wishlist->id,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateWishlistItemsTable extends Migration
+class CreateWishlistsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateWishlistItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('wishlist_items', function (Blueprint $table) {
+        Schema::create('wishlists', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('book_id');
-            $table->unsignedBigInteger('wishlist_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
-            $table->foreign('book_id')->references('id')->on('books');
-            $table->foreign('wishlist_id')->references('id')->on('wishlists')->onDelete('cascade');
-            $table->unique(['book_id', 'wishlist_id']);
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unique(['id', 'wishlist_id']);
         });
     }
 

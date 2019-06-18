@@ -4,14 +4,17 @@ import {
   WISHLIST_HYDRATE
 } from '../actions/types';
 
-function wishlistReducer(wishlist = [], action) {
+function wishlistReducer(wishlist = {}, action) {
   switch (action.type) {
     case WISHLIST_ADD:
-      return [...wishlist, action.item];
+      return { ...wishlist, items: [...wishlist.items, action.item] };
     case WISHLIST_REMOVE:
-      return wishlist.filter(item => item.id !== action.id);
+      return {
+        ...wishlist,
+        items: wishlist.items.filter(item => item.id !== action.id)
+      };
     case WISHLIST_HYDRATE:
-      return action.items;
+      return action.wishlist;
     default:
       return wishlist;
   }

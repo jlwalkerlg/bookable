@@ -28,7 +28,7 @@ export const oauthLogin = () => dispatch =>
   axios
     .get('/api/user')
     .then(response => {
-      const { user, wishlist, cart } = response.data;
+      const { wishlist, cart, ...user } = response.data;
       dispatch(loginUser(user));
       dispatch(hydrateWishlist(wishlist));
       dispatch(hydrateCart(cart));

@@ -12,25 +12,27 @@ const removeItem = id => ({
   id
 });
 
-export const hydrateWishlist = items => ({
+export const hydrateWishlist = wishlist => ({
   type: WISHLIST_HYDRATE,
-  items
+  wishlist
 });
 
-export const addToWishlist = book => dispatch =>
+export const addToWishlist = book => dispatch => {
+  const wishlist = store.getState().wishlist;
+  console.log(wishlist);
   axios
-    .post('/api/wishlist-items', {
+    .post(`/api/wishlist/${wishlist.id}/items`, {
       book_id: book.id
     })
     .then(response => dispatch(addItem(response.data)))
     .catch(err => console.log(err));
+};
 
 export const removeFromWishlist = bookId => dispatch => {
-  const item = store
-    .getState()
-    .wishlist.filter(item => item.book_id === bookId)[0];
+  const wishlist = store.getState().wishlist;
+  const item = wishlist.items.filter(item => item.book_id === bookId)[0];
   return axios
-    .delete(`/api/wishlist-items/${item.id}`)
+    .delete(`/api/wishlist/${wishlist.id}/items/${item.id}`)
     .then(() => dispatch(removeItem(item.id)))
     .catch(err => console.log(err));
 };

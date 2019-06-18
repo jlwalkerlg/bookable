@@ -32,6 +32,7 @@ class Wishlist extends Component {
 
   render() {
     const { wishlist } = this.props;
+    const wishlistItems = wishlist.items;
 
     return (
       <main className="section">
@@ -47,7 +48,7 @@ class Wishlist extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {wishlist.map((item, index) => {
+            {wishlistItems.map((item, index) => {
               const book = item.book;
               const inCart = this.inCart(book.id);
               const { author } = book;
@@ -75,7 +76,7 @@ class Wishlist extends Component {
                     </Media>
                   </Col>
                   <Col md={3}>
-                    <p>£{book.price.toFixed(2)}</p>
+                    <p>£{book.price}</p>
                   </Col>
                   <Col md={3}>
                     <Form
@@ -123,7 +124,7 @@ class Wishlist extends Component {
             })}
           </div>
           <div className="d-md-none">
-            {wishlist.map((item, index) => {
+            {wishlistItems.map((item, index) => {
               const book = item.book;
               const inCart = this.inCart(book.id);
               const { author } = book;
@@ -159,7 +160,7 @@ class Wishlist extends Component {
                       <span className="text-secondary">by: </span>
                       <Link to={`/authors/${author.id}`}>{author.name}</Link>
                     </p>
-                    <p>£20.00</p>
+                    <p>£{book.price}</p>
                     <Form
                       action="/"
                       method="POST"
@@ -196,7 +197,7 @@ class Wishlist extends Component {
 }
 
 Wishlist.propTypes = {
-  wishlist: PropTypes.array.isRequired,
+  wishlist: PropTypes.object.isRequired,
   cart: PropTypes.object.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
   addToCart: PropTypes.func.isRequired,

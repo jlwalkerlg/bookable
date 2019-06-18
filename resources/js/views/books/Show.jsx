@@ -133,7 +133,8 @@ class Show extends Component {
 
   inWishlist(bookId) {
     const { wishlist } = this.props;
-    return !!wishlist.filter(item => item.book_id === bookId).length;
+    const { items } = wishlist;
+    return items && !!items.filter(item => item.book_id === bookId).length;
   }
 
   inCart(bookId) {
@@ -461,7 +462,7 @@ class Show extends Component {
 
 Show.propTypes = {
   user: PropTypes.object.isRequired,
-  wishlist: PropTypes.array.isRequired,
+  wishlist: PropTypes.object.isRequired,
   cart: PropTypes.object.isRequired,
   addToWishlist: PropTypes.func.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
