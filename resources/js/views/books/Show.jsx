@@ -121,9 +121,9 @@ class Show extends Component {
     this.props.addToCart(book, quantity);
   }
 
-  removeFromWishlist(e, bookId) {
+  removeFromWishlist(e, book) {
     e.preventDefault();
-    this.props.removeFromWishlist(bookId);
+    this.props.removeFromWishlist(book);
   }
 
   removeFromCart(e, book) {
@@ -247,7 +247,7 @@ class Show extends Component {
                       method="POST"
                       onSubmit={
                         inWishlist
-                          ? e => this.removeFromWishlist(e, book.id)
+                          ? e => this.removeFromWishlist(e, book)
                           : e => this.addToWishlist(e, book)
                       }
                       className="mb-3"

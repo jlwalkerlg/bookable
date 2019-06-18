@@ -18,9 +18,9 @@ class ProductCard extends Component {
     this.props.addToWishlist(book);
   };
 
-  removeFromWishlist = (e, bookId) => {
+  removeFromWishlist = (e, book) => {
     e.preventDefault();
-    this.props.removeFromWishlist(bookId);
+    this.props.removeFromWishlist(book);
   };
 
   render() {
@@ -42,7 +42,7 @@ class ProductCard extends Component {
             method="POST"
             onSubmit={
               inWishlist
-                ? e => this.removeFromWishlist(e, book.id)
+                ? e => this.removeFromWishlist(e, book)
                 : e => this.addToWishlist(e, book)
             }
             className="float-right"

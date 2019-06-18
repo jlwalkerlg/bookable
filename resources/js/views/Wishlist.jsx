@@ -17,10 +17,9 @@ class Wishlist extends Component {
     this.props.removeFromCart(book);
   };
 
-  removeFromWishlist = e => {
+  removeFromWishlist = (e, book) => {
     e.preventDefault();
-    const bookId = parseInt(e.target.dataset.bookId);
-    this.props.removeFromWishlist(bookId);
+    this.props.removeFromWishlist(book);
   };
 
   inCart = bookId => {
@@ -104,8 +103,7 @@ class Wishlist extends Component {
                     <Form
                       action="/"
                       method="POST"
-                      data-book-id={book.id}
-                      onSubmit={this.removeFromWishlist}
+                      onSubmit={e => this.removeFromWishlist(e, book)}
                       className="text-secondary"
                     >
                       <Button
@@ -138,8 +136,7 @@ class Wishlist extends Component {
                     <Form
                       action="/"
                       method="POST"
-                      data-book-id={book.id}
-                      onSubmit={this.removeFromWishlist}
+                      onSubmit={e => this.removeFromWishlist(e, book)}
                       className="float-right"
                     >
                       <Button

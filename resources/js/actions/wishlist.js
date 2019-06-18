@@ -19,7 +19,6 @@ export const hydrateWishlist = wishlist => ({
 
 export const addToWishlist = book => dispatch => {
   const wishlist = store.getState().wishlist;
-  console.log(wishlist);
   axios
     .post(`/api/wishlist/${wishlist.id}/items`, {
       book_id: book.id
@@ -28,9 +27,9 @@ export const addToWishlist = book => dispatch => {
     .catch(err => console.log(err));
 };
 
-export const removeFromWishlist = bookId => dispatch => {
+export const removeFromWishlist = book => dispatch => {
   const wishlist = store.getState().wishlist;
-  const item = wishlist.items.filter(item => item.book_id === bookId)[0];
+  const item = wishlist.items.filter(item => item.book_id === book.id)[0];
   return axios
     .delete(`/api/wishlist/${wishlist.id}/items/${item.id}`)
     .then(() => dispatch(removeItem(item.id)))
