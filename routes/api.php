@@ -30,8 +30,9 @@ Route::delete('/carts/{cart}/items/{item}', 'CartItemsController@delete')->middl
 
 Route::get('/shelves', 'ShelvesController@index');
 Route::get('/shelves/items', 'ShelfItemsController@index');
-Route::get('/shelves/book/{bookId}', 'ShelvesController@book');
 Route::get('/shelves/{shelf}/items', 'ShelfItemsController@index');
-Route::post('/shelves/{shelf}/items', 'ShelfItemsController@store')->middleware('can:update,shelf');
 Route::delete('/shelves/{shelf}/items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item,shelf');
+
+Route::get('/shelves/book/{bookId}', 'ShelvesController@book');
+Route::post('/shelves/{shelf}/items', 'ShelfItemsController@store')->middleware('can:update,shelf');
 Route::get('/shelf-items', 'ShelfItemsController@index');

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import {
@@ -20,17 +21,15 @@ import Loading from '../components/Loading';
 class Shelves extends Component {
   state = {
     loading: true,
-    shelves: null,
     shelfItems: null,
     count: null,
-    limit: 2
+    limit: 10
   };
 
   async componentDidMount() {
-    const shelves = await this.fetchShelves();
     const shelfId = this.getShelfId();
     const { shelfItems, count } = await this.fetchShelfItems(shelfId);
-    this.setState({ shelves, shelfItems, count, loading: false });
+    this.setState({ shelfItems, count, loading: false });
   }
 
   async componentDidUpdate(prevProps) {
@@ -54,23 +53,14 @@ class Shelves extends Component {
     return prevProps.location.search !== this.props.location.search;
   }
 
-  async fetchShelves() {
-    try {
-      const response = await axios.get('/api/shelves');
-      return response.data;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   async fetchShelfItems(shelfId) {
     const { limit } = this.state;
     const offset = this.calcOffset();
     const params = { limit, offset };
     try {
       const url = shelfId
-        ? `/api/shelves/${shelfId}/shelf-items`
-        : '/api/shelves/shelf-items';
+        ? `/api/shelves/${shelfId}/items`
+        : '/api/shelves/items';
       const response = await axios.get(url, { params });
       return response.data;
     } catch (error) {
@@ -90,8 +80,22 @@ class Shelves extends Component {
     );
   }
 
+  removeFromShelf = async (e, shelfItem) => {
+    e.preventDefault();
+    try {
+      axios.delete(`/api/shelves/${shelfItem.shelf_id}/items/${shelfItem.id}`);
+      const shelfItems = this.state.shelfItems.filter(
+        item => item.id !== shelfItem.id
+      );
+      this.setState({ shelfItems });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   render() {
-    const { loading, shelves, shelfItems, count, limit } = this.state;
+    const { loading, shelfItems, count, limit } = this.state;
+    const { shelves } = this.props;
 
     return (
       <div className="section">
@@ -99,49 +103,43 @@ class Shelves extends Component {
           <Row>
             <Col xs={12} lg={3} className="mb-4 mb-md-none">
               <h2 className="h5 text-uppercase">Bookshelves</h2>
-              {!shelves ? (
-                <Loading />
-              ) : (
-                <>
-                  <ul className="list-unstyled text-secondary d-none d-md-block">
-                    <li>
-                      <NavLink className="sub-nav-link" to="/shelves" exact>
-                        All
-                      </NavLink>
-                    </li>
-                    {shelves.map((shelf, index) => (
-                      <li key={index}>
-                        <NavLink
-                          className="sub-nav-link"
-                          to={`/shelves/${shelf.id}`}
-                          exact
-                        >
-                          {shelf.name}
-                        </NavLink>
-                      </li>
-                    ))}
-                  </ul>
-                  <Dropdown className="d-block d-md-none w-100">
-                    <Dropdown.Toggle variant="info" id="addToShelf">
-                      Select a shelf
-                    </Dropdown.Toggle>
+              <ul className="list-unstyled text-secondary d-none d-md-block">
+                <li>
+                  <NavLink className="sub-nav-link" to="/shelves" exact>
+                    All
+                  </NavLink>
+                </li>
+                {shelves.map((shelf, index) => (
+                  <li key={index}>
+                    <NavLink
+                      className="sub-nav-link"
+                      to={`/shelves/${shelf.id}`}
+                      exact
+                    >
+                      {shelf.name}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+              <Dropdown className="d-block d-md-none w-100">
+                <Dropdown.Toggle variant="info" id="addToShelf">
+                  Select a shelf
+                </Dropdown.Toggle>
 
-                    <Dropdown.Menu>
-                      {shelves.map((shelf, index) => (
-                        <Dropdown.Item
-                          key={index}
-                          as={NavLink}
-                          to={`/shelves/${shelf.id}`}
-                          exact
-                          className="d-flex justify-content-between align-items-center"
-                        >
-                          {shelf.name}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </>
-              )}
+                <Dropdown.Menu>
+                  {shelves.map((shelf, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      as={NavLink}
+                      to={`/shelves/${shelf.id}`}
+                      exact
+                      className="d-flex justify-content-between align-items-center"
+                    >
+                      {shelf.name}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
             </Col>
             <Col xs={12} lg={9}>
               <h1 className="h5 text-uppercase mb-0 mb-md-3">Books</h1>
@@ -191,7 +189,9 @@ class Shelves extends Component {
                               <Form
                                 action="/"
                                 method="POST"
-                                onSubmit={this.removeProduct}
+                                onSubmit={e =>
+                                  this.removeFromShelf(e, shelfItem)
+                                }
                               >
                                 <Button
                                   variant="link"
@@ -251,7 +251,7 @@ class Shelves extends Component {
                             <Form
                               action="/"
                               method="POST"
-                              onSubmit={this.removeProduct}
+                              onSubmit={e => this.removeFromShelf(e, shelfItem)}
                             >
                               <Button
                                 variant="link"
@@ -285,6 +285,8 @@ class Shelves extends Component {
 }
 
 Shelves.propTypes = {
+  user: PropTypes.object.isRequired,
+  shelves: PropTypes.array.isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired
   }).isRequired,
@@ -295,4 +297,9 @@ Shelves.propTypes = {
   }).isRequired
 };
 
-export default Shelves;
+const mapStateToProps = ({ user, shelves }) => ({
+  user,
+  shelves
+});
+
+export default connect(mapStateToProps)(Shelves);
