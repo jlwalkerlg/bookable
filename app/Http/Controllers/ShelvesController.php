@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\User;
 
 class ShelvesController extends Controller
 {
-    public function index(Request $request)
+    public function index(User $user)
     {
-        $shelves = $request->user()->shelves();
-
-        return $shelves->get();
+        return $user->shelves;
     }
 }

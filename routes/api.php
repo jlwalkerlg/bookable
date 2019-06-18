@@ -28,12 +28,11 @@ Route::delete('/wishlist/{wishlist}/items/{item}', 'WishlistItemsController@dele
 Route::post('/carts/{cart}/items', 'CartItemsController@store')->middleware('can:update,cart');
 Route::delete('/carts/{cart}/items/{item}', 'CartItemsController@delete')->middleware('can:delete,item,cart');
 
-Route::get('/users/{user}/shelves', 'UsersController@shelves');
-Route::get('/users/{user}/shelves/items', 'UsersController@shelfItems');
-Route::get('/users/{user}/shelves/{shelf}/items', 'UsersController@shelfItems');
+Route::get('/users/{user}/shelves', 'ShelvesController@index');
+Route::get('/users/{user}/shelves/items', 'ShelfItemsController@index');
+Route::get('/users/{user}/shelves/{shelf}/items', 'ShelfItemsController@index');
 
 Route::delete('/shelves/{shelf}/items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item,shelf');
 
 Route::get('/shelves/book/{bookId}', 'ShelvesController@book');
 Route::post('/shelves/{shelf}/items', 'ShelfItemsController@store')->middleware('can:update,shelf');
-Route::get('/shelf-items', 'ShelfItemsController@index');

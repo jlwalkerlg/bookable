@@ -5,28 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Shelf;
 use App\ShelfItem;
+use App\User;
 
 class ShelfItemsController extends Controller
 {
-    public function index(Request $request, Shelf $shelf = null)
+    public function index(Request $request, User $user, $shelfId = null)
     {
-        $shelfItems = $shelf ? $shelf->shelfItems() : $request->user()->shelfItems();
+        $query = $shelfId ? $user->shelfItems()->where('shelf_id', $shelfId) : $user->shelfItems();
 
-        if ($bookId = $request->input('book_id')) {
-            $shelfItems->where('book_id', $bookId);
-        }
-
-        $count = (clone $shelfItems)->count();
+        $count = (clone $query)->count();
 
         if ($limit = $request->input('limit')) {
-            $shelfItems->limit($limit);
+            $query->limit($limit);
         }
 
         if ($offset = $request->input('offset')) {
-            $shelfItems->offset($offset);
+            $query->offset($offset);
         }
 
-        $shelfItems = $shelfItems->with('book.author')->get();
+        $shelfItems = $query->with('book.author')->get();
 
         return compact('shelfItems', 'count');
     }
