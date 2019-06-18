@@ -11,14 +11,14 @@ class Shelf extends Model
 
     protected $fillable = ['name', 'user_id'];
 
-    public function shelfItems()
+    public function items()
     {
         return $this->hasMany('App\ShelfItem');
     }
 
     public function addItem(Request $request)
     {
-        return $this->shelfItems()->updateOrCreate([
+        return $this->items()->updateOrCreate([
             'book_id' => $request->post('book_id')
         ]);
     }

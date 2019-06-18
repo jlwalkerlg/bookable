@@ -40,8 +40,16 @@ const App = ({ loading }) =>
           path="/category/:id([0-9]+)"
           component={CategoriesShow}
         />
-        <UserRoute exact path="/shelves" component={Shelves} />
-        <UserRoute exact path="/shelves/:id([0-9]+)" component={Shelves} />
+        <AppRoute
+          exact
+          path="/users/:userId([0-9]+)/shelves"
+          component={Shelves}
+        />
+        <AppRoute
+          exact
+          path="/users/:userId([0-9]+)/shelves/:shelfId([0-9]+)"
+          component={Shelves}
+        />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>

@@ -21,46 +21,57 @@ import Loading from '../components/Loading';
 class Shelves extends Component {
   state = {
     loading: true,
+    shelves: null,
     shelfItems: null,
     count: null,
     limit: 10
   };
 
   async componentDidMount() {
-    const shelfId = this.getShelfId();
-    const { shelfItems, count } = await this.fetchShelfItems(shelfId);
-    this.setState({ shelfItems, count, loading: false });
+    const { userId, shelfId } = this.props.match.params;
+    const shelves = await this.fetchShelves(userId);
+    const { shelfItems, count } = await this.fetchShelfItems(userId, shelfId);
+    this.setState({ shelves, shelfItems, count, loading: false });
   }
 
   async componentDidUpdate(prevProps) {
     if (this.shelfChanged(prevProps) || this.pageChanged(prevProps)) {
       this.setState({ loading: true });
-      const shelfId = this.getShelfId();
-      const { shelfItems, count } = await this.fetchShelfItems(shelfId);
+      const { userId, shelfId } = this.props.match.params;
+      const { shelfItems, count } = await this.fetchShelfItems(userId, shelfId);
       this.setState({ shelfItems, count, loading: false });
     }
   }
 
-  getShelfId() {
-    return this.props.match.params.id || null;
+  userChanged(prevProps) {
+    return prevProps.match.params.userId !== this.props.match.params.userId;
   }
 
   shelfChanged(prevProps) {
-    return prevProps.match.params.id !== this.props.match.params.id;
+    return prevProps.match.params.shelfId !== this.props.match.params.shelfId;
   }
 
   pageChanged(prevProps) {
     return prevProps.location.search !== this.props.location.search;
   }
 
-  async fetchShelfItems(shelfId) {
+  async fetchShelves(userId) {
+    try {
+      const response = await axios.get(`/api/users/${userId}/shelves`);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchShelfItems(userId, shelfId) {
     const { limit } = this.state;
     const offset = this.calcOffset();
     const params = { limit, offset };
     try {
       const url = shelfId
-        ? `/api/shelves/${shelfId}/items`
-        : '/api/shelves/items';
+        ? `/api/users/${userId}/shelves/${shelfId}/items`
+        : `/api/users/${userId}/shelves/items`;
       const response = await axios.get(url, { params });
       return response.data;
     } catch (error) {
@@ -94,8 +105,10 @@ class Shelves extends Component {
   };
 
   render() {
-    const { loading, shelfItems, count, limit } = this.state;
-    const { shelves } = this.props;
+    const { loading, shelves, shelfItems, count, limit } = this.state;
+    const { user } = this.props;
+    const { userId } = this.props.match.params;
+    const isOwnShelf = parseInt(userId) === user.id;
 
     return (
       <div className="section">
@@ -103,43 +116,61 @@ class Shelves extends Component {
           <Row>
             <Col xs={12} lg={3} className="mb-4 mb-md-none">
               <h2 className="h5 text-uppercase">Bookshelves</h2>
-              <ul className="list-unstyled text-secondary d-none d-md-block">
-                <li>
-                  <NavLink className="sub-nav-link" to="/shelves" exact>
-                    All
-                  </NavLink>
-                </li>
-                {shelves.map((shelf, index) => (
-                  <li key={index}>
-                    <NavLink
-                      className="sub-nav-link"
-                      to={`/shelves/${shelf.id}`}
-                      exact
-                    >
-                      {shelf.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-              <Dropdown className="d-block d-md-none w-100">
-                <Dropdown.Toggle variant="info" id="addToShelf">
-                  Select a shelf
-                </Dropdown.Toggle>
+              {loading ? (
+                <Loading />
+              ) : (
+                <>
+                  <ul className="list-unstyled text-secondary d-none d-md-block">
+                    <li>
+                      <NavLink
+                        className="sub-nav-link"
+                        to={`/users/${userId}/shelves`}
+                        exact
+                      >
+                        All
+                      </NavLink>
+                    </li>
+                    {shelves.map((shelf, index) => (
+                      <li key={index}>
+                        <NavLink
+                          className="sub-nav-link"
+                          to={`/users/${userId}/shelves/${shelf.id}`}
+                          exact
+                        >
+                          {shelf.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                  <Dropdown className="d-block d-md-none w-100">
+                    <Dropdown.Toggle variant="info" id="addToShelf">
+                      Select a shelf
+                    </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  {shelves.map((shelf, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      as={NavLink}
-                      to={`/shelves/${shelf.id}`}
-                      exact
-                      className="d-flex justify-content-between align-items-center"
-                    >
-                      {shelf.name}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
+                    <Dropdown.Menu>
+                      <Dropdown.Item
+                        as={NavLink}
+                        to={`/users/${userId}/shelves`}
+                        exact
+                        className="d-flex justify-content-between align-items-center"
+                      >
+                        All
+                      </Dropdown.Item>
+                      {shelves.map((shelf, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          as={NavLink}
+                          to={`/users/${userId}/shelves/${shelf.id}`}
+                          exact
+                          className="d-flex justify-content-between align-items-center"
+                        >
+                          {shelf.name}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </>
+              )}
             </Col>
             <Col xs={12} lg={9}>
               <h1 className="h5 text-uppercase mb-0 mb-md-3">Books</h1>
@@ -154,9 +185,9 @@ class Shelves extends Component {
                         <th>Title</th>
                         <th>Author</th>
                         <th>Average Rating</th>
-                        <th>Your Rating</th>
+                        {user.id && <th>Your Rating</th>}
                         <th>Date Added</th>
-                        <th />
+                        {isOwnShelf && <th />}
                       </tr>
                     </thead>
                     <tbody>
@@ -181,27 +212,31 @@ class Shelves extends Component {
                               </Link>
                             </td>
                             <td>{book.avg_rating.toFixed(2)}</td>
-                            <td className="text-nowrap">
-                              <Stars rating={0} />
-                            </td>
+                            {user.id && (
+                              <td className="text-nowrap">
+                                <Stars rating={0} />
+                              </td>
+                            )}
                             <td>{shelfItem.created_at}</td>
-                            <td>
-                              <Form
-                                action="/"
-                                method="POST"
-                                onSubmit={e =>
-                                  this.removeFromShelf(e, shelfItem)
-                                }
-                              >
-                                <Button
-                                  variant="link"
-                                  type="submit"
-                                  className="text-danger p-0"
+                            {isOwnShelf && (
+                              <td>
+                                <Form
+                                  action="/"
+                                  method="POST"
+                                  onSubmit={e =>
+                                    this.removeFromShelf(e, shelfItem)
+                                  }
                                 >
-                                  <i className="material-icons">clear</i>
-                                </Button>
-                              </Form>
-                            </td>
+                                  <Button
+                                    variant="link"
+                                    type="submit"
+                                    className="text-danger p-0"
+                                  >
+                                    <i className="material-icons">clear</i>
+                                  </Button>
+                                </Form>
+                              </td>
+                            )}
                           </tr>
                         );
                       })}
@@ -236,31 +271,37 @@ class Shelves extends Component {
                               </span>{' '}
                               {book.avg_rating.toFixed(2)}
                             </p>
-                            <p className="font-size-7 mb-2">
-                              <span className="text-secondary">
-                                Your rating:
-                              </span>{' '}
-                              <Stars rating={0} />
-                            </p>
+                            {user.id && (
+                              <p className="font-size-7 mb-2">
+                                <span className="text-secondary">
+                                  Your rating:
+                                </span>{' '}
+                                <Stars rating={0} />
+                              </p>
+                            )}
                             <p className="font-size-7 mb-2">
                               <span className="text-secondary">
                                 Date Added:
                               </span>{' '}
                               {shelfItem.created_at}
                             </p>
-                            <Form
-                              action="/"
-                              method="POST"
-                              onSubmit={e => this.removeFromShelf(e, shelfItem)}
-                            >
-                              <Button
-                                variant="link"
-                                type="submit"
-                                className="text-danger p-0 font-size-7"
+                            {isOwnShelf && (
+                              <Form
+                                action="/"
+                                method="POST"
+                                onSubmit={e =>
+                                  this.removeFromShelf(e, shelfItem)
+                                }
                               >
-                                Remove from shelf
-                              </Button>
-                            </Form>
+                                <Button
+                                  variant="link"
+                                  type="submit"
+                                  className="text-danger p-0 font-size-7"
+                                >
+                                  Remove from shelf
+                                </Button>
+                              </Form>
+                            )}
                           </Media.Body>
                         </Media>
                       );

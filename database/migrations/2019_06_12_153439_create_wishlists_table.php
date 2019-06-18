@@ -19,7 +19,7 @@ class CreateWishlistsTable extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unique(['id', 'wishlist_id']);
+            $table->unique(['id', 'user_id']);
         });
     }
 
