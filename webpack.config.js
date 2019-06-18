@@ -11,7 +11,7 @@ module.exports = {
     filename: 'js/app.js',
     path: path.resolve(__dirname, 'public')
   },
-  devtool: 'cheap-module-eval-source-map', // Generates source maps.
+  devtool: 'source-map', // Generates source maps.
   plugins: [
     new WebpackNotifierPlugin(),
     new MiniCssExtractPlugin({

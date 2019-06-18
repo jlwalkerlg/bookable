@@ -33,9 +33,20 @@ class ShelfItemsController extends Controller
         return $shelf->addItem($request)->load('book.author');
     }
 
-    public function delete(Shelf $shelf, ShelfItem $item)
+    public function delete(Request $request, Shelf $shelf, ShelfItem $item = null)
     {
-        $item->delete();
+        if ($item) {
+            $item->delete();
+        } else {
+            $query = $shelf->items();
+
+            if ($bookId = $request->input('book_id')) {
+                $query->where('book_id', $bookId);
+            }
+
+            $query->delete();
+        }
+
         return response(null, 204);
     }
 }

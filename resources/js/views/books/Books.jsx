@@ -11,7 +11,7 @@ import Pagination from '../../components/Pagination';
 class Books extends Component {
   state = {
     loading: true,
-    filterOpen: null,
+    isFilterOpen: null,
     queryParams: {
       limit: 20,
       offset: 0,
@@ -93,7 +93,7 @@ class Books extends Component {
   handleFilterSubmit = e => {
     e.preventDefault();
     this.getBooks();
-    this.setState({ filterOpen: false });
+    this.setState({ isFilterOpen: false });
   };
 
   toggleCategory = e => {
@@ -106,12 +106,13 @@ class Books extends Component {
     this.setState({ categories });
   };
 
-  toggleFilter = () => this.setState({ filterOpen: !this.state.filterOpen });
+  toggleFilter = () =>
+    this.setState({ isFilterOpen: !this.state.isFilterOpen });
 
   render() {
     const {
       categories,
-      filterOpen,
+      isFilterOpen,
       queryParams,
       books,
       totalBooks,
@@ -138,8 +139,8 @@ class Books extends Component {
                   <i
                     className={
                       'material-icons align-top ' +
-                      (filterOpen === true ? 'toggle-collapse-open' : '') +
-                      (filterOpen === false ? 'toggle-collapse-close' : '')
+                      (isFilterOpen === true ? 'toggle-collapse-open' : '') +
+                      (isFilterOpen === false ? 'toggle-collapse-close' : '')
                     }
                   >
                     arrow_drop_down
@@ -148,7 +149,7 @@ class Books extends Component {
               </h2>
               <MediaQuery minWidth={768}>
                 {matches => (
-                  <Collapse in={filterOpen || matches}>
+                  <Collapse in={isFilterOpen || matches}>
                     <Form
                       action="/"
                       method="GET"
