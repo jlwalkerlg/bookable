@@ -29,8 +29,8 @@ class ShelfSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $readIds = [320, 656, 1934];
-        $toReadIds = [3636, 8127, 7604];
+        $readIds = [320, 656, 1934, 1, 5, 6, 890, 2657];
+        $toReadIds = [3636, 8127, 7604, 3836, 4214, 4671];
 
         ShelfItem::insert(
             array_map(function ($bookId) {

@@ -28,8 +28,9 @@ Route::delete('/wishlist-items/{item}', 'WishlistItemsController@delete')->middl
 Route::post('/carts/{cart}/cart-items', 'CartItemsController@store')->middleware('can:update,cart');
 Route::delete('/carts/{cart}/cart-items/{item}', 'CartItemsController@delete')->middleware('can:delete,item,cart');
 
+Route::get('/shelves', 'ShelvesController@index')->middleware('auth');
+Route::get('/shelves/books', 'ShelvesController@books')->middleware('auth');
+Route::get('/shelves/shelf-items', 'ShelfItemsController@index')->middleware('auth');
+Route::get('/shelves/{shelf}/shelf-items', 'ShelfItemsController@index')->middleware('auth');
 Route::post('/shelves/{shelf}/shelf-items', 'ShelfItemsController@store')->middleware('can:update,shelf');
 Route::delete('/shelves/{shelf}/shelf-items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item,shelf');
-
-Route::post('/reviews', 'ReviewsController@store')->middleware('auth');
-Route::patch('/reviews/{review}', 'ReviewsController@update')->middleware('can:update,review');

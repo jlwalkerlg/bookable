@@ -20,7 +20,6 @@ import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
 import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
-import { addToShelf, removeFromShelf } from '../../actions/shelves';
 import Loading from '../../components/Loading';
 import ProductCard from '../../components/ProductCard';
 
@@ -172,27 +171,12 @@ class Show extends Component {
     );
   }
 
-  getItemFromShelf(shelfId, bookId) {
-    const shelf = this.props.shelves.filter(shelf => shelf.id === shelfId)[0];
-    return shelf.shelf_items.filter(item => item.book_id === bookId)[0];
-  }
-
-  addToShelf(e, shelf, book) {
-    e.preventDefault();
-    this.props.addToShelf(shelf, book);
-  }
-
-  removeFromShelf(e, shelf, item) {
-    e.preventDefault();
-    this.props.removeFromShelf(shelf, item);
-  }
-
   toggleEditReview = () =>
     this.setState({ editReview: !this.state.editReview });
 
   render() {
     const { loading, book, quantity, review, editReview } = this.state;
-    const { user, shelves } = this.props;
+    const { user } = this.props;
 
     if (loading)
       return (
@@ -309,7 +293,7 @@ class Show extends Component {
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>
-                    {shelves.map((shelf, index) => {
+                    {[].map((shelf, index) => {
                       const item = this.getItemFromShelf(shelf.id, book.id);
 
                       return (
@@ -606,7 +590,6 @@ Show.propTypes = {
   user: PropTypes.object.isRequired,
   wishlist: PropTypes.array.isRequired,
   cart: PropTypes.object.isRequired,
-  shelves: PropTypes.array.isRequired,
   addToWishlist: PropTypes.func.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
   addToCart: PropTypes.func.isRequired,
@@ -620,7 +603,7 @@ Show.propTypes = {
   }).isRequired
 };
 
-const mapStateToProps = ({ user, wishlist, cart, shelves }) => ({
+const mapStateToProps = ({ user, wishlist, cart }) => ({
   user,
   wishlist,
   cart,

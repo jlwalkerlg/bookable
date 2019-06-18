@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import axios from 'axios';
 import {
   Container,
   Row,
@@ -18,53 +18,71 @@ import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 
 class Shelves extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    loading: true,
+    shelves: null,
+    shelfItems: null,
+    count: null,
+    limit: 2
+  };
 
-    const currentPage = this.getCurrentPage();
+  async componentDidMount() {
+    const shelves = await this.fetchShelves();
     const shelfId = this.getShelfId();
-    const items = this.getShelfItems(shelfId);
-
-    this.state = {
-      loading: false,
-      perPage: 10,
-      currentPage,
-      shelfId,
-      items
-    };
+    const { shelfItems, count } = await this.fetchShelfItems(shelfId);
+    this.setState({ shelves, shelfItems, count, loading: false });
   }
 
-  getShelfItems(shelfId) {
-    const { shelves } = this.props;
-    return shelfId
-      ? shelves.filter(shelf => shelf.id === shelfId)[0].shelf_items
-      : shelves.reduce(
-          (prev, current) => [...prev, ...current.shelf_items],
-          []
-        );
+  async componentDidUpdate(prevProps) {
+    if (this.shelfChanged(prevProps) || this.pageChanged(prevProps)) {
+      this.setState({ loading: true });
+      const shelfId = this.getShelfId();
+      const { shelfItems, count } = await this.fetchShelfItems(shelfId);
+      this.setState({ shelfItems, count, loading: false });
+    }
   }
 
   getShelfId() {
-    return parseInt(this.props.match.params.id) || null;
+    return this.props.match.params.id || null;
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.location.search !== this.props.location.search) {
-      this.setState({ loading: true });
-      const currentPage = this.getCurrentPage();
-      this.setState({ currentPage, loading: false });
+  shelfChanged(prevProps) {
+    return prevProps.match.params.id !== this.props.match.params.id;
+  }
+
+  pageChanged(prevProps) {
+    return prevProps.location.search !== this.props.location.search;
+  }
+
+  async fetchShelves() {
+    try {
+      const response = await axios.get('/api/shelves');
+      return response.data;
+    } catch (error) {
+      console.error(error);
     }
-    if (prevProps.match.params.id !== this.props.match.params.id) {
-      this.setState({ loading: true });
-      const shelfId = this.getShelfId();
-      const items = this.getShelfItems(shelfId);
-      this.setState({ shelfId, items, loading: false });
+  }
+
+  async fetchShelfItems(shelfId) {
+    const { limit } = this.state;
+    const offset = this.calcOffset();
+    const params = { limit, offset };
+    try {
+      const url = shelfId
+        ? `/api/shelves/${shelfId}/shelf-items`
+        : '/api/shelves/shelf-items';
+      const response = await axios.get(url, { params });
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      console.log(error);
     }
   }
 
   calcOffset() {
-    const { perPage, currentPage } = this.state;
-    return (currentPage - 1) * perPage;
+    const { limit } = this.state;
+    const page = this.getCurrentPage();
+    return (page - 1) * limit;
   }
 
   getCurrentPage() {
@@ -73,18 +91,13 @@ class Shelves extends Component {
     );
   }
 
-  getTotalPages() {
-    const { items, perPage } = this.state;
-    return Math.ceil(items.length / perPage);
+  calcTotalPages() {
+    const { count, limit } = this.state;
+    return Math.ceil(count / limit);
   }
 
   render() {
-    const { shelves } = this.props;
-    const { loading, perPage, currentPage, shelfId } = this.state;
-
-    const totalPages = this.getTotalPages();
-    const offset = this.calcOffset();
-    const items = this.state.items.slice(offset, offset + perPage + 1);
+    const { loading, shelves, shelfItems } = this.state;
 
     return (
       <div className="section">
@@ -92,43 +105,49 @@ class Shelves extends Component {
           <Row>
             <Col xs={12} lg={3} className="mb-4 mb-md-none">
               <h2 className="h5 text-uppercase">Bookshelves</h2>
-              <ul className="list-unstyled text-secondary d-none d-md-block">
-                <li>
-                  <NavLink className="sub-nav-link" to="/shelves" exact>
-                    All
-                  </NavLink>
-                </li>
-                {shelves.map((shelf, index) => (
-                  <li key={index}>
-                    <NavLink
-                      className="sub-nav-link"
-                      to={`/shelves/${shelf.id}`}
-                      exact
-                    >
-                      {shelf.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-              <Dropdown className="d-block d-md-none w-100">
-                <Dropdown.Toggle variant="info" id="addToShelf">
-                  Select a shelf
-                </Dropdown.Toggle>
+              {!shelves ? (
+                <Loading />
+              ) : (
+                <>
+                  <ul className="list-unstyled text-secondary d-none d-md-block">
+                    <li>
+                      <NavLink className="sub-nav-link" to="/shelves" exact>
+                        All
+                      </NavLink>
+                    </li>
+                    {shelves.map((shelf, index) => (
+                      <li key={index}>
+                        <NavLink
+                          className="sub-nav-link"
+                          to={`/shelves/${shelf.id}`}
+                          exact
+                        >
+                          {shelf.name}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                  <Dropdown className="d-block d-md-none w-100">
+                    <Dropdown.Toggle variant="info" id="addToShelf">
+                      Select a shelf
+                    </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  {shelves.map((shelf, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      as={NavLink}
-                      to={`/shelves/${shelf.id}`}
-                      exact
-                      className="d-flex justify-content-between align-items-center"
-                    >
-                      {shelf.name}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
+                    <Dropdown.Menu>
+                      {shelves.map((shelf, index) => (
+                        <Dropdown.Item
+                          key={index}
+                          as={NavLink}
+                          to={`/shelves/${shelf.id}`}
+                          exact
+                          className="d-flex justify-content-between align-items-center"
+                        >
+                          {shelf.name}
+                        </Dropdown.Item>
+                      ))}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </>
+              )}
             </Col>
             <Col xs={12} lg={9}>
               <h1 className="h5 text-uppercase mb-0 mb-md-3">Books</h1>
@@ -149,8 +168,8 @@ class Shelves extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {items.map((item, index) => {
-                        const book = item.book;
+                      {shelfItems.map((shelfItem, index) => {
+                        const book = shelfItem.book;
                         const author = book.author;
 
                         return (
@@ -173,7 +192,7 @@ class Shelves extends Component {
                             <td className="text-nowrap">
                               <Stars rating={0} />
                             </td>
-                            <td>{item.created_at}</td>
+                            <td>{shelfItem.created_at}</td>
                             <td>
                               <Form
                                 action="/"
@@ -196,8 +215,8 @@ class Shelves extends Component {
                   </Table>
 
                   <div className="d-md-none mb-3">
-                    {items.map((item, index) => {
-                      const book = item.book;
+                    {shelfItems.map((shelfItem, index) => {
+                      const book = shelfItem.book;
                       const author = book.author;
 
                       return (
@@ -233,7 +252,7 @@ class Shelves extends Component {
                               <span className="text-secondary">
                                 Date Added:
                               </span>{' '}
-                              {item.created_at}
+                              {shelfItem.created_at}
                             </p>
                             <Form
                               action="/"
@@ -254,10 +273,9 @@ class Shelves extends Component {
                     })}
                   </div>
                   <Pagination
-                    totalPages={totalPages}
-                    limit={perPage}
-                    currentPage={currentPage}
-                    url={`/shelves/${shelfId}?page=`}
+                    totalPages={this.calcTotalPages()}
+                    currentPage={this.getCurrentPage()}
+                    url={`${this.props.location.pathname}?page=`}
                     className="justify-content-center pagination-warning"
                   />
                 </>
@@ -271,7 +289,6 @@ class Shelves extends Component {
 }
 
 Shelves.propTypes = {
-  shelves: PropTypes.array.isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired
   }).isRequired,
@@ -282,8 +299,4 @@ Shelves.propTypes = {
   }).isRequired
 };
 
-const mapStateToProps = ({ shelves }) => ({
-  shelves
-});
-
-export default connect(mapStateToProps)(Shelves);
+export default Shelves;
