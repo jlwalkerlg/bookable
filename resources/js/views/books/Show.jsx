@@ -138,10 +138,8 @@ class Show extends Component {
   }
 
   inCart(bookId) {
-    const { cart_items } = this.props.cart;
-    return (
-      cart_items && !!cart_items.filter(item => item.book_id === bookId).length
-    );
+    const { items } = this.props.cart;
+    return items && !!items.filter(item => item.book_id === bookId).length;
   }
 
   getItemFromShelf(shelf) {

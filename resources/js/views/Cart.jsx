@@ -39,7 +39,7 @@ class Cart extends Component {
               </Col>
               <Col md={3} aria-hidden="true" />
             </Row>
-            {cart.cart_items.map((item, index) => {
+            {cart.items.map((item, index) => {
               const book = item.book;
 
               return (
@@ -93,7 +93,7 @@ class Cart extends Component {
             })}
           </div>
           <div className="d-md-none">
-            {cart.cart_items.map((item, index) => {
+            {cart.items.map((item, index) => {
               const book = item.book;
 
               return (
@@ -150,7 +150,7 @@ class Cart extends Component {
               <Card.Text>
                 Total items:{' '}
                 <span className="font-weight-bold">
-                  {cart.cart_items.reduce(
+                  {cart.items.reduce(
                     (prev, current) => prev + current.quantity,
                     0
                   )}
@@ -164,7 +164,7 @@ class Cart extends Component {
                 Subtotal:{' '}
                 <span className="font-weight-bold">
                   £
-                  {cart.cart_items
+                  {cart.items
                     .reduce((prev, current) => prev + current.book.price, 0)
                     .toFixed(2)}
                 </span>

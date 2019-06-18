@@ -9,14 +9,14 @@ class Cart extends Model
 {
     protected $table = 'carts';
 
-    public function cartItems()
+    public function items()
     {
         return $this->hasMany('App\CartItem');
     }
 
     public function addItem(Request $request)
     {
-        return $this->cartItems()->create([
+        return $this->items()->create([
             'book_id' => $request->post('book_id'),
             'quantity' => $request->post('quantity')
         ]);
