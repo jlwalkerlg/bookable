@@ -11,6 +11,11 @@ class ShelfItemsController extends Controller
     public function index(Request $request, Shelf $shelf = null)
     {
         $shelfItems = $shelf ? $shelf->shelfItems() : $request->user()->shelfItems();
+
+        if ($bookId = $request->input('book_id')) {
+            $shelfItems->where('book_id', $bookId);
+        }
+
         $count = (clone $shelfItems)->count();
 
         if ($limit = $request->input('limit')) {

@@ -55,25 +55,24 @@ class Show extends Component {
     loading: true,
     book: null,
     quantity: 1,
-    review: {
-      rating: 0,
-      review: ''
-    },
-    editReview: false
+    shelves: null,
+    shelfItems: null
   };
 
   async componentDidMount() {
     const book = await this.fetchBook();
-    const review = this.getUserReview(book) || this.state.review;
-    this.setState({ book, review, loading: false });
+    const shelves = await this.fetchShelves();
+    const shelfItems = await this.fetchShelfItems();
+    this.setState({ book, shelves, shelfItems, loading: false });
   }
 
   async componentDidUpdate(prevProps) {
     if (prevProps.match.params.id !== this.props.match.params.id) {
       this.setState({ loading: true });
       const book = await this.fetchBook();
-      const review = this.getUserReview(book) || { rating: 0, review: '' };
-      this.setState({ book, review, loading: false });
+      const shelves = await this.fetchShelves();
+      const shelfItems = await this.fetchShelfItems();
+      this.setState({ book, shelves, shelfItems, loading: false });
     }
   }
 
@@ -81,61 +80,34 @@ class Show extends Component {
     const bookId = this.props.match.params.id;
     try {
       const result = await axios.get(`/api/books/${bookId}`);
-      const book = result.data;
-      return book;
+      return result.data;
     } catch (err) {
       console.log(err);
     }
   }
 
-  getUserReview(book) {
-    const { user } = this.props;
-    return book.reviews.filter(review => review.user_id === user.id)[0];
+  async fetchShelves() {
+    try {
+      const response = await axios.get('/api/shelves');
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async fetchShelfItems() {
+    const bookId = this.props.match.params.id;
+    try {
+      const response = await axios.get(`/api/shelf-items?book_id=${bookId}`);
+      return response.data.shelfItems;
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   changeQuantity = e => {
     const quantity = parseInt(e.target.value);
     this.setState({ quantity });
-  };
-
-  handleRatingChange = e => {
-    const rating = 5 - parseInt(e.target.dataset.index);
-    if (rating === this.state.rating) {
-      this.setState({ review: { ...this.state.review, rating: 0 } });
-    } else {
-      this.setState({ review: { ...this.state.review, rating } });
-    }
-  };
-
-  handleReviewChange = e => {
-    const review = e.target.value;
-    this.setState({ review: { ...this.state.review, review } });
-  };
-
-  handleReviewSubmit = async e => {
-    e.preventDefault();
-    const { review, book } = this.state;
-    const params = { ...review, book_id: book.id };
-    try {
-      const response = review.id
-        ? await axios.patch(`/api/reviews/${review.id}`, params)
-        : await axios.post(`/api/reviews`, params);
-      const newReview = response.data;
-      const reviews = [newReview, ...book.reviews];
-      const newBook = {
-        ...book,
-        ratings_count: review.id ? book.ratings_count : book.ratings_count + 1,
-        ratings_sum: book.rating_sum - review.rating + newReview.rating,
-        reviews
-      };
-      this.setState({
-        book: newBook,
-        review: newReview,
-        editReview: false
-      });
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   addToWishlist(e, book) {
@@ -171,12 +143,13 @@ class Show extends Component {
     );
   }
 
-  toggleEditReview = () =>
-    this.setState({ editReview: !this.state.editReview });
+  getItemFromShelf(shelf) {
+    const { shelfItems } = this.state;
+    return shelfItems.filter(item => item.shelf_id === shelf.id)[0];
+  }
 
   render() {
-    const { loading, book, quantity, review, editReview } = this.state;
-    const { user } = this.props;
+    const { loading, book, quantity, shelves } = this.state;
 
     if (loading)
       return (
@@ -186,6 +159,7 @@ class Show extends Component {
       );
 
     const { author } = book;
+    const { user } = this.props;
 
     const inWishlist = this.inWishlist(book.id);
     const inCart = this.inCart(book.id);
@@ -221,106 +195,117 @@ class Show extends Component {
                   <Link to="/category/1">Adventure</Link>
                 </p>
                 <p className="font-weight-bold h2 mb-4">£{book.price}</p>
-                {/* Add To Cart */}
-                <Form
-                  action="/"
-                  method="POST"
-                  className="mb-3"
-                  onSubmit={
-                    inCart
-                      ? e => this.removeFromCart(e, book)
-                      : e => this.addToCart(e, book)
-                  }
-                >
-                  {/* Quantity */}
-                  {!inCart && (
-                    <div className="d-inline-block mr-3">
-                      <Form.Group controlId="quantity">
-                        <Form.Label className="text-description mb-0 d-inline-block mb-2">
-                          Quantity:
-                        </Form.Label>
-                        <Form.Control
-                          type="number"
-                          className="rounded-pill bg-transparent w-auto"
-                          value={quantity}
-                          min="1"
-                          onChange={this.changeQuantity}
-                          size="sm"
-                        />
-                      </Form.Group>
-                    </div>
-                  )}
-                  {/* Submit button */}
-                  <div className="d-inline-block">
-                    <Button
-                      variant="warning"
-                      type="submit"
-                      className="rounded-pill"
+                {user.id && (
+                  <>
+                    {/* Add To Cart */}
+                    <Form
+                      action="/"
+                      method="POST"
+                      className="mb-3"
+                      onSubmit={
+                        inCart
+                          ? e => this.removeFromCart(e, book)
+                          : e => this.addToCart(e, book)
+                      }
                     >
-                      <i className="material-icons align-top mr-1">
-                        {inCart ? 'remove_shopping_cart' : 'add_shopping_cart'}
-                      </i>
-                      {inCart ? 'Remove From Cart' : 'Add To Cart'}
-                    </Button>
-                  </div>
-                </Form>
-                {/* Add To Wishlist */}
-                <Form
-                  action="/"
-                  method="POST"
-                  onSubmit={
-                    inWishlist
-                      ? e => this.removeFromWishlist(e, book.id)
-                      : e => this.addToWishlist(e, book)
-                  }
-                  className="mb-3"
-                >
-                  <Button
-                    variant="link"
-                    type="submit"
-                    className="link-secondary pl-0"
-                  >
-                    <i className="material-icons text-danger align-top mr-1">
-                      {inWishlist ? 'favorite' : 'favorite_border'}
-                    </i>
-                    {inWishlist ? 'Remove From Wishlist' : 'Add To Wishlist'}
-                  </Button>
-                </Form>
-                {/* Add To Shelf */}
-                <Dropdown>
-                  <Dropdown.Toggle variant="info" id="addToShelf">
-                    Add To Shelf
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu>
-                    {[].map((shelf, index) => {
-                      const item = this.getItemFromShelf(shelf.id, book.id);
-
-                      return (
-                        <Form
-                          key={index}
-                          action={`/api/shelves/${shelf.id}/shelf-items`}
-                          method="POST"
-                          onSubmit={
-                            item
-                              ? e => this.removeFromShelf(e, shelf, item)
-                              : e => this.addToShelf(e, shelf, book)
-                          }
+                      {/* Quantity */}
+                      {!inCart && (
+                        <div className="d-inline-block mr-3">
+                          <Form.Group controlId="quantity">
+                            <Form.Label className="text-description mb-0 d-inline-block mb-2">
+                              Quantity:
+                            </Form.Label>
+                            <Form.Control
+                              type="number"
+                              className="rounded-pill bg-transparent w-auto"
+                              value={quantity}
+                              min="1"
+                              onChange={this.changeQuantity}
+                              size="sm"
+                            />
+                          </Form.Group>
+                        </div>
+                      )}
+                      {/* Submit button */}
+                      <div className="d-inline-block">
+                        <Button
+                          variant="warning"
+                          type="submit"
+                          className="rounded-pill"
                         >
-                          <Dropdown.Item
-                            as="button"
-                            className="d-flex justify-content-between align-items-center"
-                          >
-                            {shelf.name}
-                            <i className="material-icons">
-                              {item ? 'check_box' : 'check_box_outline_blank'}
-                            </i>
-                          </Dropdown.Item>
-                        </Form>
-                      );
-                    })}
-                  </Dropdown.Menu>
-                </Dropdown>
+                          <i className="material-icons align-top mr-1">
+                            {inCart
+                              ? 'remove_shopping_cart'
+                              : 'add_shopping_cart'}
+                          </i>
+                          {inCart ? 'Remove From Cart' : 'Add To Cart'}
+                        </Button>
+                      </div>
+                    </Form>
+                    {/* Add To Wishlist */}
+                    <Form
+                      action="/"
+                      method="POST"
+                      onSubmit={
+                        inWishlist
+                          ? e => this.removeFromWishlist(e, book.id)
+                          : e => this.addToWishlist(e, book)
+                      }
+                      className="mb-3"
+                    >
+                      <Button
+                        variant="link"
+                        type="submit"
+                        className="link-secondary pl-0"
+                      >
+                        <i className="material-icons text-danger align-top mr-1">
+                          {inWishlist ? 'favorite' : 'favorite_border'}
+                        </i>
+                        {inWishlist
+                          ? 'Remove From Wishlist'
+                          : 'Add To Wishlist'}
+                      </Button>
+                    </Form>
+                    {/* Add To Shelf */}
+                    <Dropdown>
+                      <Dropdown.Toggle variant="info" id="addToShelf">
+                        Add To Shelf
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        {shelves.map((shelf, index) => {
+                          const shelfItem = this.getItemFromShelf(shelf);
+
+                          return (
+                            <Form
+                              key={index}
+                              action={`/api/shelves/${shelf.id}/shelf-items`}
+                              method="POST"
+                              onSubmit={
+                                shelfItem
+                                  ? e =>
+                                      this.removeFromShelf(e, shelf, shelfItem)
+                                  : e => this.addToShelf(e, shelf, book)
+                              }
+                            >
+                              <Dropdown.Item
+                                as="button"
+                                className="d-flex justify-content-between align-items-center"
+                              >
+                                {shelf.name}
+                                <i className="material-icons">
+                                  {shelfItem
+                                    ? 'check_box'
+                                    : 'check_box_outline_blank'}
+                                </i>
+                              </Dropdown.Item>
+                            </Form>
+                          );
+                        })}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </>
+                )}
               </Col>
             </Row>
           </Container>
@@ -469,118 +454,6 @@ class Show extends Component {
             </Slider>
           </Container>
         </article>
-        {/* Reviews */}
-        <article id="reviews" className="section">
-          <Container>
-            <h3 className="text-uppercase mb-3 h6">Reviews</h3>
-            <section className="mb-5">
-              {(!review.id || editReview) && (
-                <Form onSubmit={this.handleReviewSubmit}>
-                  <Form.Group>
-                    <Form.Label>Your rating:</Form.Label>{' '}
-                    <Stars
-                      rating={review.rating}
-                      editable
-                      onClick={this.handleRatingChange}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="review">
-                    <Form.Label srOnly>Your review</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows="3"
-                      placeholder="Write a review for this book..."
-                      value={review.review}
-                      onChange={this.handleReviewChange}
-                      className="placeholder-inherit"
-                    />
-                  </Form.Group>
-                  <Button
-                    variant={review.id ? 'info' : 'warning'}
-                    type="submit"
-                    className="rounded-pill d-inline-block"
-                  >
-                    {review.id ? 'Edit Review' : 'Submit Review'}
-                  </Button>
-                  {editReview && (
-                    <Button
-                      variant="link"
-                      className="ml-3 d-inline-block"
-                      onClick={this.toggleEditReview}
-                    >
-                      Cancel
-                    </Button>
-                  )}
-                </Form>
-              )}
-              {review.id && !editReview && (
-                <div>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <p className="text-secondary">Your review:</p>
-                    <Button
-                      variant="outline-info"
-                      size="sm"
-                      onClick={this.toggleEditReview}
-                    >
-                      Edit Review
-                    </Button>
-                  </div>
-                  <Media>
-                    <img
-                      src="https://via.placeholder.com/150/92c952"
-                      alt={`${user.name} profile picture`}
-                      width="70"
-                      height="70"
-                      className="mr-3"
-                    />
-                    <Media.Body>
-                      <div className="d-md-flex">
-                        <p className="mb-2 mr-auto">
-                          <span className="h6 mr-2 d-block d-md-inline-block">
-                            {user.name}
-                          </span>
-                          <span className="mr-2">rated it</span>
-                          <Stars rating={review.rating || 0} />
-                        </p>
-                        <p className="text-secondary">{review.created_at}</p>
-                      </div>
-                      <p>{review.review}</p>
-                    </Media.Body>
-                  </Media>
-                  <hr />
-                </div>
-              )}
-            </section>
-            <section>
-              {book.reviews
-                .filter(review => review.user_id !== user.id)
-                .map((review, index) => (
-                  <Media key={index}>
-                    <img
-                      src="https://via.placeholder.com/150/92c952"
-                      alt={`${review.user.name} profile picture`}
-                      width="70"
-                      height="70"
-                      className="mr-3"
-                    />
-                    <Media.Body>
-                      <div className="d-md-flex">
-                        <p className="mb-2 mr-auto">
-                          <span className="h6 mr-2 d-block d-md-inline-block">
-                            {review.user.name}
-                          </span>
-                          <span className="mr-2">rated it</span>
-                          <Stars rating={review.rating || 0} />
-                        </p>
-                        <p className="text-secondary">{review.created_at}</p>
-                      </div>
-                      <p>{review.review}</p>
-                    </Media.Body>
-                  </Media>
-                ))}
-            </section>
-          </Container>
-        </article>
       </main>
     );
   }
@@ -594,8 +467,6 @@ Show.propTypes = {
   removeFromWishlist: PropTypes.func.isRequired,
   addToCart: PropTypes.func.isRequired,
   removeFromCart: PropTypes.func.isRequired,
-  addToShelf: PropTypes.func.isRequired,
-  removeFromShelf: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       id: PropTypes.string.isRequired
@@ -606,17 +477,14 @@ Show.propTypes = {
 const mapStateToProps = ({ user, wishlist, cart }) => ({
   user,
   wishlist,
-  cart,
-  shelves
+  cart
 });
 
 const mapDispatchToProps = {
   addToWishlist,
   removeFromWishlist,
   addToCart,
-  removeFromCart,
-  addToShelf,
-  removeFromShelf
+  removeFromCart
 };
 
 export default connect(

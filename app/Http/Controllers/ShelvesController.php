@@ -8,6 +8,8 @@ class ShelvesController extends Controller
 {
     public function index(Request $request)
     {
-        return $request->user()->shelves;
+        $shelves = $request->user()->shelves();
+
+        return $shelves->get();
     }
 }

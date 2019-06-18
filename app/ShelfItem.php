@@ -14,4 +14,9 @@ class ShelfItem extends Model
     {
         return $this->belongsTo('App\Book');
     }
+
+    public function shelf()
+    {
+        return $this->belongsTo('App\Shelf');
+    }
 }
