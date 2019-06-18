@@ -72,7 +72,6 @@ class Shelves extends Component {
         ? `/api/shelves/${shelfId}/shelf-items`
         : '/api/shelves/shelf-items';
       const response = await axios.get(url, { params });
-      console.log(response);
       return response.data;
     } catch (error) {
       console.log(error);
@@ -91,13 +90,8 @@ class Shelves extends Component {
     );
   }
 
-  calcTotalPages() {
-    const { count, limit } = this.state;
-    return Math.ceil(count / limit);
-  }
-
   render() {
-    const { loading, shelves, shelfItems } = this.state;
+    const { loading, shelves, shelfItems, count, limit } = this.state;
 
     return (
       <div className="section">
@@ -273,8 +267,10 @@ class Shelves extends Component {
                     })}
                   </div>
                   <Pagination
-                    totalPages={this.calcTotalPages()}
+                    totalItems={count}
                     currentPage={this.getCurrentPage()}
+                    pageSize={limit}
+                    maxPages={5}
                     url={`${this.props.location.pathname}?page=`}
                     className="justify-content-center pagination-warning"
                   />

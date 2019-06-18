@@ -114,10 +114,11 @@ class Books extends Component {
       filterOpen,
       queryParams,
       books,
-      totalPages,
+      totalBooks,
       page,
       loading
     } = this.state;
+    const { limit } = queryParams;
 
     return (
       <main className="section">
@@ -316,8 +317,9 @@ class Books extends Component {
                     ))}
                   </div>
                   <Pagination
-                    totalPages={totalPages}
+                    totalItems={totalBooks}
                     currentPage={page}
+                    pageSize={limit}
                     url="/books?page="
                     className="justify-content-center pagination-warning"
                   />

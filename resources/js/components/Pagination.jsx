@@ -2,23 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Pagination } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import paginate from 'jw-paginate';
 
 const MyPagination = ({
-  totalPages,
-  limit = 5,
+  totalItems,
   currentPage,
+  pageSize,
+  maxPages,
   url,
   className
 }) => {
-  limit = limit < totalPages - 1 ? limit : totalPages;
-
-  const pages = [1];
-  for (let i = 2; i <= limit; i++) {
-    pages.push(i);
-  }
+  const pagination = paginate(totalItems, currentPage, pageSize, maxPages);
+  const { pages, totalPages } = pagination;
 
   return (
     <Pagination className={className}>
+      {pages[0] > 1 && (
+        <>
+          <Pagination.Item as={Link} href={url + '1'} to={url + '1'}>
+            1
+          </Pagination.Item>
+          <Pagination.Ellipsis disabled />
+        </>
+      )}
       {pages.map((page, index) => (
         <Pagination.Item
           key={index}
@@ -30,7 +36,7 @@ const MyPagination = ({
           {page}
         </Pagination.Item>
       ))}
-      {limit < totalPages && (
+      {pages[pages.length - 1] < totalPages && (
         <>
           <Pagination.Ellipsis disabled />
           <Pagination.Item
@@ -47,9 +53,10 @@ const MyPagination = ({
 };
 
 MyPagination.propTypes = {
-  totalPages: PropTypes.number.isRequired,
-  limit: PropTypes.number,
+  totalItems: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
+  pageSize: PropTypes.number,
+  maxPages: PropTypes.number,
   url: PropTypes.string.isRequired,
   className: PropTypes.string
 };
