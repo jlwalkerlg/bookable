@@ -31,7 +31,12 @@ Route::delete('/carts/{cart}/items/{item}', 'CartItemsController@delete')->middl
 Route::get('/users/{user}/shelves', 'ShelvesController@index');
 Route::get('/users/{user}/shelves/items', 'ShelfItemsController@index');
 Route::get('/users/{user}/shelves/{shelf}/items', 'ShelfItemsController@index');
-
 Route::post('/shelves/{shelf}/items', 'ShelfItemsController@store')->middleware('can:update,shelf');
 Route::delete('/shelves/{shelf}/items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item,shelf');
 Route::delete('/shelves/{shelf}/items', 'ShelfItemsController@delete')->middleware('can:update,shelf');
+
+Route::get('/users/{user}/ratings', 'RatingsController@index');
+Route::get('/ratings', 'RatingsController@index');
+Route::post('/users/{user}/ratings', 'RatingsController@store')->middleware('can:update,user');
+Route::patch('/ratings/{rating}', 'RatingsController@update')->middleware('can:update,rating');
+Route::delete('/ratings/{rating}', 'RatingsController@destroy')->middleware('can:update,rating');

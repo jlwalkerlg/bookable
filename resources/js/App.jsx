@@ -17,6 +17,7 @@ import CategoriesShow from './views/categories/Show';
 import Wishlist from './views/Wishlist';
 import Cart from './views/Cart';
 import Shelves from './views/Shelves';
+import Ratings from './views/Ratings';
 
 const App = ({ loading }) =>
   loading ? (
@@ -49,6 +50,11 @@ const App = ({ loading }) =>
           exact
           path="/users/:userId([0-9]+)/shelves/:shelfId([0-9]+)"
           component={Shelves}
+        />
+        <AppRoute
+          exact
+          path="/users/:userId([0-9]+)/ratings"
+          component={Ratings}
         />
         <Route component={NotFound} />
       </Switch>

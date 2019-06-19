@@ -1,7 +1,6 @@
 import { USER_LOGIN, USER_LOGOUT } from './types';
 import { hydrateWishlist } from './wishlist';
 import { hydrateCart } from './cart';
-import { hydrateShelves } from './shelves';
 import axios from 'axios';
 
 const loginUser = user => ({
@@ -29,10 +28,9 @@ export const oauthLogin = () => dispatch =>
   axios
     .get('/api/user')
     .then(response => {
-      const { wishlist, cart, shelves, ...user } = response.data;
+      const { wishlist, cart, ...user } = response.data;
       dispatch(loginUser(user));
       dispatch(hydrateWishlist(wishlist));
       dispatch(hydrateCart(cart));
-      dispatch(hydrateShelves(shelves));
     })
     .catch(error => error);
