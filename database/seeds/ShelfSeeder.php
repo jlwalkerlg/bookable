@@ -3,6 +3,8 @@
 use Illuminate\Database\Seeder;
 use App\Shelf;
 use App\ShelfItem;
+use App\Book;
+use App\User;
 
 class ShelfSeeder extends Seeder
 {
@@ -13,45 +15,47 @@ class ShelfSeeder extends Seeder
      */
     public function run()
     {
-        Shelf::create([
-            'id' => 1,
-            'name' => 'Read',
-            'user_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $bookIds = Book::select('id')->inRandomOrder()->get()->map(function ($book) {
+            return $book->id;
+        });
+        $userIds = User::select('id')->inRandomOrder()->get()->map(function ($user) {
+            return $user->id;
+        });
 
-        Shelf::create([
-            'id' => 2,
-            'name' => 'To Read',
-            'user_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        foreach ($userIds as $userId) {
+            $readShelf = Shelf::create([
+                'name' => 'Read',
+                'user_id' => $userId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $toReadShelf = Shelf::create([
+                'name' => 'To Read',
+                'user_id' => $userId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
-        $readIds = [320, 656, 1934, 1, 5, 6, 890, 2657];
-        $toReadIds = [3636, 8127, 7604, 3836, 4214, 4671];
-
-        ShelfItem::insert(
-            array_map(function ($bookId) {
-                return [
-                    'book_id' => $bookId,
-                    'shelf_id' => 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $readIds)
-        );
-
-        ShelfItem::insert(
-            array_map(function ($bookId) {
-                return [
-                    'book_id' => $bookId,
-                    'shelf_id' => 2,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $toReadIds)
-        );
+            ShelfItem::insert(
+                $bookIds->random(30)->map(function ($bookId) use ($readShelf) {
+                    return [
+                        'book_id' => $bookId,
+                        'shelf_id' => $readShelf->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->all()
+            );
+            ShelfItem::insert(
+                $bookIds->random(30)->map(function ($bookId) use ($toReadShelf) {
+                    return [
+                        'book_id' => $bookId,
+                        'shelf_id' => $toReadShelf->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->all()
+            );
+        }
     }
 }

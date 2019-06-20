@@ -3,6 +3,8 @@
 use Illuminate\Database\Seeder;
 use App\WishlistItem;
 use App\Wishlist;
+use App\Book;
+use App\User;
 
 class WishlistSeeder extends Seeder
 {
@@ -13,19 +15,26 @@ class WishlistSeeder extends Seeder
      */
     public function run()
     {
-        $wishlist = Wishlist::create(['user_id' => 1]);
+        $bookIds = Book::select('id')->inRandomOrder()->get()->map(function ($book) {
+            return $book->id;
+        });
+        $userIds = User::select('id')->inRandomOrder()->get()->map(function ($user) {
+            return $user->id;
+        });
 
-        $book_ids = [1381, 2956, 3836, 52036];
+        foreach ($userIds as $userId) {
+            $wishlist = Wishlist::create(['user_id' => $userId]);
 
-        WishlistItem::insert(
-            array_map(function ($book_id) use ($wishlist) {
-                return [
-                    'book_id' => $book_id,
-                    'wishlist_id' => $wishlist->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $book_ids)
-        );
+            WishlistItem::insert(
+                $bookIds->random(30)->map(function ($bookId) use ($wishlist) {
+                    return [
+                        'book_id' => $bookId,
+                        'wishlist_id' => $wishlist->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->all()
+            );
+        }
     }
 }

@@ -14,6 +14,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         User::create([
+            'id' => 1,
             'name' => 'Jordan Walker',
             'email' => 'walker.jlg@gmail.com',
             'email_verified_at' => now(),
@@ -21,6 +22,6 @@ class UsersTableSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        factory('App\User', 5)->create();
+        factory('App\User', 4)->create();
     }
 }

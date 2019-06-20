@@ -2,7 +2,8 @@
 
 use Illuminate\Database\Seeder;
 use App\Rating;
-use Illuminate\Support\Facades\DB;
+use App\Book;
+use App\User;
 
 class RatingsSeeder extends Seeder
 {
@@ -13,57 +14,25 @@ class RatingsSeeder extends Seeder
      */
     public function run()
     {
-        $book_ids = [
-            18405,
-            656,
-            233093,
-            890,
-            1381,
-            7126,
-            1420,
-            157993,
-            41865,
-            6,
-            33574273,
-            46787,
-            5297,
-            2657,
-            15881,
-            3636,
-            14891,
-            19063,
-            39988,
-            17245,
-            6185,
-            1617,
-            323355,
-            18135,
-            2998,
-            1923820,
-            24178,
-            24280,
-            2767052,
-            5326,
-        ];
+        $bookIds = Book::select('id')->inRandomOrder()->get()->map(function ($book) {
+            return $book->id;
+        });
+        $userIds = User::select('id')->inRandomOrder()->get()->map(function ($user) {
+            return $user->id;
+        });
 
-        Rating::insert(array_map(function ($book_id) {
-            return [
-                'rating' => DB::raw('CEIL(RAND() * 5)'),
-                'book_id' => $book_id,
-                'user_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }, $book_ids));
-
-        Rating::insert(array_map(function ($book_id) {
-            return [
-                'rating' => DB::raw('CEIL(RAND() * 5)'),
-                'book_id' => $book_id,
-                'user_id' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }, $book_ids));
+        foreach ($userIds as $userId) {
+            Rating::insert(
+                $bookIds->random(30)->map(function ($bookId) use ($userId) {
+                    return [
+                        'rating' => rand(1, 5),
+                        'book_id' => $bookId,
+                        'user_id' => $userId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->all()
+            );
+        }
     }
 }

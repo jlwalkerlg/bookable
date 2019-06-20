@@ -3,6 +3,8 @@
 use Illuminate\Database\Seeder;
 use App\Cart;
 use App\CartItem;
+use App\Book;
+use App\User;
 
 class CartSeeder extends Seeder
 {
@@ -13,20 +15,27 @@ class CartSeeder extends Seeder
      */
     public function run()
     {
-        $book_ids = [7144, 168668, 157993];
+        $bookIds = Book::select('id')->inRandomOrder()->get()->map(function ($book) {
+            return $book->id;
+        });
+        $userIds = User::select('id')->inRandomOrder()->get()->map(function ($user) {
+            return $user->id;
+        });
 
-        Cart::create(['id' => 1, 'user_id' => 1]);
+        foreach ($userIds as $userId) {
+            $cart = Cart::create(['user_id' => $userId]);
 
-        CartItem::insert(
-            array_map(function ($book_id) {
-                return [
-                    'quantity' => rand(1, 3),
-                    'cart_id' => 1,
-                    'book_id' => $book_id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, $book_ids)
-        );
+            CartItem::insert(
+                $bookIds->random(30)->map(function ($bookId) use ($cart) {
+                    return [
+                        'quantity' => rand(1, 3),
+                        'book_id' => $bookId,
+                        'cart_id' => $cart->id,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                })->all()
+            );
+        }
     }
 }
