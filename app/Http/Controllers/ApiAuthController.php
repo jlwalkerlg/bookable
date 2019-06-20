@@ -20,13 +20,13 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('BookOn Personal Access Client')->accessToken;
 
-        return response($token)->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
+        return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
     }
 
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
-        return response(['message' => 'You have been successfully logged out!'])->cookie('laravel_token', null, -1);
+        return response()->json(['message' => 'You have been successfully logged out!'])->cookie('laravel_token', null, -1);
     }
 
     public function register(Request $request)
@@ -42,6 +42,6 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('BookOn Personal Access Client')->accessToken;
 
-        return response($token)->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
+        return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
     }
 }
