@@ -8,6 +8,6 @@ class AuthorsController extends Controller
 {
     public function show(Author $author)
     {
-        return $author->load('books');
+        return $author;
     }
 }

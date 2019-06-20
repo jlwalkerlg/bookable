@@ -9,13 +9,37 @@ use App\WishlistItem;
 
 class WishlistItemsController extends Controller
 {
-    public function store(Request $request, Wishlist $wishlist)
+    public function index(Request $request, Wishlist $wishlist)
     {
-        $book = Book::findOrFail($request->post('book_id'));
-        return $wishlist->addBook($book)->load('book.author');
+        $query = $wishlist->items();
+
+        $count = $request->has('count') ? (clone $query)->count() : null;
+
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
+
+        $items = $query->get();
+
+        return $count ? compact('itms', 'count') : compact('itms');
     }
 
-    public function delete(Wishlist $wishlist, WishlistItem $item)
+    public function store(Request $request, Wishlist $wishlist)
+    {
+        $attributes = $request->validate([
+            'book_id' => 'required|int'
+        ]);
+
+        $item = $wishlist->items()->create($attributes);
+
+        if ($with = $request->input('with')) {
+            $item->load(explode(',', $with));
+        }
+
+        return $item;
+    }
+
+    public function destroy(Wishlist $wishlist, WishlistItem $item)
     {
         $item->delete();
         return response(null, 204);

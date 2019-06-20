@@ -15,4 +15,9 @@ class Rating extends Model
     {
         return $this->belongsTo('App\Book');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

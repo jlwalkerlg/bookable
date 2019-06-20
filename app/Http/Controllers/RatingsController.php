@@ -8,9 +8,9 @@ use App\User;
 
 class RatingsController extends Controller
 {
-    public function index(Request $request, User $user = null)
+    public function index(Request $request)
     {
-        $query = $user ? $user->ratings() : Rating::query();
+        $query = Rating::query();
 
         if ($userId = $request->input('user_id')) {
             $query->where('user_id', $userId);
@@ -24,7 +24,7 @@ class RatingsController extends Controller
             $query->whereIn('book_id', explode(',', $bookIds));
         }
 
-        $count = (clone $query)->count();
+        $count = $request->has('count') ? (clone $query)->count() : null;
 
         if ($limit = $request->input('limit')) {
             $query->limit($limit);
@@ -39,14 +39,24 @@ class RatingsController extends Controller
         }
 
         $ratings = $query->get();
-        $user = $user ? $user->only('id', 'name') : null;
 
-        return $user ? compact('user', 'ratings', 'count') : compact('ratings', 'count');
+        return $count ? compact('ratings', 'count') : compact('ratings');
     }
 
     public function store(Request $request, User $user)
     {
-        return $user->ratings()->create($request->only('rating', 'book_id'));
+        $attributes = $request->validate([
+            'rating' => 'required|int|min:1|max:5',
+            'book_id' => 'required|int'
+        ]);
+
+        $rating = $user->ratings()->create($attributes);
+
+        if ($with = $request->input('with')) {
+            $rating->load(explode(',', $with));
+        }
+
+        return $rating;
     }
 
     public function update(Request $request, Rating $rating)

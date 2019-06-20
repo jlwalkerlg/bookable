@@ -14,33 +14,33 @@ class BooksController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Book::select('books.*');
+        $query = Book::query();
 
         if ($minPrice = $request->get('min_price')) {
-            $query->where('books.price', '>=', $minPrice);
+            $query->where('price', '>=', $minPrice);
         }
 
         if ($maxPrice = $request->get('max_price')) {
-            $query->where('books.price', '<=', $maxPrice);
+            $query->where('price', '<=', $maxPrice);
         }
 
         if ($minDate = $request->get('min_date')) {
             $minDate = unixtojd((new \DateTime($minDate))->getTimestamp());
-            $query->where('books.publication_date', '>=', $minDate);
+            $query->where('publication_date', '>=', $minDate);
         }
 
         if ($maxDate = $request->get('max_date')) {
             $maxDate = unixtojd((new \DateTime($maxDate))->getTimestamp());
-            $query->where('books.publication_date', '<=', $maxDate);
+            $query->where('publication_date', '<=', $maxDate);
         }
 
         if ($minRating = $request->get('min_rating')) {
-            $col = DB::raw('books.ratings_sum/books.ratings_count');
+            $col = DB::raw('ratings_sum/ratings_count');
             $query->where($col, '>=', $minRating);
         }
 
         if ($maxRating = $request->get('max_rating')) {
-            $col = DB::raw('books.ratings_sum/books.ratings_count');
+            $col = DB::raw('ratings_sum/ratings_count');
             $query->where($col, '<=', $maxRating);
         }
 
@@ -48,7 +48,11 @@ class BooksController extends Controller
             $query->where('publisher', $publisher);
         }
 
-        $count = (clone $query)->count();
+        if ($authorId = $request->get('author_id')) {
+            $query->where('author_id', $authorId);
+        }
+
+        $count = $request->has('count') ? (clone $query)->count() : null;
 
         if ($limit = $request->get('limit')) {
             $query->limit($limit);
@@ -59,14 +63,19 @@ class BooksController extends Controller
         }
 
         if ($orderBy = $request->get('order_by')) {
-            [$column, $direction] = explode('_', $orderBy);
-            $column = $this->getOrderByColumn($column);
-            $query->orderBy($column, $direction);
+            if ($column = $this->getOrderByColumn($orderBy)) {
+                $direction = $this->getOrderByDirection($request->input('order_dir'));
+                $query->orderBy($column, $direction);
+            }
         }
 
-        $books = $query->with('author:id,name')->get();
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
 
-        return compact('books', 'count');
+        $books = $query->get();
+
+        return $count ? compact('books', 'count') : compact('books');
     }
 
     /**
@@ -75,23 +84,34 @@ class BooksController extends Controller
      */
     private function getOrderByColumn($column)
     {
-        $columnMap = [
-            'ratings' => 'books.ratings_count',
-            'price' => 'books.price',
-            'date' => 'books.publication_date',
-            'avgrating' => DB::raw('books.ratings_sum/books.ratings_count'),
+        $columns = [
+            'ratings_count' => 'ratings_count',
+            'price' => 'price',
+            'publication_date' => 'publication_date',
+            'avg_rating' => DB::raw('ratings_sum/ratings_count'),
             'random' => DB::raw('RAND()')
         ];
 
-        return $columnMap[$column] ?? $column;
+        return $columns[$column] ?? null;
+    }
+
+    private function getOrderByDirection($direction = null)
+    {
+        $directions = ['asc', 'desc'];
+        $direction = strtolower($direction ?? 'desc');
+        return in_array($direction, $directions) ? $direction : 'desc';
     }
 
     /**
      * Return data about a specific book.
      * @return array
      */
-    public function show(Book $book)
+    public function show(Request $request, Book $book)
     {
-        return $book->load('author.books');
+        if ($with = $request->input('with')) {
+            $book->load(explode(',', $with));
+        }
+
+        return $book;
     }
 }
