@@ -14,62 +14,51 @@ class BooksController extends Controller
      */
     public function index(Request $request)
     {
-        $limit = $request->get('limit');
-        $offset = $request->get('offset');
-        $orderBy = $request->get('order_by');
-        $minPrice = $request->get('min_price');
-        $maxPrice = $request->get('max_price');
-        $minDate = $request->get('min_date');
-        $maxDate = $request->get('max_date');
-        $minRating = $request->get('min_rating');
-        $maxRating = $request->get('max_rating');
-        $publisher = $request->get('publisher');
-
         $query = Book::select('books.*');
 
-        if ($minPrice) {
+        if ($minPrice = $request->get('min_price')) {
             $query->where('books.price', '>=', $minPrice);
         }
 
-        if ($maxPrice) {
+        if ($maxPrice = $request->get('max_price')) {
             $query->where('books.price', '<=', $maxPrice);
         }
 
-        if ($minDate) {
+        if ($minDate = $request->get('min_date')) {
             $minDate = unixtojd((new \DateTime($minDate))->getTimestamp());
             $query->where('books.publication_date', '>=', $minDate);
         }
 
-        if ($maxDate) {
+        if ($maxDate = $request->get('max_date')) {
             $maxDate = unixtojd((new \DateTime($maxDate))->getTimestamp());
             $query->where('books.publication_date', '<=', $maxDate);
         }
 
-        if ($minRating) {
+        if ($minRating = $request->get('min_rating')) {
             $col = DB::raw('books.ratings_sum/books.ratings_count');
             $query->where($col, '>=', $minRating);
         }
 
-        if ($maxRating) {
+        if ($maxRating = $request->get('max_rating')) {
             $col = DB::raw('books.ratings_sum/books.ratings_count');
             $query->where($col, '<=', $maxRating);
         }
 
-        if ($publisher) {
+        if ($publisher = $request->get('publisher')) {
             $query->where('publisher', $publisher);
         }
 
         $count = (clone $query)->count();
 
-        if ($limit) {
+        if ($limit = $request->get('limit')) {
             $query->limit($limit);
         }
 
-        if ($offset) {
+        if ($offset = $request->get('offset')) {
             $query->offset($offset);
         }
 
-        if ($orderBy) {
+        if ($orderBy = $request->get('order_by')) {
             [$column, $direction] = explode('_', $orderBy);
             $column = $this->getOrderByColumn($column);
             $query->orderBy($column, $direction);
