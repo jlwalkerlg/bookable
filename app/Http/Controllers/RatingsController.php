@@ -35,7 +35,7 @@ class RatingsController extends Controller
         }
 
         if ($with = $request->input('with')) {
-            $query->with(...explode(',', $with));
+            $query->with(explode(',', $with));
         }
 
         $ratings = $query->get();
