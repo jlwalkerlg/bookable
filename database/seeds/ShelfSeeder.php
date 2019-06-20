@@ -15,10 +15,10 @@ class ShelfSeeder extends Seeder
      */
     public function run()
     {
-        $bookIds = Book::select('id')->inRandomOrder()->get()->map(function ($book) {
+        $bookIds = Book::select('id')->get()->map(function ($book) {
             return $book->id;
         });
-        $userIds = User::select('id')->inRandomOrder()->get()->map(function ($user) {
+        $userIds = User::select('id')->orderBy('id', 'asc')->get()->map(function ($user) {
             return $user->id;
         });
 
