@@ -13,9 +13,11 @@ class Categories extends Component {
   async componentDidMount() {
     try {
       const response = await axios.get('/api/categories');
-      const categories = response.data.sort(
-        (a, b) => a.name.charCodeAt(0) - b.name.charCodeAt(0)
-      );
+      const categories = response.data.sort((a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+      });
       this.setState({ categories, loading: false });
     } catch (error) {
       console.log(error);
