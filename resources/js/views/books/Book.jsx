@@ -208,6 +208,8 @@ class Show extends Component {
     const inWishlist = this.inWishlist(book.id);
     const inCart = this.inCart(book.id);
 
+    const moreAuthorBooks = author.books.filter(item => item.id !== book.id);
+
     return (
       <main>
         {/* Header */}
@@ -481,13 +483,15 @@ class Show extends Component {
               <span>Other Books by</span>{' '}
               <Link to={`/authors/${author.id}`}>{author.name}</Link>
             </h2>
-            <Slider {...slickOptions} className="text-center">
-              {author.books
-                .filter(item => item.id !== book.id)
-                .map((item, index) => (
+            {moreAuthorBooks.length ? (
+              <Slider {...slickOptions} className="text-center">
+                {moreAuthorBooks.map((item, index) => (
                   <ProductCard key={index} book={item} />
                 ))}
-            </Slider>
+              </Slider>
+            ) : (
+              'No books to show.'
+            )}
           </Container>
         </article>
         {/* Similar books */}
