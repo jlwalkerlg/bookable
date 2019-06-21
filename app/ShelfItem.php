@@ -19,4 +19,9 @@ class ShelfItem extends Model
     {
         return $this->belongsTo('App\Shelf');
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return (new \DateTime($value))->format('d M Y');
+    }
 }

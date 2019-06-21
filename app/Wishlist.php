@@ -14,9 +14,4 @@ class Wishlist extends Model
     {
         return $this->hasMany('App\WishlistItem');
     }
-
-    public function addBook(Book $book)
-    {
-        return $this->items()->create(['book_id' => $book->id]);
-    }
 }

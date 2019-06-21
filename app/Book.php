@@ -35,17 +35,4 @@ class Book extends Model
     {
         return $this->hasMany('App\Review');
     }
-
-    public function addReview(Review $review)
-    {
-        $this->ratings_sum += $review->rating;
-        $this->ratings_count++;
-        return $this->save();
-    }
-
-    public function updateReview(Review $review, $newRating)
-    {
-        $this->ratings_sum += ($newRating - $review->rating);
-        return $this->save();
-    }
 }

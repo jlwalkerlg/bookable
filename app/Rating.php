@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class Rating extends Model
 {
@@ -19,5 +18,10 @@ class Rating extends Model
     public function user()
     {
         return $this->belongsTo('App\User');
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return (new \DateTime($value))->format('d M Y');
     }
 }

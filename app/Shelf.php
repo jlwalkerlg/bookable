@@ -15,11 +15,4 @@ class Shelf extends Model
     {
         return $this->hasMany('App\ShelfItem');
     }
-
-    public function addItem(Request $request)
-    {
-        return $this->items()->updateOrCreate([
-            'book_id' => $request->post('book_id')
-        ]);
-    }
 }
