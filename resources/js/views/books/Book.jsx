@@ -61,7 +61,6 @@ class Show extends Component {
 
   async componentDidMount() {
     const data = await this.fetchData();
-    console.log(data);
     this.setState({ ...data, loading: false });
   }
 

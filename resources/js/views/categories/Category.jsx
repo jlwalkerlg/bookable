@@ -1,26 +1,118 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Pagination, Form } from 'react-bootstrap';
-import TempProductCard from '../../components/TempProductCard';
+import axios from 'axios';
+import { Container, Row, Col, Form } from 'react-bootstrap';
+import ProductCard from '../../components/ProductCard';
+import Pagination from '../../components/Pagination';
+import Loading from '../../components/Loading';
+import URL from '../../utils/URL';
 
 class Show extends Component {
   state = {
-    inWishlist: false
+    loading: true,
+    category: null,
+    books: null,
+    count: null,
+    order_by: 'ratings_count',
+    order_dir: 'desc',
+    limit: 20
   };
 
-  toggleWishlist = e => {
-    e.preventDefault();
-    this.setState({ inWishlist: !this.state.inWishlist });
+  async componentDidMount() {
+    try {
+      await axios.all([this.fetchCategory(), this.fetchBooks()]);
+      this.setState({ loading: false });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async componentDidUpdate(prevProps) {
+    if (prevProps.location.search !== this.props.location.search) {
+      this.setState({ loading: true });
+      await this.fetchBooks();
+      this.setState({ loading: false });
+    }
+  }
+
+  async fetchCategory() {
+    const { categoryId } = this.props.match.params;
+    try {
+      const response = await axios.get(`/api/categories/${categoryId}`);
+      this.setState({ category: response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchBooks() {
+    const { categoryId } = this.props.match.params;
+    const { order_by, order_dir, limit } = this.state;
+    const offset = this.calcOffset();
+    try {
+      const response = await axios.get('/api/books', {
+        params: {
+          with: 'author',
+          category_id: categoryId,
+          limit,
+          offset,
+          order_by,
+          order_dir,
+          count: true
+        }
+      });
+      const { books, count } = response.data;
+      this.setState({ books, count });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  calcOffset() {
+    const page = this.getCurrentPage();
+    const { limit } = this.state;
+    return (page - 1) * limit;
+  }
+
+  getCurrentPage() {
+    return (
+      parseInt(URL.query(this.props.location.search).getParam('page')) || 1
+    );
+  }
+
+  handleSortChange = e => {
+    const [order_by, order_dir] = e.target.value.split('.');
+    this.setState({ order_by, order_dir, loading: true }, async () => {
+      await this.fetchBooks();
+      this.setState({ loading: false });
+    });
   };
 
   render() {
-    const { inWishlist } = this.state;
+    const {
+      loading,
+      category,
+      books,
+      count,
+      limit,
+      order_by,
+      order_dir
+    } = this.state;
+
+    if (loading)
+      return (
+        <div className="vh-100-nav">
+          <Loading />
+        </div>
+      );
+
+    const order = `${order_by}.${order_dir}`;
 
     return (
       <main>
         <header className="section category-head">
           <Container>
-            <h1 className="category-head__title">Philosophy</h1>
+            <h1 className="category-head__title">{category.name}</h1>
           </Container>
         </header>
         <div className="section">
@@ -29,7 +121,7 @@ class Show extends Component {
               <Col xs={12} md={8} className="mb-4 mb-md-0">
                 <div className="d-sm-flex justify-content-between align-items-center mb-3">
                   <h2 className="h5 mb-2 mb-sm-0 text-uppercase">
-                    Books in Philosophy
+                    Books in {category.name}
                   </h2>
                   <Form>
                     <Form.Group className="mb-0">
@@ -38,44 +130,49 @@ class Show extends Component {
                       </Form.Label>
                       <Form.Control
                         as="select"
+                        value={order}
+                        onChange={this.handleSortChange}
                         className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
                       >
-                        <option value="price_asc">Price (asc)</option>
-                        <option value="price_desc">Price (desc)</option>
+                        <option value="ratings_count.desc">
+                          Ratings (desc)
+                        </option>
+                        <option value="ratings_count.asc">Ratings (asc)</option>
+                        <option value="avg_rating.desc">
+                          Avg Rating (desc)
+                        </option>
+                        <option value="avg_rating.asc">Avg Rating (asc)</option>
+                        <option value="price.desc">Price (desc)</option>
+                        <option value="price.asc">Price (asc)</option>
+                        <option value="publication_date.desc">
+                          Date (desc)
+                        </option>
+                        <option value="publication_date.asc">Date (asc)</option>
                       </Form.Control>
                     </Form.Group>
                   </Form>
                 </div>
                 <div className="category-products mb-3">
-                  {new Array(20).fill(0).map((item, index) => (
-                    <TempProductCard
+                  {books.map((book, index) => (
+                    <ProductCard
                       key={index}
-                      image="https://images.gr-assets.com/books/1390173285l/1381.jpg"
-                      title="The Odyssey"
-                      author="Homer"
-                      price={10.0}
+                      book={book}
+                      size="large"
                       wishlistButton
-                      inWishlist={inWishlist}
-                      toggleWishlist={this.toggleWishlist}
                     />
                   ))}
                 </div>
-                <Pagination className="justify-content-center pagination-warning">
-                  {[1, 2, 3, 4].map((page, index) => (
-                    <Pagination.Item
-                      key={index}
-                      active={page === 1}
-                      className="text-dark"
-                    >
-                      {page}
-                    </Pagination.Item>
-                  ))}
-                  <Pagination.Ellipsis disabled />
-                  <Pagination.Item>20</Pagination.Item>
-                </Pagination>
+                <Pagination
+                  totalItems={count}
+                  currentPage={this.getCurrentPage()}
+                  pageSize={limit}
+                  maxPages={5}
+                  url={`${this.props.location.pathname}?page=`}
+                  className="justify-content-center pagination-warning"
+                />
               </Col>
               <Col xs={12} md={4}>
-                <h2 className="h5 text-uppercase">Quotes in Philosophy</h2>
+                <h2 className="h5 text-uppercase">Quotes in {category.name}</h2>
                 <ul className="list-unstyled">
                   <li className="quote mb-3">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.

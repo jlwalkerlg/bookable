@@ -24,19 +24,17 @@ class ProductCard extends Component {
   };
 
   render() {
-    const { book, className, wishlistButton, size } = this.props;
+    const { book, className, wishlistButton, size, user } = this.props;
     const { author } = book;
 
     const inWishlist = this.inWishlist();
+    const image =
+      book[(size ? `${size}_` : '') + 'image_url'] || book.image_url;
 
     return (
       <div className={`product-card ${className || ''}`}>
-        <img
-          src={book[(size ? `${size}_` : '') + 'image_url']}
-          alt={book.title}
-          className="product-card__img"
-        />
-        {wishlistButton && (
+        <img src={image} alt={book.title} className="product-card__img" />
+        {user.id && wishlistButton && (
           <Form
             action="/"
             method="POST"
@@ -77,6 +75,7 @@ class ProductCard extends Component {
 }
 
 ProductCard.propTypes = {
+  user: PropTypes.object.isRequired,
   wishlist: PropTypes.object.isRequired,
   addToWishlist: PropTypes.func.isRequired,
   removeFromWishlist: PropTypes.func.isRequired,
@@ -86,7 +85,8 @@ ProductCard.propTypes = {
   size: PropTypes.string
 };
 
-const mapStateToProps = ({ wishlist }) => ({
+const mapStateToProps = ({ user, wishlist }) => ({
+  user,
   wishlist
 });
 
