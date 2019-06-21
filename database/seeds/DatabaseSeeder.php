@@ -20,11 +20,12 @@ class DatabaseSeeder extends Seeder
         $this->call(CartSeeder::class);
         $this->call(ShelfSeeder::class);
         $this->call(RatingsSeeder::class);
+        $this->call(CategoriesSeeder::class);
     }
 
     private function truncateAll()
     {
-        $tables = ['wishlist_items', 'wishlists', 'cart_items', 'carts', 'shelf_items', 'shelves', 'ratings', 'users', 'books', 'authors'];
+        $tables = ['wishlist_items', 'wishlists', 'cart_items', 'carts', 'shelf_items', 'shelves', 'ratings', 'users', 'category_book', 'categories', 'books', 'authors'];
         foreach ($tables as $table) {
             DB::statement("DELETE FROM $table");
             DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1");
