@@ -11,30 +11,55 @@ import Stars from '../components/Stars';
 class Ratings extends Component {
   state = {
     loading: true,
-    rater: null,
+    user: null,
     ratings: null,
+    authUserRatings: null,
     count: null,
-    userRatings: null,
     limit: 10
   };
 
   async componentDidMount() {
-    const { user, ratings, count } = await this.fetchRatings();
-    const authUser = this.props.user;
-    const userRatings =
-      authUser.id === user.id
-        ? ratings
-        : await this.fetchUserRatings(ratings.map(rating => rating.book_id));
-    this.setState({ rater: user, ratings, count, userRatings, loading: false });
+    this.fetchRatings();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.location.search !== this.props.location.search) {
+      this.setState({ loading: true });
+      this.fetchRatings();
+    }
   }
 
   async fetchRatings() {
+    const { user, ratings, count } = await this.fetchUserRatings();
+
+    const isLoggedIn = !!this.props.user.id;
+    const areOwnRatings = this.props.user.id === user.id;
+
+    const userRatings = !areOwnRatings ? ratings : null;
+    const authUserRatings =
+      isLoggedIn &&
+      (areOwnRatings
+        ? ratings
+        : await this.fetchAuthUserRatings(
+            ratings.map(rating => rating.book_id)
+          ));
+
+    this.setState({
+      user,
+      ratings: userRatings,
+      count,
+      authUserRatings,
+      loading: false
+    });
+  }
+
+  async fetchUserRatings() {
     const { limit } = this.state;
     const { userId } = this.props.match.params;
     const offset = this.calcOffset();
     try {
       const response = await axios.get(`/api/users/${userId}/ratings`, {
-        params: { limit, offset, with: 'book.author' }
+        params: { limit, offset, count: true, with: 'book.author' }
       });
       return response.data;
     } catch (error) {
@@ -42,7 +67,7 @@ class Ratings extends Component {
     }
   }
 
-  async fetchUserRatings(bookIds) {
+  async fetchAuthUserRatings(bookIds) {
     const { user } = this.props;
     try {
       const response = await axios.get(`/api/ratings`, {
@@ -71,12 +96,12 @@ class Ratings extends Component {
     const rating = 5 - parseInt(e.target.dataset.index);
     const { user } = this.props;
     try {
-      const newRating = await axios.post(`/api/users/${user.id}/ratings`, {
+      const response = await axios.post(`/api/users/${user.id}/ratings`, {
         rating,
         book_id: book.id
       });
-      const userRatings = [...this.state.userRatings, newRating.data];
-      this.setState({ userRatings });
+      const authUserRatings = [...this.state.authUserRatings, response.data];
+      this.setState({ authUserRatings });
     } catch (error) {
       console.log(error);
     }
@@ -85,46 +110,59 @@ class Ratings extends Component {
   handleExistingRating = (e, rating) => {
     e.preventDefault();
     const newRating = 5 - parseInt(e.target.dataset.index);
-    newRating === rating.rating
-      ? this.deleteRating(rating)
-      : this.updateRating(rating, newRating);
+    if (newRating !== rating.rating) this.updateRating(rating, newRating);
   };
 
   async updateRating(rating, newRating) {
     try {
-      const response = await axios.patch(`/api/ratings/${rating.id}`, {
+      await axios.patch(`/api/ratings/${rating.id}`, {
         rating: newRating
       });
-      const updatedRating = response.data;
-      const userRatings = this.state.userRatings.map(rating =>
-        rating.id === updatedRating.id ? updatedRating : rating
+      const authUserRatings = this.state.authUserRatings.map(authRating =>
+        authRating.id === rating.id
+          ? { ...rating, rating: newRating }
+          : authRating
       );
-      this.setState({ userRatings });
+      this.setState({ authUserRatings });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async deleteRating(rating) {
+  async deleteRating(e, rating) {
+    e.preventDefault();
     try {
-      axios.delete(`/api/ratings/${rating.id}`);
-      const userRatings = this.state.userRatings.filter(
-        userRating => userRating.id !== rating.id
+      await axios.delete(`/api/ratings/${rating.id}`);
+      const authUserRatings = this.state.authUserRatings.filter(
+        authRating => authRating.id !== rating.id
       );
-      this.setState({ userRatings });
+      this.setState({ authUserRatings });
     } catch (error) {
       console.log(error);
     }
   }
 
-  getUserRating(book) {
-    const { userRatings } = this.state;
-    return userRatings.filter(rating => rating.book_id === book.id)[0];
+  getAuthUserRating(rating) {
+    const authUser = this.props.user;
+    const { authUserRatings, ratings } = this.state;
+
+    if (!authUser.id) return null;
+    if (authUser.id && !ratings) return rating;
+    return authUserRatings.filter(
+      authRating => authRating.book_id == rating.book_id
+    )[0];
   }
 
   render() {
-    const { loading, rater, ratings, count, limit } = this.state;
-    const { user } = this.props;
+    const {
+      loading,
+      user,
+      ratings,
+      count,
+      authUserRatings,
+      limit
+    } = this.state;
+    const authUser = this.props.user;
 
     if (loading)
       return (
@@ -137,7 +175,7 @@ class Ratings extends Component {
       <div className="section">
         <Container>
           <h1 className="h5 text-uppercase mb-0 mb-md-3">
-            {rater.name}&apos;s Ratings
+            {user.name}&apos;s Ratings
           </h1>
           <Table responsive className="d-none d-md-table mb-3">
             <thead>
@@ -146,17 +184,18 @@ class Ratings extends Component {
                 <th>Title</th>
                 <th>Author</th>
                 <th>Average Rating</th>
-                {rater.id !== user.id && <th>User Rating</th>}
-                {user.id && <th>Your Rating</th>}
+                {ratings && <th>User Rating</th>}
+                {authUser.id && <th>Your Rating</th>}
                 <th>Date Added</th>
-                {null && <th />}
+                <th />
               </tr>
             </thead>
             <tbody>
-              {ratings.map((rating, index) => {
-                const book = rating.book;
-                const author = book.author;
-                const userRating = this.getUserRating(book);
+              {(ratings || authUserRatings).map((rating, index) => {
+                const { book } = rating;
+                const { author } = book;
+                const authUserRating = this.getAuthUserRating(rating);
+                const authRating = authUserRating ? authUserRating.rating : 0;
 
                 return (
                   <tr key={index}>
@@ -170,42 +209,43 @@ class Ratings extends Component {
                       <Link to={`/authors/${author.id}`}>{author.name}</Link>
                     </td>
                     <td>{book.avg_rating.toFixed(2)}</td>
-                    {rater.id !== user.id && (
+                    {ratings && (
                       <td className="text-nowrap">
                         <Stars rating={rating.rating} />
                       </td>
                     )}
-                    {user.id && (
+                    {authUser.id && (
                       <td className="text-nowrap">
                         <Stars
-                          rating={(userRating && userRating.rating) || 0}
+                          rating={authRating}
                           editable
                           onClick={
-                            userRating
-                              ? e => this.handleExistingRating(e, userRating)
+                            authUserRating
+                              ? e =>
+                                  this.handleExistingRating(e, authUserRating)
                               : e => this.addRating(e, book)
                           }
                         />
                       </td>
                     )}
                     <td>{rating.created_at}</td>
-                    {null && (
-                      <td>
+                    <td>
+                      {authUserRating && (
                         <Form
                           action="/"
                           method="POST"
-                          onSubmit={e => this.removeFromShelf(e, rating)}
+                          onSubmit={e => this.deleteRating(e, authUserRating)}
                         >
                           <Button
                             variant="link"
                             type="submit"
-                            className="text-danger p-0"
+                            className="text-body p-0"
                           >
                             <i className="material-icons">clear</i>
                           </Button>
                         </Form>
-                      </td>
-                    )}
+                      )}
+                    </td>
                   </tr>
                 );
               })}
@@ -213,15 +253,32 @@ class Ratings extends Component {
           </Table>
 
           <div className="d-md-none mb-3">
-            {ratings.map((rating, index) => {
-              const book = rating.book;
-              const author = book.author;
-              const userRating = this.getUserRating(book);
+            {(ratings || authUserRatings).map((rating, index) => {
+              const { book } = rating;
+              const { author } = book;
+              const authUserRating = this.getAuthUserRating(rating);
+              const authRating = authUserRating ? authUserRating.rating : 0;
 
               return (
                 <Media key={index} className="product-table__row py-3">
                   <img src={book.image_url} alt={book.title} className="mr-3" />
                   <Media.Body>
+                    {authUserRating && (
+                      <Form
+                        action="/"
+                        method="POST"
+                        className="float-right"
+                        onSubmit={e => this.deleteRating(e, authUserRating)}
+                      >
+                        <Button
+                          variant="link"
+                          type="submit"
+                          className="text-body p-0"
+                        >
+                          <i className="material-icons">clear</i>
+                        </Button>
+                      </Form>
+                    )}
                     <p className="h5">
                       <Link to={`/books/${book.id}`}>{book.title}</Link>
                     </p>
@@ -233,21 +290,24 @@ class Ratings extends Component {
                       <span className="text-secondary">Average rating:</span>{' '}
                       {book.avg_rating.toFixed(2)}
                     </p>
-                    {rater.id !== user.id && (
+                    {ratings && (
                       <p className="font-size-7 mb-2">
                         <span className="text-secondary">User Rating:</span>{' '}
                         <Stars rating={rating.rating} />
                       </p>
                     )}
-                    {user.id && (
-                      <p className="font-size-7 mb-2">
-                        <span className="text-secondary">Your rating:</span>{' '}
+                    {authUser.id && (
+                      <p className="mb-2 font-size-5">
+                        <span className="text-secondary font-size-7">
+                          Your rating:
+                        </span>{' '}
                         <Stars
-                          rating={(userRating && userRating.rating) || 0}
+                          rating={authRating}
                           editable
                           onClick={
-                            userRating
-                              ? e => this.handleExistingRating(e, userRating)
+                            authUserRating
+                              ? e =>
+                                  this.handleExistingRating(e, authUserRating)
                               : e => this.addRating(e, book)
                           }
                         />
@@ -257,21 +317,6 @@ class Ratings extends Component {
                       <span className="text-secondary">Date Added:</span>{' '}
                       {rating.created_at}
                     </p>
-                    {null && (
-                      <Form
-                        action="/"
-                        method="POST"
-                        onSubmit={e => this.removeFromShelf(e, rating)}
-                      >
-                        <Button
-                          variant="link"
-                          type="submit"
-                          className="text-danger p-0 font-size-7"
-                        >
-                          Remove from shelf
-                        </Button>
-                      </Form>
-                    )}
                   </Media.Body>
                 </Media>
               );

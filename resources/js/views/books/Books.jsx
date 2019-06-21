@@ -10,12 +10,16 @@ import Pagination from '../../components/Pagination';
 
 class Books extends Component {
   state = {
+    categories: new Array(6).fill(0).map((item, index) => ({
+      name: `Category #${index}`,
+      checked: false
+    })),
     loading: true,
     isFilterOpen: null,
     queryParams: {
       limit: 20,
-      offset: 0,
-      order_by: 'ratings_desc',
+      order_by: 'ratings_count',
+      order_dir: 'desc',
       min_price: '',
       max_price: '',
       min_rating: '',
@@ -23,33 +27,59 @@ class Books extends Component {
       min_date: '',
       max_date: ''
     },
-    categories: new Array(6).fill(0).map((item, index) => ({
-      name: `Category #${index}`,
-      checked: false
-    })),
     books: null,
-    totalBooks: null,
-    totalPages: null,
-    page: null
+    count: null
   };
 
   componentDidMount() {
-    this.updateParams(this.getBooks);
+    this.getBooks();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
-      this.updateParams(this.getBooks);
+      this.setState({ loading: true });
+      this.getBooks();
     }
   }
 
-  updateParams(callback) {
+  async getBooks() {
+    try {
+      const { books, count } = await this.fetchBooks();
+      this.setState({ books, count, loading: false });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchBooks() {
+    const params = this.getParams();
+    try {
+      const response = await axios.get('/api/books', { params });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  getParams() {
+    const { queryParams } = this.state;
+    const offset = this.calcOffset();
+
+    const params = { offset, count: true };
+
+    for (const key in queryParams) {
+      if (queryParams.hasOwnProperty(key)) {
+        params[key] = queryParams[key];
+      }
+    }
+
+    return params;
+  }
+
+  calcOffset() {
     const page = this.getCurrentPage();
-    const offset = this.calcOffset(page);
-    this.setState(
-      { page, queryParams: { ...this.state.queryParams, offset } },
-      callback
-    );
+    const { limit } = this.state.queryParams;
+    return (page - 1) * limit;
   }
 
   getCurrentPage() {
@@ -57,43 +87,23 @@ class Books extends Component {
     return parseInt(URL.query(queryString).getParam('page')) || 1;
   }
 
-  calcOffset(page) {
-    const { limit } = this.state.queryParams;
-    return (page - 1) * limit;
-  }
-
-  async getBooks() {
-    this.setState({ loading: true });
-    const { books, count } = await this.fetchBooks();
-    const totalPages = this.calcTotalPages(count, this.state.queryParams.limit);
-    this.setState({ books, totalBooks: count, totalPages, loading: false });
-  }
-
-  async fetchBooks() {
-    const params = this.state.queryParams;
-    const response = await axios.get('/api/books', { params });
-    return response.data;
-  }
-
-  calcTotalPages(totalBooks, perPage) {
-    return Math.ceil(totalBooks / perPage);
-  }
-
   handleSortChange = e => {
-    this.handleQueryParamChange(e, this.getBooks);
+    const [order_by, order_dir] = e.target.value.split('.');
+    const queryParams = { ...this.state.queryParams, order_by, order_dir };
+    this.setState({ queryParams }, this.getBooks);
   };
 
-  handleQueryParamChange = (e, callback) => {
+  handleFilterChange = e => {
     const paramName = e.target.id;
     const value = e.target.value;
     const queryParams = { ...this.state.queryParams, [paramName]: value };
-    this.setState({ queryParams }, callback);
+    this.setState({ queryParams });
   };
 
   handleFilterSubmit = e => {
     e.preventDefault();
+    this.setState({ loading: true, isFilterOpen: false });
     this.getBooks();
-    this.setState({ isFilterOpen: false });
   };
 
   toggleCategory = e => {
@@ -115,8 +125,7 @@ class Books extends Component {
       isFilterOpen,
       queryParams,
       books,
-      totalBooks,
-      page,
+      count,
       loading
     } = this.state;
     const { limit } = queryParams;
@@ -166,7 +175,7 @@ class Books extends Component {
                               min="0"
                               step="0.01"
                               value={queryParams.min_price}
-                              onChange={this.handleQueryParamChange}
+                              onChange={this.handleFilterChange}
                             />
                           </Form.Group>
                         </Col>
@@ -179,7 +188,7 @@ class Books extends Component {
                               min="0"
                               step="0.01"
                               value={queryParams.max_price}
-                              onChange={this.handleQueryParamChange}
+                              onChange={this.handleFilterChange}
                             />
                           </Form.Group>
                         </Col>
@@ -196,7 +205,7 @@ class Books extends Component {
                               min="0"
                               max="5"
                               value={queryParams.min_rating}
-                              onChange={this.handleQueryParamChange}
+                              onChange={this.handleFilterChange}
                             />
                           </Form.Group>
                         </Col>
@@ -209,7 +218,7 @@ class Books extends Component {
                               min="0"
                               max="5"
                               value={queryParams.max_rating}
-                              onChange={this.handleQueryParamChange}
+                              onChange={this.handleFilterChange}
                             />
                           </Form.Group>
                         </Col>
@@ -223,7 +232,7 @@ class Books extends Component {
                             type="date"
                             placeholder="Min date"
                             value={queryParams.min_date}
-                            onChange={this.handleQueryParamChange}
+                            onChange={this.handleFilterChange}
                           />
                         </Form.Group>
                         <Form.Group controlId="max_date">
@@ -232,7 +241,7 @@ class Books extends Component {
                             type="date"
                             placeholder="Max date"
                             value={queryParams.max_date}
-                            onChange={this.handleQueryParamChange}
+                            onChange={this.handleFilterChange}
                           />
                         </Form.Group>
                       </div>
@@ -291,14 +300,14 @@ class Books extends Component {
                       onChange={this.handleSortChange}
                       className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
                     >
-                      <option value="ratings_desc">Ratings (desc)</option>
-                      <option value="ratings_asc">Ratings (asc)</option>
-                      <option value="avgrating_desc">Avg Rating (desc)</option>
-                      <option value="avgrating_asc">Avg Rating (asc)</option>
-                      <option value="price_desc">Price (desc)</option>
-                      <option value="price_asc">Price (asc)</option>
-                      <option value="date_desc">Date (desc)</option>
-                      <option value="date_asc">Date (asc)</option>
+                      <option value="ratings_count.desc">Ratings (desc)</option>
+                      <option value="ratings_count.asc">Ratings (asc)</option>
+                      <option value="avg_rating.desc">Avg Rating (desc)</option>
+                      <option value="avg_rating.asc">Avg Rating (asc)</option>
+                      <option value="price.desc">Price (desc)</option>
+                      <option value="price.asc">Price (asc)</option>
+                      <option value="publication_date.desc">Date (desc)</option>
+                      <option value="publication_date.asc">Date (asc)</option>
                     </Form.Control>
                   </Form.Group>
                 </Form>
@@ -318,8 +327,8 @@ class Books extends Component {
                     ))}
                   </div>
                   <Pagination
-                    totalItems={totalBooks}
-                    currentPage={page}
+                    totalItems={count}
+                    currentPage={this.getCurrentPage()}
                     pageSize={limit}
                     url="/books?page="
                     className="justify-content-center pagination-warning"

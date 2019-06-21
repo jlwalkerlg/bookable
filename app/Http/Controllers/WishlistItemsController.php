@@ -21,7 +21,7 @@ class WishlistItemsController extends Controller
 
         $items = $query->get();
 
-        return $count ? compact('itms', 'count') : compact('itms');
+        return $count ? compact('items', 'count') : compact('items');
     }
 
     public function store(Request $request, Wishlist $wishlist)

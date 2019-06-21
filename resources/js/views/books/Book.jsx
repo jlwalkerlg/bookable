@@ -55,47 +55,72 @@ class Show extends Component {
     loading: true,
     book: null,
     shelves: null,
-    inShelves: null,
+    shelfItems: null,
     quantity: 1
   };
 
   async componentDidMount() {
-    const { user } = this.props;
-    const book = await this.fetchBook();
-    const shelves = user.id && (await this.fetchShelves());
-    const inShelves = user.id && (await this.fetchShelves(book.id));
-    this.setState({ book, shelves, inShelves, loading: false });
+    const data = await this.fetchData();
+    console.log(data);
+    this.setState({ ...data, loading: false });
   }
 
   async componentDidUpdate(prevProps) {
     if (prevProps.match.params.id !== this.props.match.params.id) {
       this.setState({ loading: true });
-      const book = await this.fetchBook();
-      const shelves = user.id && (await this.fetchShelves());
-      const inShelves = user.id && (await this.fetchShelves(book.id));
-      this.setState({ book, shelves, inShelves, loading: false });
+      const data = await this.fetchData();
+      this.setState({ ...data, loading: false });
+    }
+  }
+
+  async fetchData() {
+    const { user } = this.props;
+    try {
+      const [book, shelves, shelfItems] = await axios.all([
+        this.fetchBook(),
+        user.id && this.fetchShelves(),
+        user.id && this.fetchShelfItems()
+      ]);
+      return { book, shelves, shelfItems };
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async fetchBook() {
     const bookId = this.props.match.params.id;
     try {
-      const result = await axios.get(`/api/books/${bookId}`);
+      const result = await axios.get(`/api/books/${bookId}`, {
+        params: { with: 'author.books' }
+      });
       return result.data;
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  async fetchShelves(bookId = null) {
+  async fetchShelves() {
     const { user } = this.props;
     try {
-      const response = await axios.get(`/api/users/${user.id}/shelves`, {
-        params: { book_id: bookId }
+      const response = await axios.get('/api/shelves', {
+        params: { user_id: user.id }
       });
-      return response.data;
-    } catch (err) {
-      console.log(err);
+      return response.data.shelves;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchShelfItems() {
+    const bookId = this.props.match.params.id;
+    const { user } = this.props;
+    try {
+      const response = await axios.get('/api/shelves/items', {
+        params: { book_id: bookId, user_id: user.id }
+      });
+      return response.data.items;
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -136,38 +161,35 @@ class Show extends Component {
     return items && !!items.filter(item => item.book_id === bookId).length;
   }
 
-  isInShelf(shelf) {
-    const { inShelves } = this.state;
-    return !!inShelves.filter(inShelf => inShelf.id === shelf.id).length;
-  }
+  getShelfItem = shelf => {
+    const { shelfItems } = this.state;
+    return shelfItems.filter(item => item.shelf_id === shelf.id)[0];
+  };
 
-  addToShelf = (e, shelf) => {
+  addToShelf = async (e, shelf) => {
     e.preventDefault();
     const { book } = this.state;
     try {
-      axios.post(`/api/shelves/${shelf.id}/items`, {
+      const response = await axios.post(`/api/shelves/${shelf.id}/items`, {
         book_id: book.id
       });
-      const inShelves = [...this.state.inShelves, shelf];
-      this.setState({ inShelves });
-    } catch (err) {
-      console.log(err);
+      const shelfItems = [...this.state.shelfItems, response.data];
+      this.setState({ shelfItems });
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  removeFromShelf = async (e, shelf) => {
+  removeFromShelf = async (e, shelfItem) => {
     e.preventDefault();
-    const { book } = this.state;
     try {
-      axios.delete(`/api/shelves/${shelf.id}/items`, {
-        params: { book_id: book.id }
-      });
-      const inShelves = this.state.inShelves.filter(
-        item => item.id !== shelf.id
+      await axios.delete(`/api/shelves/items/${shelfItem.id}`);
+      const shelfItems = this.state.shelfItems.filter(
+        item => item.id !== shelfItem.id
       );
-      this.setState({ inShelves });
-    } catch (err) {
-      console.log(err);
+      this.setState({ shelfItems });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -297,16 +319,16 @@ class Show extends Component {
 
                       <Dropdown.Menu>
                         {shelves.map((shelf, index) => {
-                          const isInShelf = this.isInShelf(shelf);
+                          const shelfItem = this.getShelfItem(shelf);
 
                           return (
                             <Form
                               key={index}
-                              action={`/api/shelves/${shelf.id}/shelf-items`}
+                              action={`/api/shelves/${shelf.id}/items`}
                               method="POST"
                               onSubmit={
-                                isInShelf
-                                  ? e => this.removeFromShelf(e, shelf)
+                                shelfItem
+                                  ? e => this.removeFromShelf(e, shelfItem)
                                   : e => this.addToShelf(e, shelf)
                               }
                             >
@@ -316,7 +338,7 @@ class Show extends Component {
                               >
                                 {shelf.name}
                                 <i className="material-icons">
-                                  {isInShelf
+                                  {shelfItem
                                     ? 'check_box'
                                     : 'check_box_outline_blank'}
                                 </i>

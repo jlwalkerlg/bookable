@@ -21,6 +21,7 @@ import Loading from '../components/Loading';
 class Shelves extends Component {
   state = {
     loading: true,
+    user: null,
     shelves: null,
     shelfItems: null,
     count: null,
@@ -28,34 +29,71 @@ class Shelves extends Component {
   };
 
   async componentDidMount() {
-    const { userId, shelfId } = this.props.match.params;
-    const shelves = await this.fetchShelves(userId);
-    const { shelfItems, count } = await this.fetchShelfItems(userId, shelfId);
-    this.setState({ shelves, shelfItems, count, loading: false });
+    this.fetchData();
   }
 
   async componentDidUpdate(prevProps) {
-    if (this.shelfChanged(prevProps) || this.pageChanged(prevProps)) {
+    if (this.needsUpdate(prevProps)) {
       this.setState({ loading: true });
-      const { userId, shelfId } = this.props.match.params;
-      const { shelfItems, count } = await this.fetchShelfItems(userId, shelfId);
-      this.setState({ shelfItems, count, loading: false });
+      this.fetchData();
     }
   }
 
-  userChanged(prevProps) {
-    return prevProps.match.params.userId !== this.props.match.params.userId;
+  async fetchData() {
+    try {
+      const { user, shelves, shelfItems, count } = await this.fetchShelfData();
+      const { userRatings, authUserRatings } = await this.fetchRatingsData(
+        shelfItems
+      );
+      const items = shelfItems.map(item => {
+        const userRating =
+          userRatings &&
+          userRatings.filter(rating => rating.book_id === item.book_id)[0];
+        const authUserRating =
+          authUserRatings &&
+          authUserRatings.filter(rating => rating.book_id === item.book_id)[0];
+        return { ...item, userRating, authUserRating };
+      });
+      this.setState({
+        user,
+        shelves,
+        shelfItems: items,
+        count,
+        userRatings,
+        authUserRatings,
+        loading: false
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  shelfChanged(prevProps) {
-    return prevProps.match.params.shelfId !== this.props.match.params.shelfId;
+  async fetchShelfData() {
+    try {
+      const [{ user, shelves }, { items, count }] = await axios.all([
+        this.fetchShelves(),
+        this.fetchShelfItems()
+      ]);
+      return { user, shelves, shelfItems: items, count };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  pageChanged(prevProps) {
-    return prevProps.location.search !== this.props.location.search;
+  async fetchRatingsData(shelfItems) {
+    try {
+      const [userRatings, authUserRatings] = await axios.all([
+        this.fetchUserRatings(shelfItems),
+        this.fetchAuthUserRatings(shelfItems)
+      ]);
+      return { userRatings, authUserRatings };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  async fetchShelves(userId) {
+  async fetchShelves() {
+    const { userId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/users/${userId}/shelves`);
       return response.data;
@@ -64,19 +102,60 @@ class Shelves extends Component {
     }
   }
 
-  async fetchShelfItems(userId, shelfId) {
+  async fetchShelfItems() {
+    const { userId, shelfId } = this.props.match.params;
     const { limit } = this.state;
     const offset = this.calcOffset();
-    const params = { limit, offset };
+    const params = {
+      limit,
+      offset,
+      with: 'book.author',
+      count: true,
+      shelf_id: shelfId,
+      user_id: userId
+    };
     try {
-      const url = shelfId
-        ? `/api/users/${userId}/shelves/${shelfId}/items`
-        : `/api/users/${userId}/shelves/items`;
-      const response = await axios.get(url, { params });
+      const response = await axios.get('/api/shelves/items', { params });
       return response.data;
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async fetchUserRatings(shelfItems) {
+    const { userId } = this.props.match.params;
+    const { user } = this.props;
+    if (user.id === parseInt(userId)) return null;
+    const bookIds = shelfItems.map(item => item.book_id);
+    try {
+      const response = await axios.get('/api/ratings', {
+        params: { user_id: userId, book_ids: bookIds.join(',') }
+      });
+      return response.data.ratings;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchAuthUserRatings(shelfItems) {
+    const { user } = this.props;
+    if (!user.id) return null;
+    const bookIds = shelfItems.map(item => item.book_id);
+    try {
+      const response = await axios.get('/api/ratings', {
+        params: { user_id: user.id, book_ids: bookIds.join(',') }
+      });
+      return response.data.ratings;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  needsUpdate(prevProps) {
+    return (
+      prevProps.match.params.shelfId !== this.props.match.params.shelfId ||
+      prevProps.location.search !== this.props.location.search
+    );
   }
 
   calcOffset() {
@@ -94,7 +173,7 @@ class Shelves extends Component {
   removeFromShelf = async (e, shelfItem) => {
     e.preventDefault();
     try {
-      axios.delete(`/api/shelves/${shelfItem.shelf_id}/items/${shelfItem.id}`);
+      await axios.delete(`/api/shelves/items/${shelfItem.id}`);
       const shelfItems = this.state.shelfItems.filter(
         item => item.id !== shelfItem.id
       );
@@ -105,10 +184,9 @@ class Shelves extends Component {
   };
 
   render() {
-    const { loading, shelves, shelfItems, count, limit } = this.state;
-    const { user } = this.props;
-    const { userId } = this.props.match.params;
-    const isOwnShelf = parseInt(userId) === user.id;
+    const { loading, user, shelves, shelfItems, count, limit } = this.state;
+    const authUser = !loading && this.props.user;
+    const isOwnShelf = !loading && user.id === authUser.id;
 
     return (
       <div className="section">
@@ -124,7 +202,7 @@ class Shelves extends Component {
                     <li>
                       <NavLink
                         className="sub-nav-link"
-                        to={`/users/${userId}/shelves`}
+                        to={`/users/${user.id}/shelves`}
                         exact
                       >
                         All
@@ -134,7 +212,7 @@ class Shelves extends Component {
                       <li key={index}>
                         <NavLink
                           className="sub-nav-link"
-                          to={`/users/${userId}/shelves/${shelf.id}`}
+                          to={`/users/${user.id}/shelves/${shelf.id}`}
                           exact
                         >
                           {shelf.name}
@@ -150,7 +228,7 @@ class Shelves extends Component {
                     <Dropdown.Menu>
                       <Dropdown.Item
                         as={NavLink}
-                        to={`/users/${userId}/shelves`}
+                        to={`/users/${user.id}/shelves`}
                         exact
                         className="d-flex justify-content-between align-items-center"
                       >
@@ -160,7 +238,7 @@ class Shelves extends Component {
                         <Dropdown.Item
                           key={index}
                           as={NavLink}
-                          to={`/users/${userId}/shelves/${shelf.id}`}
+                          to={`/users/${user.id}/shelves/${shelf.id}`}
                           exact
                           className="d-flex justify-content-between align-items-center"
                         >
@@ -185,15 +263,16 @@ class Shelves extends Component {
                         <th>Title</th>
                         <th>Author</th>
                         <th>Average Rating</th>
-                        {user.id && <th>Your Rating</th>}
+                        {!isOwnShelf && <th>User Rating</th>}
+                        {authUser.id && <th>Your Rating</th>}
                         <th>Date Added</th>
                         {isOwnShelf && <th />}
                       </tr>
                     </thead>
                     <tbody>
                       {shelfItems.map((shelfItem, index) => {
-                        const book = shelfItem.book;
-                        const author = book.author;
+                        const { book, userRating, authUserRating } = shelfItem;
+                        const { author } = book;
 
                         return (
                           <tr key={index}>
@@ -212,9 +291,23 @@ class Shelves extends Component {
                               </Link>
                             </td>
                             <td>{book.avg_rating.toFixed(2)}</td>
-                            {user.id && (
+                            {!isOwnShelf && (
                               <td className="text-nowrap">
-                                <Stars rating={0} />
+                                <Stars
+                                  rating={
+                                    (userRating && userRating.rating) || 0
+                                  }
+                                />
+                              </td>
+                            )}
+                            {authUser.id && (
+                              <td className="text-nowrap">
+                                <Stars
+                                  rating={
+                                    (authUserRating && authUserRating.rating) ||
+                                    0
+                                  }
+                                />
                               </td>
                             )}
                             <td>{shelfItem.created_at}</td>
@@ -245,8 +338,8 @@ class Shelves extends Component {
 
                   <div className="d-md-none mb-3">
                     {shelfItems.map((shelfItem, index) => {
-                      const book = shelfItem.book;
-                      const author = book.author;
+                      const { book, userRating, authUserRating } = shelfItem;
+                      const { author } = book;
 
                       return (
                         <Media key={index} className="product-table__row py-3">
@@ -271,12 +364,29 @@ class Shelves extends Component {
                               </span>{' '}
                               {book.avg_rating.toFixed(2)}
                             </p>
-                            {user.id && (
+                            {!isOwnShelf && (
+                              <p className="font-size-7 mb-2">
+                                <span className="text-secondary">
+                                  User rating:
+                                </span>{' '}
+                                <Stars
+                                  rating={
+                                    (userRating && userRating.rating) || 0
+                                  }
+                                />
+                              </p>
+                            )}
+                            {authUser.id && (
                               <p className="font-size-7 mb-2">
                                 <span className="text-secondary">
                                   Your rating:
                                 </span>{' '}
-                                <Stars rating={0} />
+                                <Stars
+                                  rating={
+                                    (authUserRating && authUserRating.rating) ||
+                                    0
+                                  }
+                                />
                               </p>
                             )}
                             <p className="font-size-7 mb-2">
@@ -327,7 +437,6 @@ class Shelves extends Component {
 
 Shelves.propTypes = {
   user: PropTypes.object.isRequired,
-  shelves: PropTypes.array.isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired
   }).isRequired,

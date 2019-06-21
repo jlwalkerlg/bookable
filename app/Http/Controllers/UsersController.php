@@ -39,13 +39,13 @@ class UsersController extends Controller
 
         $ratings = $query->get();
 
-        return $count ? compact('ratings', 'count') : compact('ratings');
+        return $count ? compact('user', 'ratings', 'count') : compact('user', 'ratings');
     }
 
     public function shelves(Request $request, User $user)
     {
         $shelves = $user->shelves;
-        return compact('shelves');
+        return compact('user', 'shelves');
     }
 
     public function shelfItems(Request $request, User $user, Shelf $shelf = null)
@@ -73,6 +73,6 @@ class UsersController extends Controller
 
         $items = $query->get();
 
-        return $count ? compact('items', 'count') : compact('items');
+        return $count ? compact('user', 'items', 'count') : compact('user', 'items');
     }
 }

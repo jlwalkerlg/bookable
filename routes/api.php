@@ -42,5 +42,6 @@ Route::get('/users/{user}/shelves', 'UsersController@shelves');
 Route::get('/users/{user}/shelves/items', 'UsersController@shelfItems');
 Route::get('/users/{user}/shelves/{shelf}/items', 'UsersController@shelfItems');
 
+Route::get('/shelves/items', 'ShelfItemsController@index');
 Route::post('/shelves/{shelf}/items', 'ShelfItemsController@store')->middleware('can:update,shelf');
 Route::delete('/shelves/items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item');

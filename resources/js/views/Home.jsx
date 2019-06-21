@@ -52,7 +52,7 @@ class Home extends Component {
       penguinBooks
     ] = await this.fetchBooks();
     this.setState({
-      bestSeller,
+      bestSeller: bestSeller[0],
       newBooks,
       featuredBooks,
       penguinBooks,
@@ -62,27 +62,54 @@ class Home extends Component {
 
   async fetchBooks() {
     try {
-      const bestSeller = await axios.get('/api/books', {
-        params: { order_by: 'ratings_desc', limit: 1 }
-      });
-      const newBooks = await axios.get('/api/books', {
-        params: { order_by: 'date_desc', limit: 15 }
-      });
-      const featuredBooks = await axios.get('/api/books', {
-        params: { order_by: 'random_asc', limit: 15 }
-      });
-      const penguinBooks = await axios.get('/api/books', {
-        params: { publisher: 'Penguin Books', limit: 15 }
-      });
-      return [
-        bestSeller.data.books[0],
-        newBooks.data.books,
-        featuredBooks.data.books,
-        penguinBooks.data.books
-      ];
-    } catch (err) {
-      console.log(err);
+      const responses = await axios.all([
+        this.fetchBestSeller(),
+        this.fetchNewBooks(),
+        this.fetchFeaturedBooks(),
+        this.fetchPenguinBooks()
+      ]);
+      return responses.map(res => res.data.books);
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  fetchBestSeller() {
+    return axios.get('/api/books', {
+      params: {
+        limit: 1,
+        order_by: 'ratings_count',
+        order_dir: 'desc',
+        with: 'author'
+      }
+    });
+  }
+
+  fetchNewBooks() {
+    return axios.get('/api/books', {
+      params: {
+        limit: 15,
+        order_by: 'publication_date',
+        order_dir: 'desc',
+        with: 'author'
+      }
+    });
+  }
+
+  fetchFeaturedBooks() {
+    return axios.get('/api/books', {
+      params: { limit: 15, order_by: 'random', with: 'author' }
+    });
+  }
+
+  fetchPenguinBooks() {
+    return axios.get('/api/books', {
+      params: {
+        limit: 15,
+        publisher: 'Penguin Books',
+        with: 'author'
+      }
+    });
   }
 
   render() {

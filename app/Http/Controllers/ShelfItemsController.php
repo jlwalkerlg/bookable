@@ -5,15 +5,26 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Shelf;
 use App\ShelfItem;
-use App\User;
 
 class ShelfItemsController extends Controller
 {
-    public function index(Request $request, User $user, $shelfId = null)
+    public function index(Request $request)
     {
-        $query = $shelfId ? $user->shelfItems()->where('shelf_id', $shelfId) : $user->shelfItems();
+        $query = ShelfItem::query();
 
-        $count = (clone $query)->count();
+        if ($shelfId = $request->input('shelf_id')) {
+            $query->where('shelf_id', $shelfId);
+        }
+
+        if ($bookId = $request->input('book_id')) {
+            $query->where('book_id', $bookId);
+        }
+
+        if ($userId = $request->input('user_id')) {
+            $query->join('shelves', 'shelf_items.shelf_id', '=', 'shelves.id')->where('shelves.user_id', $userId)->select('shelf_items.*');
+        }
+
+        $count = $request->has('count') ? (clone $query)->count() : null;
 
         if ($limit = $request->input('limit')) {
             $query->limit($limit);
@@ -23,9 +34,13 @@ class ShelfItemsController extends Controller
             $query->offset($offset);
         }
 
-        $shelfItems = $query->with('book.author')->get();
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
 
-        return compact('shelfItems', 'count');
+        $items = $query->get();
+
+        return $count ? compact('items', 'count') : compact('items');
     }
 
     public function store(Request $request, Shelf $shelf)

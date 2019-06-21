@@ -4,7 +4,6 @@ import axios from 'axios';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
-import TempProductCard from '../../components/TempProductCard';
 import SlickArrow from '../../components/SlickArrow';
 import Loading from '../../components/Loading';
 import sanitize from '../../utils/sanitize';
@@ -22,35 +21,94 @@ const slickOptions = {
 class Show extends Component {
   state = {
     loading: true,
-    author: null
+    author: null,
+    highestRated: null,
+    mostRated: null,
+    allBooks: null
   };
 
   async componentDidMount() {
-    const author = await this.fetchAuthor();
-    this.setState({ author, loading: false });
+    const data = await this.fetchData();
+    this.setState({ ...data, loading: false });
   }
 
-  async componentDidUpdate(prevProps) {
-    if (prevProps.match.params.id !== this.props.match.params.id) {
-      this.setState({ loading: true });
-      const author = await this.fetchAuthor();
-      this.setState({ author, loading: false });
+  async fetchData() {
+    try {
+      const [author, highestRated, mostRated, allBooks] = await axios.all([
+        this.fetchAuthor(),
+        this.fetchHighestRated(),
+        this.fetchMostRated(),
+        this.fetchAllBooks()
+      ]);
+      return {
+        author,
+        highestRated: highestRated.books[0],
+        mostRated: mostRated.books[0],
+        allBooks: allBooks.books
+      };
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async fetchAuthor() {
     const authorId = this.props.match.params.id;
     try {
-      const result = await axios.get(`/api/authors/${authorId}`);
-      const author = result.data;
-      return author;
+      const response = await axios.get(`/api/authors/${authorId}`);
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async fetchHighestRated() {
+    const authorId = this.props.match.params.id;
+    try {
+      const response = await axios.get('/api/books/', {
+        params: {
+          author_id: authorId,
+          order_by: 'avg_rating',
+          order_dir: 'desc',
+          limit: 1
+        }
+      });
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async fetchMostRated() {
+    const authorId = this.props.match.params.id;
+    try {
+      const response = await axios.get('/api/books/', {
+        params: {
+          author_id: authorId,
+          order_by: 'ratings_count',
+          order_dir: 'desc',
+          limit: 1
+        }
+      });
+      return response.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async fetchAllBooks() {
+    const authorId = this.props.match.params.id;
+    try {
+      const response = await axios.get('/api/books/', {
+        params: { author_id: authorId }
+      });
+      return response.data;
     } catch (err) {
       console.log(err);
     }
   }
 
   render() {
-    const { loading, author } = this.state;
+    const { loading, author, highestRated, mostRated, allBooks } = this.state;
 
     if (loading)
       return (
@@ -59,25 +117,17 @@ class Show extends Component {
         </div>
       );
 
-    const totalRatingsCount = author.books.reduce(
+    const ratingsCount = allBooks.reduce(
       (prev, current) => prev + current.ratings_count,
       0
     );
 
-    const totalRatingsSum = author.books.reduce(
+    const ratingsSum = allBooks.reduce(
       (prev, current) => prev + current.ratings_sum,
       0
     );
 
-    const avgRating = (totalRatingsSum / totalRatingsCount).toFixed(2);
-
-    const highestRated = author.books.reduce((prev, current) =>
-      prev.avg_rating > current.avg_rating ? prev : current
-    );
-
-    const mostRated = author.books.reduce((prev, current) =>
-      prev.ratings_count > current.ratings_count ? prev : current
-    );
+    const avgRating = (ratingsSum / ratingsCount).toFixed(2);
 
     return (
       <main>
@@ -108,7 +158,7 @@ class Show extends Component {
                 </p>
                 <p className="font-size-7">
                   <span className="font-weight-bold">Number of ratings:</span>{' '}
-                  {totalRatingsCount}
+                  {ratingsCount}
                 </p>
                 <p
                   className="text-description text-justify text-md-left"
@@ -217,7 +267,7 @@ class Show extends Component {
             <span>All books by {author.name}</span>
           </h2>
           <div className="d-flex flex-wrap justify-content-center">
-            {author.books.map((book, index) => (
+            {allBooks.map((book, index) => (
               <ProductCard key={index} book={book} />
             ))}
           </div>

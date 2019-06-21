@@ -26,7 +26,7 @@ export const logout = () => dispatch =>
 
 export const oauthLogin = () => dispatch =>
   axios
-    .get('/api/user')
+    .get('/api/user', { params: { with: 'wishlist.items,cart.items' } })
     .then(response => {
       const { wishlist, cart, ...user } = response.data;
       dispatch(loginUser(user));
