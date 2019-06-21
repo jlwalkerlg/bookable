@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
 import Slider from 'react-slick';
 import axios from 'axios';
@@ -36,15 +37,19 @@ const slickOptions = {
 };
 
 class Home extends Component {
-  state = {
-    loading: true,
-    bestSeller: null,
-    newBooks: null,
-    featuredBooks: null,
-    penguinBooks: null,
-    trendingCategory: null,
-    trendingCategoryBook: null
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      bestSeller: null,
+      newBooks: null,
+      featuredBooks: null,
+      penguinBooks: null,
+      trendingCategory: props.categories[0],
+      trendingCategoryBook: null
+    };
+  }
 
   async componentDidMount() {
     const [
@@ -52,14 +57,13 @@ class Home extends Component {
       newBooks,
       featuredBooks,
       penguinBooks,
-      [trendingCategory, trendingCategoryBook]
+      trendingCategoryBook
     ] = await this.fetchData();
     this.setState({
       bestSeller: bestSeller.data.books[0],
       newBooks: newBooks.data.books,
       featuredBooks: featuredBooks.data.books,
       penguinBooks: penguinBooks.data.books,
-      trendingCategory,
       trendingCategoryBook: trendingCategoryBook.data.books[0],
       loading: false
     });
@@ -119,21 +123,16 @@ class Home extends Component {
   }
 
   async fetchTrendingCategory() {
-    const categoryResponse = await axios.get('/api/categories', {
-      params: { order_by: 'random', limit: 1 }
+    const { trendingCategory } = this.state;
+    return axios.get('/api/books', {
+      params: {
+        limit: 1,
+        order_by: 'ratings_count',
+        order_dir: 'desc',
+        category_id: trendingCategory.id,
+        with: 'author'
+      }
     });
-    const trendingCategory = categoryResponse.data.categories[0];
-    return axios
-      .get('/api/books', {
-        params: {
-          limit: 1,
-          order_by: 'ratings_count',
-          order_dir: 'desc',
-          category_id: trendingCategory.id,
-          with: 'author'
-        }
-      })
-      .then(res => [trendingCategory, res]);
   }
 
   render() {
@@ -320,4 +319,8 @@ class Home extends Component {
   }
 }
 
-export default Home;
+const mapStateToProps = ({ categories }) => ({
+  categories
+});
+
+export default connect(mapStateToProps)(Home);

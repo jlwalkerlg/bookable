@@ -13,7 +13,7 @@ class Categories extends Component {
   async componentDidMount() {
     try {
       const response = await axios.get('/api/categories');
-      const categories = response.data.sort((a, b) => {
+      const categories = response.data.categories.sort((a, b) => {
         if (a.name > b.name) return 1;
         if (a.name < b.name) return -1;
         return 0;

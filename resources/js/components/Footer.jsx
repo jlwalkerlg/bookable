@@ -1,9 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import SocialIcon from '../components/SocialIcon';
 
-const Footer = () => {
+const Footer = ({ categories }) => {
   return (
     <footer className="section site-foot">
       <Container>
@@ -35,21 +36,11 @@ const Footer = () => {
               <span>Categories</span>
             </p>
             <ul className="list-unstyled">
-              <li>
-                <Link to="/category/1">Philosophy</Link>
-              </li>
-              <li>
-                <Link to="/category/1">Fiction</Link>
-              </li>
-              <li>
-                <Link to="/category/1">Science</Link>
-              </li>
-              <li>
-                <Link to="/category/1">Spirituality</Link>
-              </li>
-              <li>
-                <Link to="/category/1">Anthropology</Link>
-              </li>
+              {categories.map((category, index) => (
+                <li key={index}>
+                  <Link to={`/categories/${category.id}`}>{category.name}</Link>
+                </li>
+              ))}
             </ul>
           </Col>
           <Col xs={12} md={4}>
@@ -76,4 +67,8 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+const mapStateToProps = ({ categories }) => ({
+  categories
+});
+
+export default connect(mapStateToProps)(Footer);

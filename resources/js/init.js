@@ -2,6 +2,7 @@ import axios from 'axios';
 import store from './store';
 import { finishLoading } from './actions/loading';
 import { oauthLogin } from './actions/user';
+import { fetchCategories } from './actions/categories';
 
 const setupAxios = () => {
   axios.defaults.headers.common['Accept'] = 'application/json';
@@ -10,9 +11,11 @@ const setupAxios = () => {
 
 const initLogin = () => store.dispatch(oauthLogin());
 
+const initCategories = () => store.dispatch(fetchCategories());
+
 const init = async () => {
   setupAxios();
-  await initLogin();
+  await Promise.all([initLogin(), initCategories()]);
   store.dispatch(finishLoading);
 };
 

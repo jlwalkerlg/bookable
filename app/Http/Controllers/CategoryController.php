@@ -12,6 +12,10 @@ class CategoryController extends Controller
     {
         $query = Category::query();
 
+        if ($limit = $request->input('limit')) {
+            $query->limit($limit);
+        }
+
         if ($orderBy = $request->input('order_by')) {
             if ($column = $this->getOrderByColumn($orderBy)) {
                 $direction = $this->getOrderByDirection($request->input('order_dir'));
