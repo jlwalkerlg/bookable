@@ -46,4 +46,5 @@ Route::get('/shelves/items', 'ShelfItemsController@index');
 Route::post('/shelves/{shelf}/items', 'ShelfItemsController@store')->middleware('can:update,shelf');
 Route::delete('/shelves/items/{item}', 'ShelfItemsController@delete')->middleware('can:delete,item');
 
+Route::get('/categories', 'CategoryController@index');
 Route::get('/categories/{category}', 'CategoryController@show');
