@@ -91,7 +91,7 @@ class Show extends Component {
     const bookId = this.props.match.params.id;
     try {
       const result = await axios.get(`/api/books/${bookId}`, {
-        params: { with: 'author.books' }
+        params: { with: 'author.books,categories' }
       });
       return result.data;
     } catch (error) {
@@ -236,8 +236,20 @@ class Show extends Component {
                 />
                 <p>
                   <span className="text-secondary">Categories: </span>
-                  <Link to="/category/1">Philosophy</Link>,{' '}
-                  <Link to="/category/1">Adventure</Link>
+                  {book.categories.length ? (
+                    book.categories.map((category, index) => (
+                      <React.Fragment key={index}>
+                        {index !== 0 && ', '}
+                        <Link to={`/category/${category.id}`}>
+                          {category.name}
+                        </Link>
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    <p className="font-size-7 text-secondary">
+                      No categories to show.
+                    </p>
+                  )}
                 </p>
                 <p className="font-weight-bold h2 mb-4">£{book.price}</p>
                 {user.id && (
