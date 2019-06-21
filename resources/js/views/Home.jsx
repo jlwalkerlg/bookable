@@ -41,7 +41,9 @@ class Home extends Component {
     bestSeller: null,
     newBooks: null,
     featuredBooks: null,
-    penguinBooks: null
+    penguinBooks: null,
+    trendingCategory: null,
+    trendingCategoryBook: null
   };
 
   async componentDidMount() {
@@ -49,26 +51,30 @@ class Home extends Component {
       bestSeller,
       newBooks,
       featuredBooks,
-      penguinBooks
-    ] = await this.fetchBooks();
-    this.setState({
-      bestSeller: bestSeller[0],
-      newBooks,
-      featuredBooks,
       penguinBooks,
+      [trendingCategory, trendingCategoryBook]
+    ] = await this.fetchData();
+    this.setState({
+      bestSeller: bestSeller.data.books[0],
+      newBooks: newBooks.data.books,
+      featuredBooks: featuredBooks.data.books,
+      penguinBooks: penguinBooks.data.books,
+      trendingCategory,
+      trendingCategoryBook: trendingCategoryBook.data.books[0],
       loading: false
     });
   }
 
-  async fetchBooks() {
+  async fetchData() {
     try {
-      const responses = await axios.all([
+      const res = await axios.all([
         this.fetchBestSeller(),
         this.fetchNewBooks(),
         this.fetchFeaturedBooks(),
-        this.fetchPenguinBooks()
+        this.fetchPenguinBooks(),
+        this.fetchTrendingCategory()
       ]);
-      return responses.map(res => res.data.books);
+      return res;
     } catch (error) {
       console.log(error);
     }
@@ -112,13 +118,33 @@ class Home extends Component {
     });
   }
 
+  async fetchTrendingCategory() {
+    const categoryResponse = await axios.get('/api/categories', {
+      params: { order_by: 'random', limit: 1 }
+    });
+    const trendingCategory = categoryResponse.data.categories[0];
+    return axios
+      .get('/api/books', {
+        params: {
+          limit: 1,
+          order_by: 'ratings_count',
+          order_dir: 'desc',
+          category_id: trendingCategory.id,
+          with: 'author'
+        }
+      })
+      .then(res => [trendingCategory, res]);
+  }
+
   render() {
     const {
       loading,
       bestSeller,
       newBooks,
       featuredBooks,
-      penguinBooks
+      penguinBooks,
+      trendingCategory,
+      trendingCategoryBook
     } = this.state;
 
     return loading ? (
@@ -245,34 +271,42 @@ class Home extends Component {
             <Row>
               <Col xs={12} md={6} className="offset-md-6">
                 <h2 className="heading heading--left-md text-md-left mb-4">
-                  <span>Trending in</span> <Link to="/">Philosophy</Link>
+                  <span>Trending in</span>{' '}
+                  <Link to={`/categories/${trendingCategory.id}`}>
+                    {trendingCategory.name}
+                  </Link>
                 </h2>
               </Col>
               <Col xs={12} md={6} className="mb-3 mb-md-0 text-md-right">
                 <img
-                  src="https://images.gr-assets.com/books/1522157426l/19063.jpg"
-                  alt="The Book Thief"
+                  src={trendingCategoryBook.large_image_url}
+                  alt={trendingCategoryBook.title}
                   className="book-highlight"
                 />
               </Col>
               <Col xs={12} md={6} className="text-md-left">
                 <p className="h1 font-display font-weight-bold text-break">
-                  <Link to="/books/1">The Book Thief</Link>
+                  <Link to={`/books/${trendingCategoryBook.id}`}>
+                    {trendingCategoryBook.title}
+                  </Link>
                 </p>
                 <p>
                   <span className="text-secondary">by:</span>{' '}
-                  <Link to="/authors/1">Markus Zusak</Link>
+                  <Link to={`/authors/${trendingCategoryBook.author.id}`}>
+                    {trendingCategoryBook.author.name}
+                  </Link>
                 </p>
-                <p className="h2 font-weight-bold text-warning mb-4">£19.99</p>
-                <p className="text-description">
-                  A nineteenth-century boy from a Mississippi River town
-                  recounts his adventures as he travels down the river with a
-                  runaway slave, encountering a family involved in a feud, two
-                  scoundrels pretending to be royalty, and Tom Sawyer's aunt who
-                  mistakes him for Tom.
+                <p className="h2 font-weight-bold text-warning mb-4">
+                  £{trendingCategoryBook.price}
                 </p>
+                <p
+                  className="text-description"
+                  dangerouslySetInnerHTML={sanitize.markup(
+                    trendingCategoryBook.description
+                  )}
+                />
                 <Link
-                  to="/books/1"
+                  to={`/books/${trendingCategoryBook.id}`}
                   className="btn btn-warning btn-md rounded-pill text-uppercase"
                 >
                   Read More
