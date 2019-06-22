@@ -4,6 +4,8 @@ use Illuminate\Database\Seeder;
 use App\Category;
 use App\CategoryBook;
 use App\Book;
+use App\Quote;
+use App\CategoryQuote;
 
 class CategoriesSeeder extends Seeder
 {
@@ -18,6 +20,10 @@ class CategoriesSeeder extends Seeder
             return $book->id;
         });
 
+        $quoteIds = Quote::select('id')->get()->map(function ($quote) {
+            return $quote->id;
+        });
+
         $categories = [
             'Classics', 'Fiction', 'History', 'Philosophy', 'Prehistory', 'Anthropology', 'Fantasy', 'Comedy', 'Science', 'Travel', 'Thriller', 'Spirituality', 'Nonfiction'
         ];
@@ -26,12 +32,26 @@ class CategoriesSeeder extends Seeder
             return ['name' => $name];
         }, $categories));
 
-        $count = count($categories);
+        $totalCategories = count($categories);
 
         foreach ($bookIds as $bookId) {
-            $categoryIds = collect(range(1, $count))->shuffle()->take(rand(3, 6))->all();
+            $categoryIds = collect(range(1, $totalCategories))->shuffle()->take(rand(3, 6))->all();
             CategoryBook::insert(array_map(function ($categoryId) use ($bookId) {
                 return ['book_id' => $bookId, 'category_id' => $categoryId];
+            }, $categoryIds));
+        }
+
+        foreach ($bookIds as $bookId) {
+            $categoryIds = collect(range(1, $totalCategories))->shuffle()->take(rand(3, 6))->all();
+            CategoryBook::insert(array_map(function ($categoryId) use ($bookId) {
+                return ['book_id' => $bookId, 'category_id' => $categoryId];
+            }, $categoryIds));
+        }
+
+        foreach ($quoteIds as $quoteId) {
+            $categoryIds = collect(range(1, $totalCategories))->shuffle()->take(rand(3, 6))->all();
+            CategoryQuote::insert(array_map(function ($categoryId) use ($quoteId) {
+                return ['quote_id' => $quoteId, 'category_id' => $categoryId];
             }, $categoryIds));
         }
     }

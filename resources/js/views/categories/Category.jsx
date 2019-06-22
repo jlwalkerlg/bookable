@@ -6,6 +6,7 @@ import ProductCard from '../../components/ProductCard';
 import Pagination from '../../components/Pagination';
 import Loading from '../../components/Loading';
 import URL from '../../utils/URL';
+import sanitize from '../../utils/sanitize';
 
 class Show extends Component {
   state = {
@@ -13,6 +14,7 @@ class Show extends Component {
     category: null,
     books: null,
     count: null,
+    quotes: null,
     order_by: 'ratings_count',
     order_dir: 'desc',
     limit: 20
@@ -20,7 +22,11 @@ class Show extends Component {
 
   async componentDidMount() {
     try {
-      await axios.all([this.fetchCategory(), this.fetchBooks()]);
+      await axios.all([
+        this.fetchCategory(),
+        this.fetchBooks(),
+        this.fetchQuotes()
+      ]);
       this.setState({ loading: false });
     } catch (error) {
       console.log(error);
@@ -68,6 +74,18 @@ class Show extends Component {
     }
   }
 
+  async fetchQuotes() {
+    const { categoryId } = this.props.match.params;
+    try {
+      const response = await axios.get('/api/quotes', {
+        params: { category_id: categoryId, limit: 10 }
+      });
+      this.setState({ quotes: response.data.quotes });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   calcOffset() {
     const page = this.getCurrentPage();
     const { limit } = this.state;
@@ -94,6 +112,7 @@ class Show extends Component {
       category,
       books,
       count,
+      quotes,
       limit,
       order_by,
       order_dir
@@ -174,27 +193,18 @@ class Show extends Component {
               <Col xs={12} md={4}>
                 <h2 className="h5 text-uppercase">Quotes in {category.name}</h2>
                 <ul className="list-unstyled">
-                  <li className="quote mb-3">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolor quasi a facilis corrupti quo, ipsam quidem! Soluta
-                    dolores quibusdam architecto voluptas quis laboriosam
-                    reprehenderit perspiciatis reiciendis impedit qui, amet ut.
-                  </li>
-                  <li className="quote mb-3">
-                    Voluptates beatae repudiandae fugiat magnam ad iusto totam
-                    illum laudantium minus nemo et, expedita iure eligendi
-                    numquam dignissimos voluptatem similique sunt unde,
-                    doloremque rerum! Incidunt nobis sint necessitatibus
-                    accusantium illum?
-                  </li>
-                  <li className="quote mb-3">
-                    Velit alias sed cum culpa aliquid ab ex, ullam perspiciatis
-                    perferendis. Dicta nostrum amet adipisci aperiam dolorem
-                    suscipit illum necessitatibus molestias, eius reiciendis!
-                    Odit quisquam distinctio adipisci officia, maxime numquam.
-                  </li>
+                  {quotes.map((quote, index) => (
+                    <li
+                      key={index}
+                      className="quote mb-3"
+                      dangerouslySetInnerHTML={sanitize.markup(quote.quote)}
+                    />
+                  ))}
                 </ul>
-                <Link to="/" className="font-weight-bold">
+                <Link
+                  to={`/quotes?category_id=${category.id}`}
+                  className="font-weight-bold"
+                >
                   Read More
                 </Link>
               </Col>

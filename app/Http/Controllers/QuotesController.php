@@ -20,6 +20,10 @@ class QuotesController extends Controller
             $query->where('author_id', $authorId);
         }
 
+        if ($categoryId = $request->input('category_id')) {
+            $query->join('category_quote', 'quotes.id', '=', 'category_quote.quote_id')->where('category_id', $categoryId);
+        }
+
         $count = $request->has('count') ? (clone $query)->count() : null;
 
         if ($limit = $request->input('limit')) {
