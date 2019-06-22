@@ -54,6 +54,7 @@ class Show extends Component {
   state = {
     loading: true,
     book: null,
+    quotes: null,
     shelves: null,
     shelfItems: null,
     quantity: 1
@@ -75,12 +76,18 @@ class Show extends Component {
   async fetchData() {
     const { user } = this.props;
     try {
-      const [book, shelves, shelfItems] = await axios.all([
+      const [book, quotes, shelves, shelfItems] = await axios.all([
         this.fetchBook(),
+        this.fetchQuotes(),
         user.id && this.fetchShelves(),
         user.id && this.fetchShelfItems()
       ]);
-      return { book, shelves, shelfItems };
+      return {
+        book: book.data,
+        quotes: quotes.data.quotes,
+        shelves: user.id ? shelves.data.shelves : null,
+        shelfItems: user.id ? shelfItems.data.items : null
+      };
     } catch (error) {
       console.log(error);
     }
@@ -89,10 +96,20 @@ class Show extends Component {
   async fetchBook() {
     const bookId = this.props.match.params.id;
     try {
-      const result = await axios.get(`/api/books/${bookId}`, {
+      return axios.get(`/api/books/${bookId}`, {
         params: { with: 'author.books,categories' }
       });
-      return result.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchQuotes() {
+    const bookId = this.props.match.params.id;
+    try {
+      return axios.get('/api/quotes', {
+        params: { book_id: bookId, limit: 5 }
+      });
     } catch (error) {
       console.log(error);
     }
@@ -101,10 +118,9 @@ class Show extends Component {
   async fetchShelves() {
     const { user } = this.props;
     try {
-      const response = await axios.get('/api/shelves', {
+      return axios.get('/api/shelves', {
         params: { user_id: user.id }
       });
-      return response.data.shelves;
     } catch (error) {
       console.log(error);
     }
@@ -114,10 +130,9 @@ class Show extends Component {
     const bookId = this.props.match.params.id;
     const { user } = this.props;
     try {
-      const response = await axios.get('/api/shelves/items', {
+      return axios.get('/api/shelves/items', {
         params: { book_id: bookId, user_id: user.id }
       });
-      return response.data.items;
     } catch (error) {
       console.log(error);
     }
@@ -193,7 +208,7 @@ class Show extends Component {
   };
 
   render() {
-    const { loading, book, shelves, quantity } = this.state;
+    const { loading, book, quotes, shelves, quantity } = this.state;
     const { user } = this.props;
 
     if (loading)
@@ -428,22 +443,16 @@ class Show extends Component {
                 <section id="quotes" className="mb-4">
                   <h3 className="text-uppercase font-size-6">Quotes</h3>
                   <ul className="list-unstyled mb-3">
-                    {new Array(5).fill(0).map((item, index) => (
-                      <li key={index} className="quote mb-3">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Alias modi cupiditate, maiores mollitia reprehenderit,
-                        eaque assumenda necessitatibus optio aut sequi
-                        laudantium autem quam id labore quisquam similique
-                        voluptates non officiis nisi adipisci inventore
-                        repellendus. Aliquid dolore magnam corrupti quisquam
-                        explicabo, quo et fugit perspiciatis ut, architecto sed
-                        quasi ad vel libero, odit aspernatur in impedit beatae
-                        atque suscipit voluptatum? Minus.
-                      </li>
+                    {quotes.map((quote, index) => (
+                      <li
+                        key={index}
+                        className="quote mb-3"
+                        dangerouslySetInnerHTML={sanitize.markup(quote.quote)}
+                      />
                     ))}
                   </ul>
                   <p className="font-weight-bold">
-                    <Link to="/">Read More...</Link>
+                    <Link to={`/books/${book.id}/quotes`}>Read More...</Link>
                   </p>
                 </section>
               </Col>

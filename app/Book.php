@@ -40,4 +40,9 @@ class Book extends Model
     {
         return $this->belongsToMany('App\Category', 'category_book');
     }
+
+    public function quotes()
+    {
+        return $this->hasMany('App\Quote');
+    }
 }

@@ -48,3 +48,5 @@ Route::delete('/shelves/items/{item}', 'ShelfItemsController@delete')->middlewar
 
 Route::get('/categories', 'CategoryController@index');
 Route::get('/categories/{category}', 'CategoryController@show');
+
+Route::get('/quotes', 'QuotesController@index');
