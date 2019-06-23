@@ -41,13 +41,6 @@ class CategoriesSeeder extends Seeder
             }, $categoryIds));
         }
 
-        foreach ($bookIds as $bookId) {
-            $categoryIds = collect(range(1, $totalCategories))->shuffle()->take(rand(3, 6))->all();
-            CategoryBook::insert(array_map(function ($categoryId) use ($bookId) {
-                return ['book_id' => $bookId, 'category_id' => $categoryId];
-            }, $categoryIds));
-        }
-
         foreach ($quoteIds as $quoteId) {
             $categoryIds = collect(range(1, $totalCategories))->shuffle()->take(rand(3, 6))->all();
             CategoryQuote::insert(array_map(function ($categoryId) use ($quoteId) {

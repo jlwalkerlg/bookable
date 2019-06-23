@@ -18,6 +18,7 @@ class WishlistSeeder extends Seeder
         $bookIds = Book::select('id')->get()->map(function ($book) {
             return $book->id;
         });
+
         $userIds = User::select('id')->orderBy('id', 'asc')->get()->map(function ($user) {
             return $user->id;
         });
@@ -26,7 +27,7 @@ class WishlistSeeder extends Seeder
             $wishlist = Wishlist::create(['user_id' => $userId]);
 
             WishlistItem::insert(
-                $bookIds->random(30)->map(function ($bookId) use ($wishlist) {
+                $bookIds->random(10)->map(function ($bookId) use ($wishlist) {
                     return [
                         'book_id' => $bookId,
                         'wishlist_id' => $wishlist->id,

@@ -18,6 +18,7 @@ class CartSeeder extends Seeder
         $bookIds = Book::select('id')->get()->map(function ($book) {
             return $book->id;
         });
+
         $userIds = User::select('id')->orderBy('id', 'asc')->get()->map(function ($user) {
             return $user->id;
         });
@@ -26,7 +27,7 @@ class CartSeeder extends Seeder
             $cart = Cart::create(['user_id' => $userId]);
 
             CartItem::insert(
-                $bookIds->random(30)->map(function ($bookId) use ($cart) {
+                $bookIds->random(8)->map(function ($bookId) use ($cart) {
                     return [
                         'quantity' => rand(1, 3),
                         'book_id' => $bookId,
