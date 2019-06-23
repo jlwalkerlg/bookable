@@ -427,8 +427,8 @@ class Show extends Component {
                   <h3 className="text-uppercase font-size-6">Details</h3>
                   <ul className="list-unstyled">
                     <li>
-                      <span className="font-weight-bold">Publisher:</span> AKW
-                      Books
+                      <span className="font-weight-bold">Publisher:</span>{' '}
+                      {book.publisher}
                     </li>
                     <li>
                       <span className="font-weight-bold">Publish Date:</span>{' '}
