@@ -80,6 +80,10 @@ class UsersController extends Controller
     {
         $query = $user->quotes();
 
+        if ($quoteIds = $request->input('quote_ids')) {
+            $query->whereIn('quote_id', explode(',', $quoteIds));
+        }
+
         $count = $request->has('count') ? (clone $query)->count() : null;
 
         if ($limit = $request->input('limit')) {

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Quote;
-use Illuminate\Support\Facades\DB;
 
 class QuotesController extends Controller
 {
@@ -18,6 +17,14 @@ class QuotesController extends Controller
 
         if ($authorId = $request->input('author_id')) {
             $query->where('author_id', $authorId);
+        }
+
+        if ($userId = $request->input('user_id')) {
+            $query->join('user_quote', 'user_quote.quote_id', '=', 'quotes.id')->select('quotes.*')->where('user_quote.user_id', $userId);
+        }
+
+        if ($quoteIds = $request->input('quote_ids')) {
+            $query->whereIn('quotes.id', explode(',', $quoteIds));
         }
 
         if ($categoryId = $request->input('category_id')) {
