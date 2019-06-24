@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Card, Button, Form } from 'react-bootstrap';
 import Loading from '../components/Loading';
+import Pagination from '../components/Pagination';
 import sanitize from '../utils/sanitize';
+import URL from '../utils/URL';
 
 class Quotes extends Component {
   state = {
@@ -21,9 +23,16 @@ class Quotes extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.match.params.userId !== this.props.match.params.userId) {
+    if (this.needsUpdate(prevProps)) {
       this.fetchQuotes();
     }
+  }
+
+  needsUpdate(prevProps) {
+    return (
+      prevProps.match.params.userId !== this.props.match.params.userId ||
+      prevProps.location.search !== this.props.location.search
+    );
   }
 
   async fetchQuotes() {
@@ -32,13 +41,14 @@ class Quotes extends Component {
     const areOwnQuotes = parseInt(userId) === this.props.user.id;
 
     try {
-      const { user, quotes } = await this.fetchUserQuotes();
+      const { user, quotes, count } = await this.fetchUserQuotes();
       const userQuotes = quotes;
 
       if (areOwnQuotes)
         return this.setState({
           user,
           userQuotes: null,
+          count,
           authUserQuotes: userQuotes,
           loading: false
         });
@@ -50,6 +60,7 @@ class Quotes extends Component {
       return this.setState({
         user,
         userQuotes,
+        count,
         authUserQuotes,
         loading: false
       });
@@ -60,10 +71,11 @@ class Quotes extends Component {
 
   async fetchUserQuotes() {
     const { limit } = this.state;
+    const offset = this.calcOffset();
     const { userId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/users/${userId}/quotes`, {
-        params: { limit, with: 'quote.book,quote.author' }
+        params: { limit, offset, with: 'quote.book,quote.author', count: true }
       });
       return response.data;
     } catch (error) {
@@ -81,6 +93,18 @@ class Quotes extends Component {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  calcOffset() {
+    const page = this.getCurrentPage();
+    const { limit } = this.state;
+    return (page - 1) * limit;
+  }
+
+  getCurrentPage() {
+    return (
+      parseInt(URL.query(this.props.location.search).getParam('page')) || 1
+    );
   }
 
   getAuthQuote(userQuote) {
@@ -128,7 +152,14 @@ class Quotes extends Component {
   };
 
   render() {
-    const { loading, user, userQuotes, authUserQuotes } = this.state;
+    const {
+      loading,
+      user,
+      userQuotes,
+      limit,
+      count,
+      authUserQuotes
+    } = this.state;
     const authUser = this.props.user;
 
     if (loading)
@@ -198,6 +229,14 @@ class Quotes extends Component {
               );
             })}
           </div>
+          <Pagination
+            totalItems={count}
+            currentPage={this.getCurrentPage()}
+            pageSize={limit}
+            maxPages={5}
+            url={`${this.props.location.pathname}?page=`}
+            className="justify-content-center pagination-warning mt-4"
+          />
         </Container>
       </div>
     );
