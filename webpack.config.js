@@ -69,7 +69,7 @@ module.exports = {
             // Extract images and dump into img folder.
             loader: 'file-loader',
             options: {
-              name: 'img/[name].[ext]'
+              name: 'images/[name].[ext]'
             }
           }
         ]
