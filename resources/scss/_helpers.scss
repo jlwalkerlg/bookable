@@ -41,3 +41,9 @@
 .placeholder-inherit::placeholder {
   font-size: inherit;
 }
+
+@include sm {
+  .col-count-2 {
+    column-count: 2;
+  }
+}

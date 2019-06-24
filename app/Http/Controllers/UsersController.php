@@ -75,4 +75,27 @@ class UsersController extends Controller
 
         return $count ? compact('user', 'items', 'count') : compact('user', 'items');
     }
+
+    public function quotes(Request $request, User $user)
+    {
+        $query = $user->quotes();
+
+        $count = $request->has('count') ? (clone $query)->count() : null;
+
+        if ($limit = $request->input('limit')) {
+            $query->limit($limit);
+        }
+
+        if ($offset = $request->input('offset')) {
+            $query->offset($offset);
+        }
+
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
+
+        $quotes = $query->get();
+
+        return $count ? compact('user', 'quotes', 'count') : compact('user', 'quotes');
+    }
 }

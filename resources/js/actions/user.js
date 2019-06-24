@@ -26,9 +26,11 @@ export const logout = () => dispatch =>
 
 export const oauthLogin = () => dispatch =>
   axios
-    .get('/api/user', { params: { with: 'wishlist.items,cart.items' } })
+    .get('/api/user', {
+      params: { with: 'wishlist.items,cart.items,quotes' }
+    })
     .then(response => {
-      const { wishlist, cart, ...user } = response.data;
+      const { wishlist, cart, quotes, ...user } = response.data;
       dispatch(loginUser(user));
       dispatch(hydrateWishlist(wishlist));
       dispatch(hydrateCart(cart));

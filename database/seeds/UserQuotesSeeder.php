@@ -2,11 +2,8 @@
 
 use Illuminate\Database\Seeder;
 use App\Quote;
-use App\Quotelist;
-use App\QuotelistItem;
-use App\User;
 
-class QuotelistsSeeder extends Seeder
+class UserQuotesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,19 +15,16 @@ class QuotelistsSeeder extends Seeder
         $quoteIds = Quote::select('id')->get()->map(function ($quote) {
             return $quote->id;
         });
-
-        $userIds = User::select('id')->orderBy('id', 'asc')->get()->map(function ($user) {
+        $userIds = App\User::select('id')->orderBy('id', 'asc')->get()->map(function ($user) {
             return $user->id;
         });
 
         foreach ($userIds as $userId) {
-            $quotelist = Quotelist::create(['user_id' => $userId]);
-
-            QuotelistItem::insert(
-                $quoteIds->random(20)->map(function ($quoteId) use ($quotelist) {
+            App\UserQuote::insert(
+                $quoteIds->random(30)->map(function ($quoteId) use ($userId) {
                     return [
                         'quote_id' => $quoteId,
-                        'quotelist_id' => $quotelist->id,
+                        'user_id' => $userId,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

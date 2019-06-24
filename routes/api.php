@@ -50,3 +50,5 @@ Route::get('/categories', 'CategoryController@index');
 Route::get('/categories/{category}', 'CategoryController@show');
 
 Route::get('/quotes', 'QuotesController@index');
+
+Route::get('/users/{user}/quotes', 'UsersController@quotes');
