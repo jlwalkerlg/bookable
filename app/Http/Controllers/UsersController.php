@@ -19,6 +19,11 @@ class UsersController extends Controller
         return $user;
     }
 
+    public function show(User $user)
+    {
+        return $user->only(['id', 'name']);
+    }
+
     public function ratings(Request $request, User $user)
     {
         $query = $user->ratings();

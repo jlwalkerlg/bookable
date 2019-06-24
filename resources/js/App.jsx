@@ -18,7 +18,7 @@ import Wishlist from './views/Wishlist';
 import Cart from './views/Cart';
 import Shelves from './views/Shelves';
 import Ratings from './views/Ratings';
-import Quotes from './views/Quotes';
+import UserQuotes from './views/UserQuotes';
 
 const App = ({ loading }) =>
   loading ? (
@@ -60,7 +60,7 @@ const App = ({ loading }) =>
         <AppRoute
           exact
           path="/users/:userId([0-9]+)/quotes"
-          component={Quotes}
+          component={UserQuotes}
         />
         <Route component={NotFound} />
       </Switch>

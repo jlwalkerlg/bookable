@@ -8,23 +8,23 @@ import Pagination from '../components/Pagination';
 import sanitize from '../utils/sanitize';
 import URL from '../utils/URL';
 
-class Quotes extends Component {
+class UserQuotes extends Component {
   state = {
     loading: true,
     user: null,
-    userQuotes: null,
+    quotes: null,
     count: null,
-    authUserQuotes: null,
+    userQuotes: null,
     limit: 10
   };
 
   componentDidMount() {
-    this.fetchQuotes();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
     if (this.needsUpdate(prevProps)) {
-      this.fetchQuotes();
+      this.fetchData();
     }
   }
 
@@ -35,61 +35,67 @@ class Quotes extends Component {
     );
   }
 
-  async fetchQuotes() {
-    const { userId } = this.props.match.params;
-
-    const areOwnQuotes = parseInt(userId) === this.props.user.id;
-
+  async fetchData() {
     try {
-      const { user, quotes, count } = await this.fetchUserQuotes();
-      const userQuotes = quotes;
+      const [user, { quotes }] = await axios.all([
+        this.fetchUser(),
+        this.fetchQuotes()
+      ]);
 
-      if (areOwnQuotes)
-        return this.setState({
-          user,
-          userQuotes: null,
-          count,
-          authUserQuotes: userQuotes,
-          loading: false
-        });
+      if (this.props.user.id) {
+        const quoteIds = quotes.map(quote => quote.id);
+        await this.fetchUserQuotes(quoteIds);
+      }
 
-      const quoteIds = userQuotes.map(userQuote => userQuote.quote.id);
-      const authUserQuotes =
-        this.props.user.id && (await this.fetchAuthUserQuotes(quoteIds)).quotes;
-
-      return this.setState({
-        user,
-        userQuotes,
-        count,
-        authUserQuotes,
-        loading: false
-      });
+      this.setState({ loading: false });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async fetchUserQuotes() {
+  async fetchUser() {
+    const { userId } = this.props.match.params;
+    try {
+      const response = await axios.get(`/api/users/${userId}`);
+      const user = response.data;
+      this.setState({ user });
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async fetchQuotes() {
     const { limit } = this.state;
     const offset = this.calcOffset();
     const { userId } = this.props.match.params;
     try {
-      const response = await axios.get(`/api/users/${userId}/quotes`, {
-        params: { limit, offset, with: 'quote.book,quote.author', count: true }
+      const response = await axios.get(`/api/quotes`, {
+        params: {
+          user_id: userId,
+          limit,
+          offset,
+          with: 'book,author',
+          count: true
+        }
       });
+      const { quotes, count } = response.data;
+      this.setState({ quotes, count });
       return response.data;
     } catch (error) {
       console.log(error);
     }
   }
 
-  async fetchAuthUserQuotes(quoteIds) {
+  async fetchUserQuotes(quoteIds) {
     const { user } = this.props;
     try {
       const response = await axios.get(`/api/users/${user.id}/quotes`, {
         params: { quote_ids: quoteIds.join(',') }
       });
-      return response.data;
+      const userQuotes = response.data.quotes;
+      this.setState({ userQuotes });
+      return userQuotes;
     } catch (error) {
       console.log(error);
     }
@@ -107,59 +113,43 @@ class Quotes extends Component {
     );
   }
 
-  getAuthQuote(userQuote) {
-    const { userQuotes, authUserQuotes } = this.state;
-    if (!userQuotes) return userQuote;
-    if (!authUserQuotes) return null;
-    return authUserQuotes.filter(
-      authQuote => authQuote.quote_id === userQuote.quote_id
-    )[0];
+  getUserQuote(quote) {
+    const { user } = this.props;
+    if (!user) return null;
+
+    const { userQuotes } = this.state;
+    return userQuotes.filter(userQuote => userQuote.quote_id === quote.id)[0];
   }
 
   deleteQuote = async (e, userQuote) => {
     e.preventDefault();
-    const { userQuotes, authUserQuotes } = this.state;
-    const authQuote = !userQuotes
-      ? userQuote
-      : authUserQuotes.filter(
-          quote => quote.quote_id === userQuote.quote_id
-        )[0];
     try {
-      await axios.delete(`/api/user-quotes/${authQuote.id}`);
-      const newAuthUserQuotes = authUserQuotes.filter(
-        quote => quote.id !== authQuote.id
+      await axios.delete(`/api/user-quotes/${userQuote.id}`);
+      const userQuotes = this.state.userQuotes.filter(
+        authQuote => authQuote.id !== userQuote.id
       );
-      this.setState({ authUserQuotes: newAuthUserQuotes });
+      this.setState({ userQuotes });
     } catch (error) {
       console.log(error);
     }
   };
 
-  saveQuote = async (e, userQuote) => {
+  saveQuote = async (e, quote) => {
     e.preventDefault();
     const { user } = this.props;
-    const areOwnQuotes = !this.state.userQuotes;
     try {
       const response = await axios.post(`/api/users/${user.id}/quotes`, {
-        quote_id: userQuote.quote_id,
-        with: areOwnQuotes ? 'quote.book,quote.author' : null
+        quote_id: quote.id
       });
-      const authUserQuotes = [...this.state.authUserQuotes, response.data];
-      this.setState({ authUserQuotes });
+      const userQuotes = [...this.state.userQuotes, response.data];
+      this.setState({ userQuotes });
     } catch (error) {
       console.log(error);
     }
   };
 
   render() {
-    const {
-      loading,
-      user,
-      userQuotes,
-      limit,
-      count,
-      authUserQuotes
-    } = this.state;
+    const { loading, user, quotes, count, limit } = this.state;
     const authUser = this.props.user;
 
     if (loading)
@@ -169,8 +159,6 @@ class Quotes extends Component {
         </div>
       );
 
-    const areOwnQuotes = user.id === authUser.id;
-
     return (
       <div className="section">
         <Container>
@@ -178,9 +166,9 @@ class Quotes extends Component {
             {user.name}&apos;s Quotes
           </h1>
           <div className="col-count-2">
-            {(userQuotes || authUserQuotes).map((userQuote, index) => {
-              const { quote, book, author } = userQuote.quote;
-              const authQuote = this.getAuthQuote(userQuote);
+            {quotes.map((quote, index) => {
+              const { book, author } = quote;
+              const userQuote = this.getUserQuote(quote);
 
               return (
                 <Card key={index} className="d-inline-block w-100 mt-3">
@@ -188,7 +176,7 @@ class Quotes extends Component {
                     <blockquote className="blockquote mb-0">
                       <p
                         className="font-size-6"
-                        dangerouslySetInnerHTML={sanitize.markup(quote)}
+                        dangerouslySetInnerHTML={sanitize.markup(quote.quote)}
                       />
                       <footer className="blockquote-footer">
                         <Link to={`/authors/${author.name}`}>
@@ -200,7 +188,7 @@ class Quotes extends Component {
                         </cite>
                       </footer>
                     </blockquote>
-                    {(areOwnQuotes || authQuote) && (
+                    {userQuote && (
                       <Form
                         action="/"
                         method="POST"
@@ -212,12 +200,12 @@ class Quotes extends Component {
                         </Button>
                       </Form>
                     )}
-                    {!areOwnQuotes && !authQuote && authUser.id && (
+                    {authUser.id && !userQuote && (
                       <Form
                         action="/"
                         method="POST"
                         className="mt-2"
-                        onSubmit={e => this.saveQuote(e, userQuote)}
+                        onSubmit={e => this.saveQuote(e, quote)}
                       >
                         <Button type="submit" variant="outline-info" size="sm">
                           Save
@@ -243,9 +231,8 @@ class Quotes extends Component {
   }
 }
 
-const mapStateToProps = ({ quotes, user }) => ({
-  quotes,
+const mapStateToProps = ({ user }) => ({
   user
 });
 
-export default connect(mapStateToProps)(Quotes);
+export default connect(mapStateToProps)(UserQuotes);
