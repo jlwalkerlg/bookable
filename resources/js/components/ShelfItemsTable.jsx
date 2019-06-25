@@ -69,12 +69,12 @@ class ShelfItemsTable extends Component {
                   <td className="text-nowrap">
                     <Stars
                       rating={(userRating && userRating.rating) || 0}
-                      // editable
-                      // onClick={
-                      //   userRating
-                      //     ? e => onUpdateRating(e, userRating)
-                      //     : e => onAddRating(e, book)
-                      // }
+                      editable
+                      onClick={
+                        userRating
+                          ? e => onUpdateRating(e, userRating)
+                          : e => onAddRating(e, book)
+                      }
                     />
                   </td>
                 )}

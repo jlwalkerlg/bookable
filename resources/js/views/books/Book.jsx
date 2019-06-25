@@ -18,6 +18,7 @@ import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
 import Loading from '../../components/Loading';
 import BookCarousel from '../../components/BookCarousel';
+import { addToShelf, removeFromShelf } from '../../actions/shelves';
 
 class Show extends Component {
   state = {
@@ -152,28 +153,18 @@ class Show extends Component {
   addToShelf = async (e, shelf) => {
     e.preventDefault();
     const { book } = this.state;
-    try {
-      const response = await axios.post(`/api/shelves/${shelf.id}/items`, {
-        book_id: book.id
-      });
-      const shelfItems = [...this.state.shelfItems, response.data];
-      this.setState({ shelfItems });
-    } catch (error) {
-      console.log(error);
-    }
+    const shelfItem = await addToShelf(book, shelf);
+    const shelfItems = [...this.state.shelfItems, shelfItem];
+    this.setState({ shelfItems });
   };
 
   removeFromShelf = async (e, shelfItem) => {
     e.preventDefault();
-    try {
-      await axios.delete(`/api/shelves/items/${shelfItem.id}`);
-      const shelfItems = this.state.shelfItems.filter(
-        item => item.id !== shelfItem.id
-      );
-      this.setState({ shelfItems });
-    } catch (error) {
-      console.log(error);
-    }
+    await removeFromShelf(shelfItem);
+    const shelfItems = this.state.shelfItems.filter(
+      item => item.id !== shelfItem.id
+    );
+    this.setState({ shelfItems });
   };
 
   render() {

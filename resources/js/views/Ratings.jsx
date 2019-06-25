@@ -7,6 +7,7 @@ import URL from '../utils/URL';
 import Loading from '../components/Loading';
 import BookListing from '../components/BookListing';
 import RatingsTable from '../components/RatingsTable';
+import { addRating, updateRating, deleteRating } from '../actions/ratings';
 
 class Ratings extends Component {
   state = {
@@ -90,45 +91,28 @@ class Ratings extends Component {
     e.preventDefault();
     const rating = 5 - parseInt(e.target.dataset.index);
     const { user } = this.props;
-    try {
-      const response = await axios.post(`/api/users/${user.id}/ratings`, {
-        rating,
-        book_id: book.id
-      });
-      const userRatings = [...this.state.userRatings, response.data];
-      this.setUserRatings(userRatings);
-    } catch (error) {
-      console.log(error);
-    }
+    const newRating = await addRating(rating, book, user);
+    const userRatings = [...this.state.userRatings, newRating];
+    this.setUserRatings(userRatings);
   };
 
   updateRating = async (rating, newRating) => {
-    try {
-      await axios.patch(`/api/ratings/${rating.id}`, {
-        rating: newRating
-      });
-      const userRatings = this.state.userRatings.map(userRating =>
-        userRating.id === rating.id
-          ? { ...userRating, rating: newRating }
-          : userRating
-      );
-      this.setUserRatings(userRatings);
-    } catch (error) {
-      console.log(error);
-    }
+    await updateRating(rating, newRating);
+    const userRatings = this.state.userRatings.map(userRating =>
+      userRating.id === rating.id
+        ? { ...userRating, rating: newRating }
+        : userRating
+    );
+    this.setUserRatings(userRatings);
   };
 
   deleteRating = async (e, rating) => {
     e.preventDefault();
-    try {
-      await axios.delete(`/api/ratings/${rating.id}`);
-      const userRatings = this.state.userRatings.filter(
-        userRating => userRating.id !== rating.id
-      );
-      this.setUserRatings(userRatings);
-    } catch (error) {
-      console.log(error);
-    }
+    await deleteRating(rating);
+    const userRatings = this.state.userRatings.filter(
+      userRating => userRating.id !== rating.id
+    );
+    this.setUserRatings(userRatings);
   };
 
   handleUpdateRating = (e, rating) => {

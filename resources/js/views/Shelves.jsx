@@ -9,6 +9,8 @@ import Pagination from '../components/Pagination';
 import Loading from '../components/Loading';
 import ShelfItemsTable from '../components/ShelfItemsTable';
 import BookListing from '../components/BookListing';
+import { addRating, updateRating } from '../actions/ratings';
+import { removeFromShelf } from '../actions/shelves';
 
 class Shelves extends Component {
   state = {
@@ -49,8 +51,9 @@ class Shelves extends Component {
         this.fetchRatings(bookIds),
         this.fetchUserRatings(bookIds)
       ]);
-    } else {
-      await this.fetchRatings(bookIds);
+    } else if (authUser.id) {
+      const { ratings } = await this.fetchRatings(bookIds);
+      this.setState({ userRatings: ratings });
     }
   }
 
@@ -90,14 +93,13 @@ class Shelves extends Component {
 
   async fetchRatings(bookIds) {
     const { userId } = this.props.match.params;
-    const { user } = this.props;
-    if (user.id === parseInt(userId)) return null;
     try {
       const response = await axios.get('/api/ratings', {
         params: { user_id: userId, book_ids: bookIds.join(',') }
       });
       const { ratings } = response.data;
       this.setState({ ratings });
+      return response.data;
     } catch (error) {
       console.log(error);
     }
@@ -139,16 +141,43 @@ class Shelves extends Component {
 
   removeFromShelf = async (e, shelfItem) => {
     e.preventDefault();
-    try {
-      await axios.delete(`/api/shelves/items/${shelfItem.id}`);
-      const shelfItems = this.state.shelfItems.filter(
-        item => item.id !== shelfItem.id
-      );
-      this.setState({ shelfItems });
-    } catch (error) {
-      console.log(error);
-    }
+    await removeFromShelf(shelfItem);
+    const shelfItems = this.state.shelfItems.filter(
+      item => item.id !== shelfItem.id
+    );
+    this.setState({ shelfItems });
   };
+
+  addRating = async (e, book) => {
+    e.preventDefault();
+    const rating = 5 - parseInt(e.target.dataset.index);
+    const { user } = this.props;
+    const newRating = await addRating(rating, book, user);
+    const userRatings = [...this.state.userRatings, newRating];
+    this.setUserRatings(userRatings);
+  };
+
+  updateRating = async (rating, newRating) => {
+    await updateRating(rating, newRating);
+    const userRatings = this.state.userRatings.map(userRating =>
+      userRating.id === rating.id
+        ? { ...userRating, rating: newRating }
+        : userRating
+    );
+    this.setUserRatings(userRatings);
+  };
+
+  handleUpdateRating = (e, rating) => {
+    e.preventDefault();
+    const newRating = 5 - parseInt(e.target.dataset.index);
+    if (newRating !== rating.rating) this.updateRating(rating, newRating);
+  };
+
+  setUserRatings(userRatings) {
+    if (this.state.user.id === this.props.user.id)
+      return this.setState({ ratings: userRatings, userRatings });
+    return this.setState({ userRatings });
+  }
 
   getRating(book) {
     return this.state.ratings.filter(rating => rating.book_id === book.id)[0];
@@ -248,79 +277,10 @@ class Shelves extends Component {
                 shelfItems={shelfItems}
                 ratings={ratings}
                 userRatings={userRatings}
+                onAddRating={this.addRating}
+                onUpdateRating={this.handleUpdateRating}
                 onDeleteItem={this.removeFromShelf}
               />
-              {/* <div className="d-md-none mb-3">
-                {shelfItems.map((shelfItem, index) => {
-                  const { book, userRating, authUserRating } = shelfItem;
-                  const { author } = book;
-
-                  return (
-                    <Media key={index} className="product-table__row py-3">
-                      <img
-                        src={book.image_url}
-                        alt={book.title}
-                        className="mr-3"
-                      />
-                      <Media.Body>
-                        <p className="h5">
-                          <Link to={`/books/${book.id}`}>{book.title}</Link>
-                        </p>
-                        <p>
-                          <span className="text-secondary">by: </span>
-                          <Link to={`/authors/${author.id}`}>
-                            {author.name}
-                          </Link>
-                        </p>
-                        <p className="font-size-7 mb-2">
-                          <span className="text-secondary">
-                            Average rating:
-                          </span>{' '}
-                          {book.avg_rating.toFixed(2)}
-                        </p>
-                        {!isOwnShelf && (
-                          <p className="font-size-7 mb-2">
-                            <span className="text-secondary">User rating:</span>{' '}
-                            <Stars
-                              rating={(userRating && userRating.rating) || 0}
-                            />
-                          </p>
-                        )}
-                        {authUser.id && (
-                          <p className="font-size-7 mb-2">
-                            <span className="text-secondary">Your rating:</span>{' '}
-                            <Stars
-                              rating={
-                                (authUserRating && authUserRating.rating) || 0
-                              }
-                            />
-                          </p>
-                        )}
-                        <p className="font-size-7 mb-2">
-                          <span className="text-secondary">Date Added:</span>{' '}
-                          {shelfItem.created_at}
-                        </p>
-                        {isOwnShelf && (
-                          <Form
-                            action="/"
-                            method="POST"
-                            onSubmit={e => this.removeFromShelf(e, shelfItem)}
-                          >
-                            <Button
-                              variant="link"
-                              type="submit"
-                              className="text-danger p-0 font-size-7"
-                            >
-                              Remove from shelf
-                            </Button>
-                          </Form>
-                        )}
-                      </Media.Body>
-                    </Media>
-                  );
-                })}
-              </div> */}
-
               <div className="d-md-none mb-3">
                 {shelfItems.map((shelfItem, index) => {
                   const { book } = shelfItem;
@@ -338,6 +298,8 @@ class Shelves extends Component {
                       rating={rating}
                       userRating={userRating}
                       createdAt={shelfItem.created_at}
+                      onAddRating={this.addRating}
+                      onUpdateRating={this.handleUpdateRating}
                       deletable={user.id === authUser.id}
                       onDelete={e => this.removeFromShelf(e, shelfItem)}
                     />
