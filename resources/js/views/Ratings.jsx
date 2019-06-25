@@ -1,59 +1,54 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import { Container, Table, Form, Button, Media } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import Pagination from '../components/Pagination';
 import URL from '../utils/URL';
 import Loading from '../components/Loading';
-import Stars from '../components/Stars';
+import BookListing from '../components/BookListing';
+import RatingsTable from '../components/RatingsTable';
 
 class Ratings extends Component {
   state = {
     loading: true,
     user: null,
     ratings: null,
-    authUserRatings: null,
+    userRatings: null,
     count: null,
     limit: 10
   };
 
   async componentDidMount() {
-    this.fetchRatings();
+    await this.fetchData();
+    this.setState({ loading: false });
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
       this.setState({ loading: true });
-      this.fetchRatings();
+      await this.fetchData();
+      this.setState({ loading: false });
     }
   }
 
-  async fetchRatings() {
-    const { user, ratings, count } = await this.fetchUserRatings();
+  async fetchData() {
+    const { user, ratings, count } = await this.fetchRatings();
 
-    const isLoggedIn = !!this.props.user.id;
-    const areOwnRatings = this.props.user.id === user.id;
+    if (!this.props.user.id) {
+      return this.setState({ user, ratings, count });
+    }
 
-    const userRatings = !areOwnRatings ? ratings : null;
-    const authUserRatings =
-      isLoggedIn &&
-      (areOwnRatings
-        ? ratings
-        : await this.fetchAuthUserRatings(
-            ratings.map(rating => rating.book_id)
-          ));
+    if (user.id === this.props.user.id) {
+      return this.setState({ user, ratings, userRatings: ratings, count });
+    }
 
-    this.setState({
-      user,
-      ratings: userRatings,
-      count,
-      authUserRatings,
-      loading: false
-    });
+    const bookIds = ratings.map(rating => rating.book_id);
+    const userRatings = (await this.fetchUserRatings(bookIds)).ratings;
+
+    return this.setState({ user, ratings, userRatings, count });
   }
 
-  async fetchUserRatings() {
+  async fetchRatings() {
     const { limit } = this.state;
     const { userId } = this.props.match.params;
     const offset = this.calcOffset();
@@ -67,13 +62,13 @@ class Ratings extends Component {
     }
   }
 
-  async fetchAuthUserRatings(bookIds) {
+  async fetchUserRatings(bookIds) {
     const { user } = this.props;
     try {
       const response = await axios.get(`/api/ratings`, {
         params: { user_id: user.id, book_ids: bookIds.join(',') }
       });
-      return response.data.ratings;
+      return response.data;
     } catch (error) {
       console.log(error);
     }
@@ -91,7 +86,7 @@ class Ratings extends Component {
     );
   }
 
-  async addRating(e, book) {
+  addRating = async (e, book) => {
     e.preventDefault();
     const rating = 5 - parseInt(e.target.dataset.index);
     const { user } = this.props;
@@ -100,69 +95,67 @@ class Ratings extends Component {
         rating,
         book_id: book.id
       });
-      const authUserRatings = [...this.state.authUserRatings, response.data];
-      this.setState({ authUserRatings });
+      const userRatings = [...this.state.userRatings, response.data];
+      this.setUserRatings(userRatings);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  handleExistingRating = (e, rating) => {
+  updateRating = async (rating, newRating) => {
+    try {
+      await axios.patch(`/api/ratings/${rating.id}`, {
+        rating: newRating
+      });
+      const userRatings = this.state.userRatings.map(userRating =>
+        userRating.id === rating.id
+          ? { ...userRating, rating: newRating }
+          : userRating
+      );
+      this.setUserRatings(userRatings);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  deleteRating = async (e, rating) => {
+    e.preventDefault();
+    try {
+      await axios.delete(`/api/ratings/${rating.id}`);
+      const userRatings = this.state.userRatings.filter(
+        userRating => userRating.id !== rating.id
+      );
+      this.setUserRatings(userRatings);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  handleUpdateRating = (e, rating) => {
     e.preventDefault();
     const newRating = 5 - parseInt(e.target.dataset.index);
     if (newRating !== rating.rating) this.updateRating(rating, newRating);
   };
 
-  async updateRating(rating, newRating) {
-    try {
-      await axios.patch(`/api/ratings/${rating.id}`, {
-        rating: newRating
-      });
-      const authUserRatings = this.state.authUserRatings.map(authRating =>
-        authRating.id === rating.id
-          ? { ...rating, rating: newRating }
-          : authRating
-      );
-      this.setState({ authUserRatings });
-    } catch (error) {
-      console.log(error);
-    }
+  setUserRatings(userRatings) {
+    if (this.state.user.id === this.props.user.id)
+      return this.setState({ ratings: userRatings, userRatings });
+    return this.setState({ userRatings });
   }
 
-  async deleteRating(e, rating) {
-    e.preventDefault();
-    try {
-      await axios.delete(`/api/ratings/${rating.id}`);
-      const authUserRatings = this.state.authUserRatings.filter(
-        authRating => authRating.id !== rating.id
-      );
-      this.setState({ authUserRatings });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  getUserRating(rating) {
+    const { userRatings } = this.state;
+    if (!userRatings) return null;
 
-  getAuthUserRating(rating) {
-    const authUser = this.props.user;
-    const { authUserRatings, ratings } = this.state;
+    if (rating.user_id === this.props.user.id) return rating;
 
-    if (!authUser.id) return null;
-    if (authUser.id && !ratings) return rating;
-    return authUserRatings.filter(
-      authRating => authRating.book_id == rating.book_id
+    return userRatings.filter(
+      userRating => userRating.book_id === rating.book_id
     )[0];
   }
 
   render() {
-    const {
-      loading,
-      user,
-      ratings,
-      count,
-      authUserRatings,
-      limit
-    } = this.state;
-    const authUser = this.props.user;
+    const { loading, user, ratings, count, limit } = this.state;
 
     if (loading)
       return (
@@ -174,151 +167,39 @@ class Ratings extends Component {
     return (
       <div className="section">
         <Container>
-          <h1 className="h5 text-uppercase mb-0 mb-md-3">
-            {user.name}&apos;s Ratings
-          </h1>
-          <Table responsive className="d-none d-md-table mb-3">
-            <thead>
-              <tr>
-                <th>Cover</th>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Average Rating</th>
-                {ratings && <th>User Rating</th>}
-                {authUser.id && <th>Your Rating</th>}
-                <th>Date Added</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {(ratings || authUserRatings).map((rating, index) => {
-                const { book } = rating;
-                const { author } = book;
-                const authUserRating = this.getAuthUserRating(rating);
-                const authRating = authUserRating ? authUserRating.rating : 0;
+          <h1 className="h5 text-uppercase mb-0">{user.name}&apos;s Ratings</h1>
 
-                return (
-                  <tr key={index}>
-                    <td>
-                      <img src={book.small_image_url} alt={book.title} />
-                    </td>
-                    <td>
-                      <Link to={`/books/${book.id}`}>{book.title}</Link>
-                    </td>
-                    <td>
-                      <Link to={`/authors/${author.id}`}>{author.name}</Link>
-                    </td>
-                    <td>{book.avg_rating.toFixed(2)}</td>
-                    {ratings && (
-                      <td className="text-nowrap">
-                        <Stars rating={rating.rating} />
-                      </td>
-                    )}
-                    {authUser.id && (
-                      <td className="text-nowrap">
-                        <Stars
-                          rating={authRating}
-                          editable
-                          onClick={
-                            authUserRating
-                              ? e =>
-                                  this.handleExistingRating(e, authUserRating)
-                              : e => this.addRating(e, book)
-                          }
-                        />
-                      </td>
-                    )}
-                    <td>{rating.created_at}</td>
-                    <td>
-                      {authUserRating && (
-                        <Form
-                          action="/"
-                          method="POST"
-                          onSubmit={e => this.deleteRating(e, authUserRating)}
-                        >
-                          <Button
-                            variant="link"
-                            type="submit"
-                            className="text-body p-0"
-                          >
-                            <i className="material-icons">clear</i>
-                          </Button>
-                        </Form>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+          <RatingsTable
+            className="d-none d-md-table mt-3"
+            user={user}
+            ratings={ratings}
+            authUser={this.props.user}
+            userRatings={this.state.userRatings}
+            onAddRating={this.addRating}
+            onUpdateRating={this.handleUpdateRating}
+            onDeleteRating={this.deleteRating}
+          />
 
-          <div className="d-md-none mb-3">
-            {(ratings || authUserRatings).map((rating, index) => {
+          <div className="d-md-none mt-3">
+            {ratings.map((rating, index) => {
               const { book } = rating;
-              const { author } = book;
-              const authUserRating = this.getAuthUserRating(rating);
-              const authRating = authUserRating ? authUserRating.rating : 0;
+              const userRating = this.getUserRating(rating);
 
               return (
-                <Media key={index} className="product-table__row py-3">
-                  <img src={book.image_url} alt={book.title} className="mr-3" />
-                  <Media.Body>
-                    {authUserRating && (
-                      <Form
-                        action="/"
-                        method="POST"
-                        className="float-right"
-                        onSubmit={e => this.deleteRating(e, authUserRating)}
-                      >
-                        <Button
-                          variant="link"
-                          type="submit"
-                          className="text-body p-0"
-                        >
-                          <i className="material-icons">clear</i>
-                        </Button>
-                      </Form>
-                    )}
-                    <p className="h5">
-                      <Link to={`/books/${book.id}`}>{book.title}</Link>
-                    </p>
-                    <p>
-                      <span className="text-secondary">by: </span>
-                      <Link to={`/authors/${author.id}`}>{author.name}</Link>
-                    </p>
-                    <p className="font-size-7 mb-2">
-                      <span className="text-secondary">Average rating:</span>{' '}
-                      {book.avg_rating.toFixed(2)}
-                    </p>
-                    {ratings && (
-                      <p className="font-size-7 mb-2">
-                        <span className="text-secondary">User Rating:</span>{' '}
-                        <Stars rating={rating.rating} />
-                      </p>
-                    )}
-                    {authUser.id && (
-                      <p className="mb-2 font-size-5">
-                        <span className="text-secondary font-size-7">
-                          Your rating:
-                        </span>{' '}
-                        <Stars
-                          rating={authRating}
-                          editable
-                          onClick={
-                            authUserRating
-                              ? e =>
-                                  this.handleExistingRating(e, authUserRating)
-                              : e => this.addRating(e, book)
-                          }
-                        />
-                      </p>
-                    )}
-                    <p className="font-size-7 mb-2">
-                      <span className="text-secondary">Date Added:</span>{' '}
-                      {rating.created_at}
-                    </p>
-                  </Media.Body>
-                </Media>
+                <BookListing
+                  key={index}
+                  user={user}
+                  authUser={this.props.user}
+                  book={book}
+                  author={book.author}
+                  rating={rating}
+                  userRating={userRating}
+                  createdAt={rating.created_at}
+                  onAddRating={this.addRating}
+                  onUpdateRating={this.handleUpdateRating}
+                  deletable={user.id === this.props.user.id}
+                  onDelete={e => this.deleteRating(e, userRating)}
+                />
               );
             })}
           </div>
@@ -328,7 +209,7 @@ class Ratings extends Component {
             pageSize={limit}
             maxPages={5}
             url={`${this.props.location.pathname}?page=`}
-            className="justify-content-center pagination-warning"
+            className="mt-3 justify-content-center pagination-warning"
           />
         </Container>
       </div>

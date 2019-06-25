@@ -31,11 +31,6 @@ class Book extends Model
         return $this->belongsTo('App\Author');
     }
 
-    public function reviews()
-    {
-        return $this->hasMany('App\Review');
-    }
-
     public function categories()
     {
         return $this->belongsToMany('App\Category', 'category_book');
