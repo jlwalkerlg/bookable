@@ -171,9 +171,9 @@ class Home extends Component {
             <h2 className="heading mb-5">
               <span>Penguin Classics</span>
             </h2>
-            <div className="d-flex justify-content-center flex-wrap">
+            <div className="d-flex justify-content-center flex-wrap mb-4">
               {penguinBooks.map((book, index) => (
-                <ProductCard key={index} book={book} className="mb-4 mx-3" />
+                <ProductCard key={index} book={book} className="mx-3" />
               ))}
             </div>
           </Container>

@@ -31,6 +31,15 @@ const slickOptions = {
 };
 
 const BookCarousel = ({ books, jagged, cardClassName }) => {
+  if (books.length < 5)
+    return (
+      <div className="d-flex justify-content-center flex-wrap">
+        {books.map((book, index) => (
+          <ProductCard key={index} book={book} className="mx-3" />
+        ))}
+      </div>
+    );
+
   return (
     <Slider {...slickOptions} className="text-center">
       {books.map((book, index) => {
