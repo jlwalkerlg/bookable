@@ -31,7 +31,6 @@ const slickOptions = {
 };
 
 const BookCarousel = ({ books, jagged, cardClassName }) => {
-  console.log(jagged);
   return (
     <Slider {...slickOptions} className="text-center">
       {books.map((book, index) => {

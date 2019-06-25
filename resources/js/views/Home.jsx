@@ -7,6 +7,7 @@ import ProductCard from '../components/ProductCard';
 import Loading from '../components/Loading';
 import BookCarousel from '../components/BookCarousel';
 import sanitize from '../utils/sanitize';
+import FeaturedBook from '../components/FeaturedBook';
 
 class Home extends Component {
   constructor(props) {
@@ -139,55 +140,12 @@ class Home extends Component {
         </header>
         {/* BEST SELLER */}
         <article className="bg-beige section text-center">
-          <Container>
-            <Row>
-              <Col xs={12} lg={4} className="mb-4 mb-lg-0 text-lg-right">
-                <h2 className="heading heading--right-md mb-5">
-                  <span>Best Seller</span>
-                </h2>
-                <p className="h1 font-display font-weight-bold text-break">
-                  <Link to={`/books/${bestSeller.id}`}>{bestSeller.title}</Link>
-                </p>
-                <p>
-                  <span className="text-secondary">by:</span>{' '}
-                  <Link to={`/authors/${bestSeller.author.id}`}>
-                    {bestSeller.author.name}
-                  </Link>
-                </p>
-                <p className="h2 font-weight-bold text-warning">
-                  £{bestSeller.price}
-                </p>
-              </Col>
-              <Col xs={12} md={6} lg={4} className="mb-5 mb-md-0">
-                <img
-                  src={bestSeller.large_image_url}
-                  alt={bestSeller.title}
-                  className="d-block mx-auto book-highlight"
-                />
-              </Col>
-              <Col
-                xs={12}
-                md={6}
-                lg={4}
-                className="d-flex align-items-end text-md-left"
-              >
-                <div>
-                  <p
-                    className="text-description"
-                    dangerouslySetInnerHTML={sanitize.markup(
-                      bestSeller.description
-                    )}
-                  />
-                  <Link
-                    to={`/books/${bestSeller.id}`}
-                    className="btn btn-warning btn-md rounded-pill text-uppercase"
-                  >
-                    Read More
-                  </Link>
-                </div>
-              </Col>
-            </Row>
-          </Container>
+          <FeaturedBook
+            title="Best Seller"
+            book={bestSeller}
+            author={bestSeller.author}
+            variant="middle"
+          />
         </article>
         {/* NEW BOOKS */}
         <article className="section text-center">
@@ -222,53 +180,19 @@ class Home extends Component {
         </article>
         {/* PHILOSOPHY FEATURE */}
         <article className="bg-beige section text-center">
-          <Container>
-            <Row>
-              <Col xs={12} md={6} className="offset-md-6">
-                <h2 className="heading heading--left-md text-md-left mb-4">
-                  <span>Trending in</span>{' '}
-                  <Link to={`/categories/${trendingCategory.id}`}>
-                    {trendingCategory.name}
-                  </Link>
-                </h2>
-              </Col>
-              <Col xs={12} md={6} className="mb-3 mb-md-0 text-md-right">
-                <img
-                  src={trendingCategoryBook.large_image_url}
-                  alt={trendingCategoryBook.title}
-                  className="book-highlight"
-                />
-              </Col>
-              <Col xs={12} md={6} className="text-md-left">
-                <p className="h1 font-display font-weight-bold text-break">
-                  <Link to={`/books/${trendingCategoryBook.id}`}>
-                    {trendingCategoryBook.title}
-                  </Link>
-                </p>
-                <p>
-                  <span className="text-secondary">by:</span>{' '}
-                  <Link to={`/authors/${trendingCategoryBook.author.id}`}>
-                    {trendingCategoryBook.author.name}
-                  </Link>
-                </p>
-                <p className="h2 font-weight-bold text-warning mb-4">
-                  £{trendingCategoryBook.price}
-                </p>
-                <p
-                  className="text-description"
-                  dangerouslySetInnerHTML={sanitize.markup(
-                    trendingCategoryBook.description
-                  )}
-                />
-                <Link
-                  to={`/books/${trendingCategoryBook.id}`}
-                  className="btn btn-warning btn-md rounded-pill text-uppercase"
-                >
-                  Read More
+          <FeaturedBook
+            title={() => (
+              <>
+                <span>Trending in</span>{' '}
+                <Link to={`/categories/${trendingCategory.id}`}>
+                  {trendingCategory.name}
                 </Link>
-              </Col>
-            </Row>
-          </Container>
+              </>
+            )}
+            book={trendingCategoryBook}
+            author={trendingCategoryBook.author}
+            variant="left"
+          />
         </article>
       </>
     );

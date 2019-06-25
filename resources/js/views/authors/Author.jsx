@@ -8,6 +8,7 @@ import SlickArrow from '../../components/SlickArrow';
 import Loading from '../../components/Loading';
 import sanitize from '../../utils/sanitize';
 import ProductCard from '../../components/ProductCard';
+import FeaturedBook from '../../components/FeaturedBook';
 
 const slickOptions = {
   infinite: false,
@@ -170,96 +171,21 @@ class Show extends Component {
         </header>
         {/* Highest rated book */}
         <article className="section text-center">
-          <Container>
-            <Row>
-              <Col xs={12} md={6} className="offset-md-6">
-                <h2 className="heading heading--left-md text-md-left mb-4">
-                  <span>Highest rated book</span>
-                </h2>
-              </Col>
-              <Col xs={12} md={6} className="mb-3 mb-md-0 text-md-right">
-                <img
-                  src={highestRated.large_image_url}
-                  alt={highestRated.title}
-                  className="book-highlight"
-                />
-              </Col>
-              <Col xs={12} md={6} className="text-md-left">
-                <p className="h1 font-display font-weight-bold text-break">
-                  <Link to={`/books/${highestRated.id}`}>
-                    {highestRated.title}
-                  </Link>
-                </p>
-                <p>
-                  <span className="text-secondary">by:</span>{' '}
-                  <Link to={`/authors/${author.id}`}>{author.name}</Link>
-                </p>
-                <p className="h2 font-weight-bold text-warning mb-4">
-                  £{highestRated.price}
-                </p>
-                <p
-                  className="text-description text-justify text-md-left"
-                  dangerouslySetInnerHTML={sanitize.markup(
-                    highestRated.description
-                  )}
-                />
-                <Link
-                  to={`/books/${highestRated.id}`}
-                  className="btn btn-warning btn-md rounded-pill text-uppercase"
-                >
-                  Read More
-                </Link>
-              </Col>
-            </Row>
-          </Container>
+          <FeaturedBook
+            title="Highest rated book"
+            book={highestRated}
+            author={author}
+            variant="left"
+          />
         </article>
         {/* Most rated book */}
         <article className="section bg-beige text-center">
-          <Container>
-            <Row>
-              <Col xs={12} md={6}>
-                <h2 className="heading heading--right-md text-md-right mb-4">
-                  <span>Most rated book</span>
-                </h2>
-              </Col>
-            </Row>
-            <Row>
-              <Col
-                xs={12}
-                md={{ span: 6, order: 2 }}
-                className="mb-3 mb-md-0 text-md-left"
-              >
-                <img
-                  src={mostRated.large_image_url}
-                  alt={mostRated.title}
-                  className="book-highlight"
-                />
-              </Col>
-              <Col xs={12} md={{ span: 6, order: 1 }} className="text-md-right">
-                <p className="h1 font-display font-weight-bold text-break">
-                  <Link to="/books/1">{mostRated.title}</Link>
-                </p>
-                <p>
-                  <span className="text-secondary">by:</span>{' '}
-                  <Link to={`/authors/${author.id}`}>{author.name}</Link>
-                </p>
-
-                <p className="h2 font-weight-bold text-warning mb-4">£12.00</p>
-                <p
-                  className="text-description text-justify text-md-right"
-                  dangerouslySetInnerHTML={sanitize.markup(
-                    mostRated.description
-                  )}
-                />
-                <Link
-                  to={`/books/${mostRated.id}`}
-                  className="btn btn-warning btn-md rounded-pill text-uppercase"
-                >
-                  Read More
-                </Link>
-              </Col>
-            </Row>
-          </Container>
+          <FeaturedBook
+            title="Most rated book"
+            book={mostRated}
+            author={author}
+            variant="right"
+          />
         </article>
         {/* All books */}
         <article className="section text-center">
