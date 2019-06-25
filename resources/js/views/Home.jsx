@@ -2,39 +2,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
-import Slider from 'react-slick';
 import axios from 'axios';
 import ProductCard from '../components/ProductCard';
-import SlickArrow from '../components/SlickArrow';
 import Loading from '../components/Loading';
+import BookCarousel from '../components/BookCarousel';
 import sanitize from '../utils/sanitize';
-
-const slickOptions = {
-  infinite: true,
-  speed: 500,
-  slidesToShow: 5,
-  slidesToScroll: 5,
-  nextArrow: <SlickArrow direction="right" />,
-  prevArrow: <SlickArrow direction="left" />,
-  responsive: [
-    {
-      breakpoint: 991,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3
-      }
-    },
-    {
-      breakpoint: 575,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        dots: true
-      }
-    }
-  ]
-};
 
 class Home extends Component {
   constructor(props) {
@@ -223,32 +195,16 @@ class Home extends Component {
             <h2 className="heading mb-5">
               <span>New Books</span>
             </h2>
-            <Slider {...slickOptions} className="text-center">
-              {newBooks.map((book, index) => (
-                <ProductCard
-                  key={index}
-                  book={book}
-                  className={index % 2 !== 0 ? 'mt-lg-4' : ''}
-                />
-              ))}
-            </Slider>
+            <BookCarousel books={newBooks} jagged={true} />
           </Container>
         </article>
         {/* FEATURED BOOKS */}
         <article className="section text-center bg-beige">
-          <h2 className="heading mb-5">
-            <span>Featured Books</span>
-          </h2>
           <Container>
-            <Slider {...slickOptions} className="text-center">
-              {featuredBooks.map((book, index) => (
-                <ProductCard
-                  key={index}
-                  book={book}
-                  className={index % 2 !== 0 ? 'mt-lg-4' : ''}
-                />
-              ))}
-            </Slider>
+            <h2 className="heading mb-5">
+              <span>Featured Books</span>
+            </h2>
+            <BookCarousel books={featuredBooks} jagged={true} />
           </Container>
         </article>
         {/* PENGUIN CLASSICS */}

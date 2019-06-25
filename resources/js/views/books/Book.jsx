@@ -12,43 +12,12 @@ import {
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
-import Slider from 'react-slick';
 import axios from 'axios';
 import sanitize from '../../utils/sanitize';
-import Stars from '../../components/Stars';
-import TempProductCard from '../../components/TempProductCard';
-import SlickArrow from '../../components/SlickArrow';
 import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
 import Loading from '../../components/Loading';
-import ProductCard from '../../components/ProductCard';
-
-const slickOptions = {
-  infinite: true,
-  speed: 500,
-  slidesToShow: 5,
-  slidesToScroll: 5,
-  nextArrow: <SlickArrow direction="right" />,
-  prevArrow: <SlickArrow direction="left" />,
-  responsive: [
-    {
-      breakpoint: 991,
-      settings: {
-        slidesToShow: 3,
-        slidesToScroll: 3
-      }
-    },
-    {
-      breakpoint: 575,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        dots: true
-      }
-    }
-  ]
-};
+import BookCarousel from '../../components/BookCarousel';
 
 class Show extends Component {
   state = {
@@ -493,11 +462,7 @@ class Show extends Component {
               <Link to={`/authors/${author.id}`}>{author.name}</Link>
             </h2>
             {moreAuthorBooks.length ? (
-              <Slider {...slickOptions} className="text-center">
-                {moreAuthorBooks.map((item, index) => (
-                  <ProductCard key={index} book={item} />
-                ))}
-              </Slider>
+              <BookCarousel books={moreAuthorBooks} />
             ) : (
               'No books to show.'
             )}
@@ -509,17 +474,17 @@ class Show extends Component {
             <h2 className="heading mb-4">
               <span>Readers also enjoyed</span>
             </h2>
-            <Slider {...slickOptions} className="text-center">
-              {new Array(15).fill(0).map((item, index) => (
-                <TempProductCard
-                  key={index}
-                  image="https://images.gr-assets.com/books/1483412266m/865.jpg"
-                  title="The Alchemist"
-                  author="Paulo Coelho"
-                  price={14.99}
-                />
-              ))}
-            </Slider>
+            <BookCarousel
+              books={new Array(15).fill(0).map(() => ({
+                id: 1,
+                image_url:
+                  'https://images.gr-assets.com/books/1483412266m/865.jpg',
+                title: 'The Alchemist',
+                author: { id: 1, name: 'Paulo Coelho' },
+                price: 14.99,
+                author_id: 1
+              }))}
+            />
           </Container>
         </article>
       </main>
