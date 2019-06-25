@@ -1,12 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row, Col, Form, Button, Collapse } from 'react-bootstrap';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import axios from 'axios';
-import MediaQuery from 'react-responsive';
 import ProductCard from '../../components/ProductCard';
 import URL from '../../utils/URL';
 import Loading from '../../components/Loading';
 import Pagination from '../../components/Pagination';
+import FilterForm from '../../components/FilterForm';
+import SortBySelect from '../../components/SortBySelect';
+
+const sortOptions = {
+  'ratings_count.desc': 'Ratings (desc)',
+  'ratings_count.asc': 'Ratings (asc)',
+  'avg_rating.desc': 'Avg Rating (desc)',
+  'avg_rating.asc': 'Avg Rating (asc)',
+  'price.desc': 'Price (desc)',
+  'price.asc': 'Price (asc)',
+  'publication_date.desc': 'Date (desc)',
+  'publication_date.asc': 'Date (asc)'
+};
 
 class Books extends Component {
   state = {
@@ -15,7 +27,6 @@ class Books extends Component {
       checked: false
     })),
     loading: true,
-    isFilterOpen: null,
     queryParams: {
       limit: 20,
       order_by: 'ratings_count',
@@ -106,7 +117,7 @@ class Books extends Component {
     this.getBooks();
   };
 
-  toggleCategory = e => {
+  handleCategoryChange = e => {
     const categoryName = e.target.dataset.categoryName;
     const categories = this.state.categories.map(category => {
       return category.name === categoryName
@@ -116,18 +127,8 @@ class Books extends Component {
     this.setState({ categories });
   };
 
-  toggleFilter = () =>
-    this.setState({ isFilterOpen: !this.state.isFilterOpen });
-
   render() {
-    const {
-      categories,
-      isFilterOpen,
-      queryParams,
-      books,
-      count,
-      loading
-    } = this.state;
+    const { categories, queryParams, books, count, loading } = this.state;
     const { limit } = queryParams;
 
     return (
@@ -135,182 +136,21 @@ class Books extends Component {
         <Container>
           <Row>
             <Col xs={12} md={4} className="mb-4 mb-md-0">
-              <h2 className="h5 text-uppercase mb-3 d-none d-md-block">
-                Filter
-              </h2>
-              <h2 className="mb-3 d-md-none">
-                <button
-                  className="btn-reset h5 text-uppercase"
-                  aria-label="Toggle filter form"
-                  onClick={this.toggleFilter}
-                >
-                  Filter
-                  <i
-                    className={
-                      'material-icons align-top ' +
-                      (isFilterOpen === true ? 'toggle-collapse-open' : '') +
-                      (isFilterOpen === false ? 'toggle-collapse-close' : '')
-                    }
-                  >
-                    arrow_drop_down
-                  </i>
-                </button>
-              </h2>
-              <MediaQuery minWidth={768}>
-                {matches => (
-                  <Collapse in={isFilterOpen || matches}>
-                    <Form
-                      action="/"
-                      method="GET"
-                      onSubmit={this.handleFilterSubmit}
-                    >
-                      {/* Price */}
-                      <Form.Row>
-                        <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="min_price">
-                            <Form.Label>Min Price</Form.Label>
-                            <Form.Control
-                              type="number"
-                              placeholder="Min price"
-                              min="0"
-                              step="0.01"
-                              value={queryParams.min_price}
-                              onChange={this.handleFilterChange}
-                            />
-                          </Form.Group>
-                        </Col>
-                        <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="max_price">
-                            <Form.Label>Max Price</Form.Label>
-                            <Form.Control
-                              type="number"
-                              placeholder="Max price"
-                              min="0"
-                              step="0.01"
-                              value={queryParams.max_price}
-                              onChange={this.handleFilterChange}
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Form.Row>
-
-                      {/* Rating */}
-                      <Form.Row>
-                        <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="min_rating">
-                            <Form.Label>Min Rating</Form.Label>
-                            <Form.Control
-                              type="number"
-                              placeholder="Min rating"
-                              min="0"
-                              max="5"
-                              value={queryParams.min_rating}
-                              onChange={this.handleFilterChange}
-                            />
-                          </Form.Group>
-                        </Col>
-                        <Col xs={6} md={12} lg={6}>
-                          <Form.Group controlId="max_rating">
-                            <Form.Label>Max Rating</Form.Label>
-                            <Form.Control
-                              type="number"
-                              placeholder="Max rating"
-                              min="0"
-                              max="5"
-                              value={queryParams.max_rating}
-                              onChange={this.handleFilterChange}
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Form.Row>
-
-                      {/* Date */}
-                      <div>
-                        <Form.Group controlId="min_date">
-                          <Form.Label>Min Date</Form.Label>
-                          <Form.Control
-                            type="date"
-                            placeholder="Min date"
-                            value={queryParams.min_date}
-                            onChange={this.handleFilterChange}
-                          />
-                        </Form.Group>
-                        <Form.Group controlId="max_date">
-                          <Form.Label>Max Date</Form.Label>
-                          <Form.Control
-                            type="date"
-                            placeholder="Max date"
-                            value={queryParams.max_date}
-                            onChange={this.handleFilterChange}
-                          />
-                        </Form.Group>
-                      </div>
-
-                      {/* Categories */}
-                      <div>
-                        <p className="d-inline-block mb-2">Categories</p>
-                        <Form.Group className="d-flex flex-wrap">
-                          {categories.map((category, index) => (
-                            <div key={index} className="mr-2">
-                              <input
-                                type="checkbox"
-                                className="sr-only"
-                                id={`category_${category.name}`}
-                                onChange={this.toggleCategory}
-                                data-category-name={category.name}
-                              />
-                              <label
-                                htmlFor={`category_${category.name}`}
-                                className={
-                                  'tag btn btn-sm rounded-pill ' +
-                                  (category.checked
-                                    ? 'btn-info'
-                                    : 'btn-outline-info')
-                                }
-                              >
-                                {category.name}
-                              </label>
-                            </div>
-                          ))}
-                        </Form.Group>
-                      </div>
-
-                      <Button
-                        type="submit"
-                        variant="warning"
-                        className="rounded-pill"
-                      >
-                        Apply Filter
-                      </Button>
-                    </Form>
-                  </Collapse>
-                )}
-              </MediaQuery>
+              <FilterForm
+                queryParams={queryParams}
+                categories={categories}
+                onFilterChange={this.handleFilterChange}
+                onCategoryChange={this.handleCategoryChange}
+                onFilterSubmit={this.handleFilterSubmit}
+              />
             </Col>
             <Col xs={12} md={8}>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="h5 text-uppercase mb-2 mb-md-0">Books</h2>
-                <Form>
-                  <Form.Group className="mb-0" controlId="order_by">
-                    <Form.Label className="d-inline-block mr-2 font-size-7">
-                      Sort by:
-                    </Form.Label>
-                    <Form.Control
-                      as="select"
-                      onChange={this.handleSortChange}
-                      className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
-                    >
-                      <option value="ratings_count.desc">Ratings (desc)</option>
-                      <option value="ratings_count.asc">Ratings (asc)</option>
-                      <option value="avg_rating.desc">Avg Rating (desc)</option>
-                      <option value="avg_rating.asc">Avg Rating (asc)</option>
-                      <option value="price.desc">Price (desc)</option>
-                      <option value="price.asc">Price (asc)</option>
-                      <option value="publication_date.desc">Date (desc)</option>
-                      <option value="publication_date.asc">Date (asc)</option>
-                    </Form.Control>
-                  </Form.Group>
-                </Form>
+                <SortBySelect
+                  options={sortOptions}
+                  onSortChange={this.handleSortChange}
+                />
               </div>
               {loading ? (
                 <Loading />

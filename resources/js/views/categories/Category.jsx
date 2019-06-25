@@ -7,6 +7,18 @@ import Pagination from '../../components/Pagination';
 import Loading from '../../components/Loading';
 import URL from '../../utils/URL';
 import sanitize from '../../utils/sanitize';
+import SortBySelect from '../../components/SortBySelect';
+
+const sortOptions = {
+  'ratings_count.desc': 'Ratings (desc)',
+  'ratings_count.asc': 'Ratings (asc)',
+  'avg_rating.desc': 'Avg Rating (desc)',
+  'avg_rating.asc': 'Avg Rating (asc)',
+  'price.desc': 'Price (desc)',
+  'price.asc': 'Price (asc)',
+  'publication_date.desc': 'Date (desc)',
+  'publication_date.asc': 'Date (asc)'
+};
 
 class Show extends Component {
   state = {
@@ -142,34 +154,11 @@ class Show extends Component {
                   <h2 className="h5 mb-2 mb-sm-0 text-uppercase">
                     Books in {category.name}
                   </h2>
-                  <Form>
-                    <Form.Group className="mb-0">
-                      <Form.Label className="d-inline-block mr-2 font-size-7">
-                        Sort by:
-                      </Form.Label>
-                      <Form.Control
-                        as="select"
-                        value={order}
-                        onChange={this.handleSortChange}
-                        className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
-                      >
-                        <option value="ratings_count.desc">
-                          Ratings (desc)
-                        </option>
-                        <option value="ratings_count.asc">Ratings (asc)</option>
-                        <option value="avg_rating.desc">
-                          Avg Rating (desc)
-                        </option>
-                        <option value="avg_rating.asc">Avg Rating (asc)</option>
-                        <option value="price.desc">Price (desc)</option>
-                        <option value="price.asc">Price (asc)</option>
-                        <option value="publication_date.desc">
-                          Date (desc)
-                        </option>
-                        <option value="publication_date.asc">Date (asc)</option>
-                      </Form.Control>
-                    </Form.Group>
-                  </Form>
+                  <SortBySelect
+                    options={sortOptions}
+                    value={order}
+                    onSortChange={this.handleSortChange}
+                  />
                 </div>
                 <div className="category-products mb-3">
                   {books.map((book, index) => (
