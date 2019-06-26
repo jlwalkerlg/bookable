@@ -3,24 +3,24 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Card, Button, Form } from 'react-bootstrap';
-import Async from '../components/Async';
-import Pagination from '../components/Pagination';
-import sanitize from '../utils/sanitize';
-import URL from '../utils/URL';
+import Async from '../../components/Async';
+import Pagination from '../../components/Pagination';
+import sanitize from '../../utils/sanitize';
+import URL from '../../utils/URL';
 
 class UserQuotes extends Component {
   state = {
     loading: {
-      user: true,
+      book: true,
       quotes: true,
       userQuotes: true
     },
     errors: {
-      user: null,
+      book: null,
       quotes: null,
       userQuotes: null
     },
-    user: null,
+    book: null,
     quotes: null,
     userQuotes: null,
     count: null,
@@ -28,37 +28,34 @@ class UserQuotes extends Component {
   };
 
   componentDidMount() {
-    this.fetchUser();
+    this.fetchBook();
     this.fetchQuotes();
   }
 
   componentDidUpdate(prevProps) {
     if (this.needsUpdate(prevProps)) {
-      this.fetchUser();
+      this.fetchBook();
       this.fetchQuotes();
     }
   }
 
   needsUpdate(prevProps) {
-    return (
-      prevProps.match.params.userId !== this.props.match.params.userId ||
-      prevProps.location.search !== this.props.location.search
-    );
+    return prevProps.location.search !== this.props.location.search;
   }
 
-  fetchUser = async () => {
-    this.setLoading({ user: true });
+  fetchBook = async () => {
+    this.setLoading({ book: true });
 
-    const { userId } = this.props.match.params;
+    const { bookId } = this.props.match.params;
     try {
-      const response = await axios.get(`/api/users/${userId}`);
-      const user = response.data;
-      this.setState({ user });
-      this.setError({ user: null });
+      const response = await axios.get(`/api/books/${bookId}`);
+      const book = response.data;
+      this.setState({ book });
+      this.setError({ book: null });
     } catch (error) {
-      this.setError({ user: error.response.statusText });
+      this.setError({ book: error.response.statusText });
     }
-    this.setLoading({ user: false });
+    this.setLoading({ book: false });
   };
 
   fetchQuotes = async () => {
@@ -66,14 +63,14 @@ class UserQuotes extends Component {
 
     const { limit } = this.state;
     const offset = this.calcOffset();
-    const { userId } = this.props.match.params;
+    const { bookId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/quotes`, {
         params: {
-          user_id: userId,
+          book_id: bookId,
           limit,
           offset,
-          with: 'book,author',
+          with: 'author',
           count: true
         }
       });
@@ -108,6 +105,7 @@ class UserQuotes extends Component {
       this.setState({ userQuotes });
       this.setError({ userQuotes: null });
     } catch (error) {
+      console.log(error);
       this.setError({ userQuotes: error.response.statusText });
     }
     this.setLoading({ userQuotes: false });
@@ -169,21 +167,21 @@ class UserQuotes extends Component {
   };
 
   render() {
-    const { loading, errors, user, quotes, count, limit } = this.state;
+    const { loading, errors, book, quotes, count, limit } = this.state;
     const authUser = this.props.user;
 
     return (
       <div className="section">
         <Container>
           <Async
-            loading={loading.user}
-            error={errors.user}
-            retry={this.fetchUser}
+            loading={loading.book}
+            error={errors.book}
+            retry={this.fetchBook}
           >
             {() => (
               <>
                 <h1 className="h5 text-uppercase mb-0 mb-md-3">
-                  {user.name}&apos;s Quotes
+                  Quotes in {book.title}
                 </h1>
                 <Async
                   loading={loading.quotes || loading.userQuotes}
@@ -198,7 +196,7 @@ class UserQuotes extends Component {
                     <>
                       <div className="col-count-2">
                         {quotes.map((quote, index) => {
-                          const { book, author } = quote;
+                          const { author } = quote;
                           const userQuote = this.getUserQuote(quote);
 
                           return (

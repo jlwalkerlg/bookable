@@ -412,7 +412,7 @@ class Show extends Component {
                     ))}
                   </ul>
                   <p className="font-weight-bold">
-                    <Link to={`/quotes?book_id=${book.id}`}>Read More...</Link>
+                    <Link to={`/books/${book.id}/quotes`}>Read More...</Link>
                   </p>
                 </section>
               </Col>

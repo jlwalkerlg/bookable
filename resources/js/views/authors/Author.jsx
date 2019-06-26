@@ -292,7 +292,7 @@ class Show extends Component {
                           ))}
                           <div>
                             <Link
-                              to={`/quotes?author_id=${author.id}`}
+                              to={`/authors/${author.id}/quotes`}
                               className="btn btn-warning rounded-pill"
                             >
                               Read More Quotes
