@@ -3,28 +3,39 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Container, Card, Button, Form } from 'react-bootstrap';
-import Loading from '../components/Loading';
+import Async from '../components/Async';
 import Pagination from '../components/Pagination';
 import sanitize from '../utils/sanitize';
 import URL from '../utils/URL';
 
 class UserQuotes extends Component {
   state = {
-    loading: true,
+    loading: {
+      user: true,
+      quotes: true,
+      userQuotes: true
+    },
+    errors: {
+      user: null,
+      quotes: null,
+      userQuotes: null
+    },
     user: null,
     quotes: null,
-    count: null,
     userQuotes: null,
+    count: null,
     limit: 10
   };
 
   componentDidMount() {
-    this.fetchData();
+    this.fetchUser();
+    this.fetchQuotes();
   }
 
   componentDidUpdate(prevProps) {
     if (this.needsUpdate(prevProps)) {
-      this.fetchData();
+      this.fetchUser();
+      this.fetchQuotes();
     }
   }
 
@@ -35,37 +46,24 @@ class UserQuotes extends Component {
     );
   }
 
-  async fetchData() {
-    try {
-      const [user, { quotes }] = await axios.all([
-        this.fetchUser(),
-        this.fetchQuotes()
-      ]);
+  fetchUser = async () => {
+    this.setLoading({ user: true });
 
-      if (this.props.user.id) {
-        const quoteIds = quotes.map(quote => quote.id);
-        await this.fetchUserQuotes(quoteIds);
-      }
-
-      this.setState({ loading: false });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async fetchUser() {
     const { userId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/users/${userId}`);
       const user = response.data;
       this.setState({ user });
-      return user;
+      this.setError({ user: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ user: error.response.statusText });
     }
-  }
+    this.setLoading({ user: false });
+  };
 
-  async fetchQuotes() {
+  fetchQuotes = async () => {
+    this.setLoading({ quotes: true });
+
     const { limit } = this.state;
     const offset = this.calcOffset();
     const { userId } = this.props.match.params;
@@ -81,24 +79,46 @@ class UserQuotes extends Component {
       });
       const { quotes, count } = response.data;
       this.setState({ quotes, count });
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+      this.setError({ quotes: null });
 
-  async fetchUserQuotes(quoteIds) {
+      this.fetchUserQuotes(quotes);
+    } catch (error) {
+      this.setError({ quotes: error.response.statusText });
+      this.setLoading({ userQuotes: false });
+    }
+    this.setLoading({ quotes: false });
+  };
+
+  fetchUserQuotes = async quotes => {
+    this.setLoading({ userQuotes: true });
+
     const { user } = this.props;
+    if (!user.id) {
+      this.setError({ userQuotes: null });
+      this.setLoading({ userQuotes: false });
+      return;
+    }
+
+    const quoteIds = (quotes || this.state.quotes).map(quote => quote.id);
     try {
       const response = await axios.get(`/api/users/${user.id}/quotes`, {
         params: { quote_ids: quoteIds.join(',') }
       });
       const userQuotes = response.data.quotes;
       this.setState({ userQuotes });
-      return userQuotes;
+      this.setError({ userQuotes: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ userQuotes: error.response.statusText });
     }
+    this.setLoading({ userQuotes: false });
+  };
+
+  setLoading(loading) {
+    this.setState({ loading: { ...this.state.loading, ...loading } });
+  }
+
+  setError(error) {
+    this.setState({ errors: { ...this.state.errors, ...error } });
   }
 
   calcOffset() {
@@ -149,82 +169,116 @@ class UserQuotes extends Component {
   };
 
   render() {
-    const { loading, user, quotes, count, limit } = this.state;
+    const { loading, errors, user, quotes, count, limit } = this.state;
     const authUser = this.props.user;
-
-    if (loading)
-      return (
-        <div className="vh-min-100">
-          <Loading />
-        </div>
-      );
 
     return (
       <div className="section">
         <Container>
-          <h1 className="h5 text-uppercase mb-0 mb-md-3">
-            {user.name}&apos;s Quotes
-          </h1>
-          <div className="col-count-2">
-            {quotes.map((quote, index) => {
-              const { book, author } = quote;
-              const userQuote = this.getUserQuote(quote);
+          <Async
+            loading={loading.user}
+            error={errors.user}
+            retry={this.fetchUser}
+          >
+            {() => (
+              <>
+                <h1 className="h5 text-uppercase mb-0 mb-md-3">
+                  {user.name}&apos;s Quotes
+                </h1>
+                <Async
+                  loading={loading.quotes || loading.userQuotes}
+                  error={errors.quotes || errors.userQuotes}
+                  retry={
+                    errors.quotes
+                      ? this.fetchQuotes
+                      : () => this.fetchUserQuotes()
+                  }
+                >
+                  {() => (
+                    <>
+                      <div className="col-count-2">
+                        {quotes.map((quote, index) => {
+                          const { book, author } = quote;
+                          const userQuote = this.getUserQuote(quote);
 
-              return (
-                <Card key={index} className="d-inline-block w-100 mt-3">
-                  <Card.Body>
-                    <blockquote className="blockquote mb-0">
-                      <p
-                        className="font-size-6"
-                        dangerouslySetInnerHTML={sanitize.markup(quote.quote)}
+                          return (
+                            <Card
+                              key={index}
+                              className="d-inline-block w-100 mt-3"
+                            >
+                              <Card.Body>
+                                <blockquote className="blockquote mb-0">
+                                  <p
+                                    className="font-size-6"
+                                    dangerouslySetInnerHTML={sanitize.markup(
+                                      quote.quote
+                                    )}
+                                  />
+                                  <footer className="blockquote-footer">
+                                    <Link to={`/authors/${author.id}`}>
+                                      {author.name}
+                                    </Link>{' '}
+                                    in{' '}
+                                    <cite title="Source Title">
+                                      <Link to={`/books/${book.id}`}>
+                                        {book.title}
+                                      </Link>
+                                    </cite>
+                                  </footer>
+                                </blockquote>
+                                {userQuote && (
+                                  <Form
+                                    action="/"
+                                    method="POST"
+                                    className="mt-2"
+                                    onSubmit={e =>
+                                      this.deleteQuote(e, userQuote)
+                                    }
+                                  >
+                                    <Button
+                                      type="submit"
+                                      variant="outline-info"
+                                      size="sm"
+                                    >
+                                      Unsave
+                                    </Button>
+                                  </Form>
+                                )}
+                                {authUser.id && !userQuote && (
+                                  <Form
+                                    action="/"
+                                    method="POST"
+                                    className="mt-2"
+                                    onSubmit={e => this.saveQuote(e, quote)}
+                                  >
+                                    <Button
+                                      type="submit"
+                                      variant="outline-info"
+                                      size="sm"
+                                    >
+                                      Save
+                                    </Button>
+                                  </Form>
+                                )}
+                              </Card.Body>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                      <Pagination
+                        totalItems={count}
+                        currentPage={this.getCurrentPage()}
+                        pageSize={limit}
+                        maxPages={5}
+                        url={`${this.props.location.pathname}?page=`}
+                        className="justify-content-center pagination-warning mt-4"
                       />
-                      <footer className="blockquote-footer">
-                        <Link to={`/authors/${author.name}`}>
-                          {author.name}
-                        </Link>{' '}
-                        in{' '}
-                        <cite title="Source Title">
-                          <Link to={`/books/${book.id}`}>{book.title}</Link>
-                        </cite>
-                      </footer>
-                    </blockquote>
-                    {userQuote && (
-                      <Form
-                        action="/"
-                        method="POST"
-                        className="mt-2"
-                        onSubmit={e => this.deleteQuote(e, userQuote)}
-                      >
-                        <Button type="submit" variant="outline-info" size="sm">
-                          Unsave
-                        </Button>
-                      </Form>
-                    )}
-                    {authUser.id && !userQuote && (
-                      <Form
-                        action="/"
-                        method="POST"
-                        className="mt-2"
-                        onSubmit={e => this.saveQuote(e, quote)}
-                      >
-                        <Button type="submit" variant="outline-info" size="sm">
-                          Save
-                        </Button>
-                      </Form>
-                    )}
-                  </Card.Body>
-                </Card>
-              );
-            })}
-          </div>
-          <Pagination
-            totalItems={count}
-            currentPage={this.getCurrentPage()}
-            pageSize={limit}
-            maxPages={5}
-            url={`${this.props.location.pathname}?page=`}
-            className="justify-content-center pagination-warning mt-4"
-          />
+                    </>
+                  )}
+                </Async>
+              </>
+            )}
+          </Async>
         </Container>
       </div>
     );
