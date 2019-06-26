@@ -31,7 +31,7 @@ class Cart extends Component {
     this.setState({ loading: true });
     try {
       const { cart } = this.props;
-      const response = await axios.get(`/api/carts/${cart.id}/itemss`, {
+      const response = await axios.get(`/api/carts/${cart.id}/items`, {
         params: { with: 'book.author', count: true }
       });
       const { items, count } = response.data;
