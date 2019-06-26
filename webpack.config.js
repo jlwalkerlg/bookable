@@ -45,24 +45,6 @@ module.exports = {
         }
       },
       {
-        test: /\.(eot|ttf|woff)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name(file) {
-                return file
-                  .replace('fonts/', '')
-                  .replace(
-                    '/Users/jlwalker/Sites/bookable/node_modules/',
-                    'fonts/vendor/'
-                  );
-              }
-            }
-          }
-        ]
-      },
-      {
         test: /\.(jpe?g|png|gif|svg)$/,
         use: [
           {

@@ -7,7 +7,7 @@ $enable-gradients: true;
 
 // Slick carousel.
 @import '../../node_modules/slick-carousel/slick/slick.css';
-@import '../../node_modules/slick-carousel/slick/slick-theme.css';
+@import './components/slick';
 
 // Custom CSS.
 @import './_mixins';
