@@ -11,16 +11,16 @@ import URL from '../../utils/URL';
 class UserQuotes extends Component {
   state = {
     loading: {
-      author: true,
+      category: true,
       quotes: true,
       userQuotes: true
     },
     errors: {
-      author: null,
+      category: null,
       quotes: null,
       userQuotes: null
     },
-    author: null,
+    category: null,
     quotes: null,
     userQuotes: null,
     count: null,
@@ -28,13 +28,13 @@ class UserQuotes extends Component {
   };
 
   componentDidMount() {
-    this.fetchAuthor();
+    this.fetchCategory();
     this.fetchQuotes();
   }
 
   componentDidUpdate(prevProps) {
     if (this.needsUpdate(prevProps)) {
-      this.fetchAuthor();
+      this.fetchCategory();
       this.fetchQuotes();
     }
   }
@@ -43,19 +43,19 @@ class UserQuotes extends Component {
     return prevProps.location.search !== this.props.location.search;
   }
 
-  fetchAuthor = async () => {
-    this.setLoading({ author: true });
+  fetchCategory = async () => {
+    this.setLoading({ category: true });
 
-    const { authorId } = this.props.match.params;
+    const { categoryId } = this.props.match.params;
     try {
-      const response = await axios.get(`/api/authors/${authorId}`);
-      const author = response.data;
-      this.setState({ author });
-      this.setError({ author: null });
+      const response = await axios.get(`/api/categories/${categoryId}`);
+      const category = response.data;
+      this.setState({ category });
+      this.setError({ category: null });
     } catch (error) {
-      this.setError({ author: error.response.statusText });
+      this.setError({ category: error.response.statusText });
     }
-    this.setLoading({ author: false });
+    this.setLoading({ category: false });
   };
 
   fetchQuotes = async () => {
@@ -63,14 +63,14 @@ class UserQuotes extends Component {
 
     const { limit } = this.state;
     const offset = this.calcOffset();
-    const { authorId } = this.props.match.params;
+    const { categoryId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/quotes`, {
         params: {
-          author_id: authorId,
+          category_id: categoryId,
           limit,
           offset,
-          with: 'book',
+          with: 'book,author',
           count: true
         }
       });
@@ -167,22 +167,22 @@ class UserQuotes extends Component {
   };
 
   render() {
-    const { loading, errors, author, quotes, count, limit } = this.state;
+    const { loading, errors, category, quotes, count, limit } = this.state;
     const authUser = this.props.user;
 
     return (
       <div className="section">
         <Container>
           <Async
-            loading={loading.author}
-            error={errors.author}
+            loading={loading.category}
+            error={errors.category}
             retry={this.fetchBook}
           >
             {() => (
               <>
                 <h1 className="h5 text-uppercase mb-0 mb-md-3">
-                  Quotes by{' '}
-                  <Link to={`/authors/${author.id}`}>{author.name}</Link>
+                  Quotes in{' '}
+                  <Link to={`/categories/${category.id}`}>{category.name}</Link>
                 </h1>
                 <Async
                   loading={loading.quotes || loading.userQuotes}
@@ -197,7 +197,7 @@ class UserQuotes extends Component {
                     <>
                       <div className="col-count-2">
                         {quotes.map((quote, index) => {
-                          const { book } = quote;
+                          const { book, author } = quote;
                           const userQuote = this.getUserQuote(quote);
 
                           return (

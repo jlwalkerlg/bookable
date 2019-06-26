@@ -230,7 +230,7 @@ class Show extends Component {
                             ))}
                           </ul>
                           <Link
-                            to={`/quotes?category_id=${category.id}`}
+                            to={`/categories/${category.id}/quotes`}
                             className="font-weight-bold"
                           >
                             Read More

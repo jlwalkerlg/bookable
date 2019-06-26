@@ -21,7 +21,7 @@ const FeaturedBookMiddle = ({ book, author, heading }) => (
       </Col>
       <Col xs={12} md={6} lg={4} className="mb-5 mb-md-0">
         <img
-          src={book.large_image_url}
+          src={book.large_image_url || book.image_url}
           alt={book.title}
           className="d-block mx-auto book-highlight"
         />
@@ -59,7 +59,7 @@ const FeaturedBookLeft = ({ book, author, heading }) => (
       </Col>
       <Col xs={12} md={6} className="mb-3 mb-md-0 text-md-right">
         <img
-          src={book.large_image_url}
+          src={book.large_image_url || book.image_url}
           alt={book.title}
           className="book-highlight"
         />
@@ -104,7 +104,7 @@ const FeaturedBookRight = ({ book, author, heading }) => (
         className="mb-3 mb-md-0 text-md-left"
       >
         <img
-          src={book.large_image_url}
+          src={book.large_image_url || book.image_url}
           alt={book.title}
           className="book-highlight"
         />

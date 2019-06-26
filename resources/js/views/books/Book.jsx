@@ -193,7 +193,7 @@ class Show extends Component {
             <Row>
               <Col xs={12} md={4} className="mb-3 mb-md-0">
                 <img
-                  src={book.large_image_url}
+                  src={book.large_image_url || book.image_url}
                   alt={book.title}
                   className="d-block mx-auto mr-md-0 book-highlight"
                 />

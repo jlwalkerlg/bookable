@@ -21,6 +21,7 @@ import Ratings from './views/Ratings';
 import UserQuotes from './views/UserQuotes';
 import BookQuotes from './views/books/BookQuotes';
 import AuthorQuotes from './views/authors/AuthorQuotes';
+import CategoryQuotes from './views/categories/CategoryQuotes';
 
 const App = ({ loading }) =>
   loading ? (
@@ -73,6 +74,11 @@ const App = ({ loading }) =>
           exact
           path="/authors/:authorId([0-9]+)/quotes"
           component={AuthorQuotes}
+        />
+        <AppRoute
+          exact
+          path="/categories/:categoryId([0-9]+)/quotes"
+          component={CategoryQuotes}
         />
         <Route component={NotFound} />
       </Switch>

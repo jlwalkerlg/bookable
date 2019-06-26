@@ -181,7 +181,7 @@ class UserQuotes extends Component {
             {() => (
               <>
                 <h1 className="h5 text-uppercase mb-0 mb-md-3">
-                  Quotes in {book.title}
+                  Quotes in <Link to={`/books/${book.id}`}>{book.title}</Link>
                 </h1>
                 <Async
                   loading={loading.quotes || loading.userQuotes}
