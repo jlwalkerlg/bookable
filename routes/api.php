@@ -22,13 +22,13 @@ Route::get('/books/{book}', 'BooksController@show');
 
 Route::get('/authors/{author}', 'AuthorsController@show');
 
-Route::get('/wishlists/{wishlist}/items', 'WishlistItemsController@index');
+Route::get('/wishlists/{wishlist}/items', 'WishlistItemsController@index')->middleware('can:view,wishlist');
 Route::post('/wishlists/{wishlist}/items', 'WishlistItemsController@store')->middleware('can:update,wishlist');
 Route::delete('/wishlists/{wishlist}/items/{item}', 'WishlistItemsController@destroy')->middleware('can:delete,item,wishlist');
 
 Route::get('/shelves', 'ShelvesController@index');
 
-Route::get('/carts/{cart}/items', 'CartItemsController@index');
+Route::get('/carts/{cart}/items', 'CartItemsController@index')->middleware('can:view,cart');
 Route::post('/carts/{cart}/items', 'CartItemsController@store')->middleware('can:update,cart');
 Route::delete('/carts/{cart}/items/{item}', 'CartItemsController@destroy')->middleware('can:delete,item,cart');
 

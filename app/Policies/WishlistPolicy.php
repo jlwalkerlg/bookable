@@ -11,6 +11,18 @@ class WishlistPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user can view the wishlist.
+     *
+     * @param  \App\User  $user
+     * @param  \App\Wishlist  $wishlist
+     * @return mixed
+     */
+    public function view(User $user, Wishlist $wishlist)
+    {
+        return $user->id === $wishlist->user_id;
+    }
+
+    /**
      * Determine whether the user can update the wishlist.
      *
      * @param  \App\User  $user
