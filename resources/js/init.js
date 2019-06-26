@@ -1,8 +1,13 @@
+import { Component } from 'react';
 import axios from 'axios';
 import store from './store';
 import { finishLoading } from './actions/loading';
 import { oauthLogin } from './actions/user';
 import { fetchCategories } from './actions/categories';
+
+Component.prototype.setStateAsync = function(state) {
+  return new Promise(resolve => this.setState(state, resolve));
+};
 
 const setupAxios = () => {
   axios.defaults.headers.common['Accept'] = 'application/json';
