@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import MediaQuery from 'react-responsive';
-import { Col, Form, Button, Collapse } from 'react-bootstrap';
+import { Col, Form, Button, Collapse, Spinner } from 'react-bootstrap';
 
 class FilterForm extends Component {
   state = {
@@ -16,7 +16,8 @@ class FilterForm extends Component {
       categories,
       onFilterChange,
       onCategoryChange,
-      onFilterSubmit
+      onFilterSubmit,
+      loading
     } = this.props;
     const { isFilterOpen } = this.state;
 
@@ -158,8 +159,17 @@ class FilterForm extends Component {
                   type="submit"
                   variant="warning"
                   className="rounded-pill"
+                  disabled={loading}
                 >
                   Apply Filter
+                  {loading && (
+                    <Spinner
+                      className="align-text-bottom ml-2"
+                      size="sm"
+                      animation="border"
+                      role="status"
+                    />
+                  )}
                 </Button>
               </Form>
             </Collapse>

@@ -4,7 +4,7 @@ import { Container, Row, Col, Form } from 'react-bootstrap';
 import axios from 'axios';
 import ProductCard from '../../components/ProductCard';
 import URL from '../../utils/URL';
-import Loading from '../../components/Loading';
+import Async from '../../components/Async';
 import Pagination from '../../components/Pagination';
 import FilterForm from '../../components/FilterForm';
 import SortBySelect from '../../components/SortBySelect';
@@ -26,7 +26,6 @@ class Books extends Component {
       name: `Category #${index}`,
       checked: false
     })),
-    loading: true,
     queryParams: {
       limit: 20,
       order_by: 'ratings_count',
@@ -38,39 +37,32 @@ class Books extends Component {
       min_date: '',
       max_date: ''
     },
+    loading: true,
     books: null,
     count: null
   };
 
   componentDidMount() {
-    this.getBooks();
+    this.fetchBooks();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
-      this.setState({ loading: true });
-      this.getBooks();
+      this.fetchBooks();
     }
   }
 
-  async getBooks() {
-    try {
-      const { books, count } = await this.fetchBooks();
-      this.setState({ books, count, loading: false });
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async fetchBooks() {
+  fetchBooks = async () => {
     const params = this.getParams();
+    this.setState({ loading: true });
     try {
       const response = await axios.get('/api/books', { params });
-      return response.data;
+      const { books, count } = response.data;
+      this.setState({ books, count, loading: false, error: null });
     } catch (error) {
-      console.log(error);
+      this.setState({ error: error.response.statusText, loading: false });
     }
-  }
+  };
 
   getParams() {
     const { queryParams } = this.state;
@@ -113,8 +105,11 @@ class Books extends Component {
 
   handleFilterSubmit = e => {
     e.preventDefault();
-    this.setState({ loading: true, isFilterOpen: false });
-    this.getBooks();
+    const { loading } = this.state;
+    if (!loading) {
+      this.setState({ isFilterOpen: false });
+      this.fetchBooks();
+    }
   };
 
   handleCategoryChange = e => {
@@ -128,7 +123,14 @@ class Books extends Component {
   };
 
   render() {
-    const { categories, queryParams, books, count, loading } = this.state;
+    const {
+      categories,
+      queryParams,
+      books,
+      count,
+      loading,
+      error
+    } = this.state;
     const { limit } = queryParams;
 
     return (
@@ -142,6 +144,7 @@ class Books extends Component {
                 onFilterChange={this.handleFilterChange}
                 onCategoryChange={this.handleCategoryChange}
                 onFilterSubmit={this.handleFilterSubmit}
+                loading={loading}
               />
             </Col>
             <Col xs={12} md={8}>
@@ -152,29 +155,29 @@ class Books extends Component {
                   onSortChange={this.handleSortChange}
                 />
               </div>
-              {loading ? (
-                <Loading />
-              ) : (
-                <>
-                  <div className="browse-products mb-4">
-                    {books.map((book, index) => (
-                      <ProductCard
-                        key={index}
-                        book={book}
-                        size="large"
-                        wishlistButton
-                      />
-                    ))}
-                  </div>
-                  <Pagination
-                    totalItems={count}
-                    currentPage={this.getCurrentPage()}
-                    pageSize={limit}
-                    url="/books?page="
-                    className="justify-content-center pagination-warning"
-                  />
-                </>
-              )}
+              <Async loading={loading} error={error} retry={this.fetchBooks}>
+                {() => (
+                  <>
+                    <div className="browse-products mb-4">
+                      {books.map((book, index) => (
+                        <ProductCard
+                          key={index}
+                          book={book}
+                          size="large"
+                          wishlistButton
+                        />
+                      ))}
+                    </div>
+                    <Pagination
+                      totalItems={count}
+                      currentPage={this.getCurrentPage()}
+                      pageSize={limit}
+                      url="/books?page="
+                      className="justify-content-center pagination-warning"
+                    />
+                  </>
+                )}
+              </Async>
             </Col>
           </Row>
         </Container>

@@ -44,7 +44,7 @@ class Home extends Component {
     this.fetchTrendingCategoryBook();
   }
 
-  async fetchBestSeller() {
+  fetchBestSeller = async () => {
     this.setLoading({ bestSeller: true });
     try {
       const response = await axios.get('/api/books', {
@@ -57,15 +57,15 @@ class Home extends Component {
       });
       const bestSeller = response.data.books[0];
       this.setState({ bestSeller });
-      this.setError({ bestSeller: false });
+      this.setError({ bestSeller: null });
       this.setLoading({ bestSeller: false });
     } catch (error) {
       this.setError({ bestSeller: error.response.statusText });
       this.setLoading({ bestSeller: false });
     }
-  }
+  };
 
-  async fetchNewBooks() {
+  fetchNewBooks = async () => {
     this.setLoading({ newBooks: true });
     try {
       const response = await axios.get('/api/books', {
@@ -78,15 +78,15 @@ class Home extends Component {
       });
       const newBooks = response.data.books;
       this.setState({ newBooks });
-      this.setError({ newBooks: false });
+      this.setError({ newBooks: null });
       this.setLoading({ newBooks: false });
     } catch (error) {
       this.setError({ newBooks: error.response.statusText });
       this.setLoading({ newBooks: false });
     }
-  }
+  };
 
-  async fetchFeaturedBooks() {
+  fetchFeaturedBooks = async () => {
     this.setLoading({ featuredBooks: true });
     try {
       const response = await axios.get('/api/books', {
@@ -94,15 +94,15 @@ class Home extends Component {
       });
       const featuredBooks = response.data.books;
       this.setState({ featuredBooks });
-      this.setError({ featuredBooks: false });
+      this.setError({ featuredBooks: null });
       this.setLoading({ featuredBooks: false });
     } catch (error) {
       this.setError({ featuredBooks: error.response.statusText });
       this.setLoading({ featuredBooks: false });
     }
-  }
+  };
 
-  async fetchPenguinBooks() {
+  fetchPenguinBooks = async () => {
     this.setLoading({ penguinBooks: true });
     try {
       const response = await axios.get('/api/books', {
@@ -114,15 +114,15 @@ class Home extends Component {
       });
       const penguinBooks = response.data.books;
       this.setState({ penguinBooks });
-      this.setError({ penguinBooks: false });
+      this.setError({ penguinBooks: null });
       this.setLoading({ penguinBooks: false });
     } catch (error) {
       this.setError({ penguinBooks: error.response.statusText });
       this.setLoading({ penguinBooks: false });
     }
-  }
+  };
 
-  async fetchTrendingCategoryBook() {
+  fetchTrendingCategoryBook = async () => {
     this.setLoading({ trendingCategoryBook: true });
     try {
       const { trendingCategory } = this.state;
@@ -137,13 +137,13 @@ class Home extends Component {
       });
       const trendingCategoryBook = response.data.books[0];
       this.setState({ trendingCategoryBook });
-      this.setError({ trendingCategoryBook: false });
+      this.setError({ trendingCategoryBook: null });
       this.setLoading({ trendingCategoryBook: false });
     } catch (error) {
       this.setError({ trendingCategoryBook: error.response.statusText });
       this.setLoading({ trendingCategoryBook: false });
     }
-  }
+  };
 
   setLoading(loading) {
     this.setState({ loading: { ...this.state.loading, ...loading } });
@@ -186,7 +186,7 @@ class Home extends Component {
           <Async
             loading={loading.bestSeller}
             error={errors.bestSeller}
-            retry={this.fetchBestSeller.bind(this)}
+            retry={this.fetchBestSeller}
           >
             {() => (
               <FeaturedBook
@@ -208,7 +208,7 @@ class Home extends Component {
             <Async
               loading={loading.newBooks}
               error={errors.newBooks}
-              retry={this.fetchNewBooks.bind(this)}
+              retry={this.fetchNewBooks}
             >
               {() => <BookCarousel books={newBooks} jagged={true} />}
             </Async>
@@ -224,7 +224,7 @@ class Home extends Component {
             <Async
               loading={loading.featuredBooks}
               error={errors.featuredBooks}
-              retry={this.fetchFeaturedBooks.bind(this)}
+              retry={this.fetchFeaturedBooks}
             >
               {() => <BookCarousel books={featuredBooks} jagged={true} />}
             </Async>
@@ -240,7 +240,7 @@ class Home extends Component {
             <Async
               loading={loading.penguinBooks}
               error={errors.penguinBooks}
-              retry={this.fetchPenguinBooks.bind(this)}
+              retry={this.fetchPenguinBooks}
             >
               {() => (
                 <div className="d-flex justify-content-center flex-wrap mb-4">
@@ -258,7 +258,7 @@ class Home extends Component {
           <Async
             loading={loading.trendingCategoryBook}
             error={errors.trendingCategoryBook}
-            retry={this.fetchTrendingCategoryBook.bind(this)}
+            retry={this.fetchTrendingCategoryBook}
           >
             {() => (
               <FeaturedBook
