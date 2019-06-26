@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import ProductCard from '../../components/ProductCard';
 import Pagination from '../../components/Pagination';
-import Loading from '../../components/Loading';
+import Async from '../../components/Async';
 import URL from '../../utils/URL';
 import sanitize from '../../utils/sanitize';
 import SortBySelect from '../../components/SortBySelect';
@@ -22,48 +22,52 @@ const sortOptions = {
 
 class Show extends Component {
   state = {
-    loading: true,
+    loading: {
+      category: true,
+      books: true,
+      quotes: true
+    },
+    errors: {
+      category: null,
+      books: null,
+      quotes: null
+    },
     category: null,
     books: null,
-    count: null,
     quotes: null,
+    count: null,
     order_by: 'ratings_count',
     order_dir: 'desc',
     limit: 20
   };
 
-  async componentDidMount() {
-    try {
-      await axios.all([
-        this.fetchCategory(),
-        this.fetchBooks(),
-        this.fetchQuotes()
-      ]);
-      this.setState({ loading: false });
-    } catch (error) {
-      console.log(error);
-    }
+  componentDidMount() {
+    this.fetchCategory();
+    this.fetchBooks();
+    this.fetchQuotes();
   }
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     if (prevProps.location.search !== this.props.location.search) {
-      this.setState({ loading: true });
-      await this.fetchBooks();
-      this.setState({ loading: false });
+      this.fetchBooks();
     }
   }
 
-  async fetchCategory() {
+  fetchCategory = async () => {
+    this.setLoading({ category: true });
     const { categoryId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/categories/${categoryId}`);
       this.setState({ category: response.data });
+      this.setError({ category: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ category: error.response.statusText });
     }
-  }
+    this.setLoading({ category: false });
+  };
 
-  async fetchBooks() {
+  fetchBooks = async () => {
+    this.setLoading({ books: true });
     const { categoryId } = this.props.match.params;
     const { order_by, order_dir, limit } = this.state;
     const offset = this.calcOffset();
@@ -81,21 +85,34 @@ class Show extends Component {
       });
       const { books, count } = response.data;
       this.setState({ books, count });
+      this.setError({ books: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ books: error.response.statusText });
     }
-  }
+    this.setLoading({ books: false });
+  };
 
-  async fetchQuotes() {
+  fetchQuotes = async () => {
+    this.setLoading({ quotes: true });
     const { categoryId } = this.props.match.params;
     try {
       const response = await axios.get('/api/quotes', {
         params: { category_id: categoryId, limit: 10 }
       });
       this.setState({ quotes: response.data.quotes });
+      this.setError({ quotes: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ quotes: error.response.statusText });
     }
+    this.setLoading({ quotes: false });
+  };
+
+  setLoading(loading) {
+    this.setState({ loading: { ...this.state.loading, ...loading } });
+  }
+
+  setError(error) {
+    this.setState({ errors: { ...this.state.errors, ...error } });
   }
 
   calcOffset() {
@@ -110,17 +127,18 @@ class Show extends Component {
     );
   }
 
-  handleSortChange = e => {
-    const [order_by, order_dir] = e.target.value.split('.');
-    this.setState({ order_by, order_dir, loading: true }, async () => {
-      await this.fetchBooks();
-      this.setState({ loading: false });
-    });
+  handleSortChange = async e => {
+    const { loading } = this.state;
+    if (!loading.books) {
+      const [order_by, order_dir] = e.target.value.split('.');
+      this.setState({ order_by, order_dir }, this.fetchBooks);
+    }
   };
 
   render() {
     const {
       loading,
+      errors,
       category,
       books,
       count,
@@ -130,77 +148,103 @@ class Show extends Component {
       order_dir
     } = this.state;
 
-    if (loading)
-      return (
-        <div className="vh-100-nav">
-          <Loading />
-        </div>
-      );
-
     const order = `${order_by}.${order_dir}`;
 
     return (
-      <main>
-        <header className="section category-head">
-          <Container>
-            <h1 className="category-head__title">{category.name}</h1>
-          </Container>
-        </header>
-        <div className="section">
-          <Container>
-            <Row>
-              <Col xs={12} md={8} className="mb-4 mb-md-0">
-                <div className="d-sm-flex justify-content-between align-items-center mb-3">
-                  <h2 className="h5 mb-2 mb-sm-0 text-uppercase">
-                    Books in {category.name}
-                  </h2>
-                  <SortBySelect
-                    options={sortOptions}
-                    value={order}
-                    onSortChange={this.handleSortChange}
-                  />
-                </div>
-                <div className="category-products mb-3">
-                  {books.map((book, index) => (
-                    <ProductCard
-                      key={index}
-                      book={book}
-                      size="large"
-                      wishlistButton
-                    />
-                  ))}
-                </div>
-                <Pagination
-                  totalItems={count}
-                  currentPage={this.getCurrentPage()}
-                  pageSize={limit}
-                  maxPages={5}
-                  url={`${this.props.location.pathname}?page=`}
-                  className="justify-content-center pagination-warning"
-                />
-              </Col>
-              <Col xs={12} md={4}>
-                <h2 className="h5 text-uppercase">Quotes in {category.name}</h2>
-                <ul className="list-unstyled">
-                  {quotes.map((quote, index) => (
-                    <li
-                      key={index}
-                      className="quote mb-3"
-                      dangerouslySetInnerHTML={sanitize.markup(quote.quote)}
-                    />
-                  ))}
-                </ul>
-                <Link
-                  to={`/quotes?category_id=${category.id}`}
-                  className="font-weight-bold"
-                >
-                  Read More
-                </Link>
-              </Col>
-            </Row>
-          </Container>
-        </div>
-      </main>
+      <Async
+        loading={loading.category}
+        error={errors.category}
+        retry={this.fetchCategory}
+      >
+        {() => (
+          <main>
+            <header className="section category-head">
+              <Container>
+                <h1 className="category-head__title">{category.name}</h1>
+              </Container>
+            </header>
+            <div className="section">
+              <Container>
+                <Row>
+                  <Col xs={12} md={8} className="mb-4 mb-md-0">
+                    <div className="d-sm-flex justify-content-between align-items-center mb-3">
+                      <h2 className="h5 mb-2 mb-sm-0 text-uppercase">
+                        Books in {category.name}
+                      </h2>
+                      <SortBySelect
+                        options={sortOptions}
+                        value={order}
+                        disabled={loading.books}
+                        onSortChange={this.handleSortChange}
+                      />
+                    </div>
+                    <Async
+                      loading={loading.books}
+                      error={errors.books}
+                      retry={this.fetchBooks}
+                    >
+                      {() => (
+                        <>
+                          <div className="category-products mb-3">
+                            {books.map((book, index) => (
+                              <ProductCard
+                                key={index}
+                                book={book}
+                                size="large"
+                                wishlistButton
+                              />
+                            ))}
+                          </div>
+                          <Pagination
+                            totalItems={count}
+                            currentPage={this.getCurrentPage()}
+                            pageSize={limit}
+                            maxPages={5}
+                            url={`${this.props.location.pathname}?page=`}
+                            className="justify-content-center pagination-warning"
+                          />
+                        </>
+                      )}
+                    </Async>
+                  </Col>
+                  <Col xs={12} md={4}>
+                    <h2 className="h5 text-uppercase">
+                      Quotes in {category.name}
+                    </h2>
+                    <Async
+                      loading={loading.quotes}
+                      error={errors.quotes}
+                      retry={this.fetchQuotes}
+                    >
+                      {() => (
+                        <>
+                          <ul className="list-unstyled">
+                            {quotes.map((quote, index) => (
+                              <li
+                                key={index}
+                                className="quote mb-3"
+                                dangerouslySetInnerHTML={sanitize.markup(
+                                  quote.quote
+                                )}
+                              />
+                            ))}
+                          </ul>
+                          <Link
+                            to={`/quotes?category_id=${category.id}`}
+                            className="font-weight-bold"
+                          >
+                            Read More
+                          </Link>
+                        </>
+                      )}
+                    </Async>
+                  </Col>
+                </Row>
+              </Container>
+            </div>
+          </main>
+        )}
+      </Async>
     );
   }
 }

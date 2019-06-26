@@ -36,7 +36,7 @@ class Home extends Component {
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.fetchBestSeller();
     this.fetchNewBooks();
     this.fetchFeaturedBooks();
@@ -58,11 +58,10 @@ class Home extends Component {
       const bestSeller = response.data.books[0];
       this.setState({ bestSeller });
       this.setError({ bestSeller: null });
-      this.setLoading({ bestSeller: false });
     } catch (error) {
       this.setError({ bestSeller: error.response.statusText });
-      this.setLoading({ bestSeller: false });
     }
+    this.setLoading({ bestSeller: false });
   };
 
   fetchNewBooks = async () => {
@@ -79,11 +78,10 @@ class Home extends Component {
       const newBooks = response.data.books;
       this.setState({ newBooks });
       this.setError({ newBooks: null });
-      this.setLoading({ newBooks: false });
     } catch (error) {
       this.setError({ newBooks: error.response.statusText });
-      this.setLoading({ newBooks: false });
     }
+    this.setLoading({ newBooks: false });
   };
 
   fetchFeaturedBooks = async () => {
@@ -95,11 +93,10 @@ class Home extends Component {
       const featuredBooks = response.data.books;
       this.setState({ featuredBooks });
       this.setError({ featuredBooks: null });
-      this.setLoading({ featuredBooks: false });
     } catch (error) {
       this.setError({ featuredBooks: error.response.statusText });
-      this.setLoading({ featuredBooks: false });
     }
+    this.setLoading({ featuredBooks: false });
   };
 
   fetchPenguinBooks = async () => {
@@ -115,11 +112,10 @@ class Home extends Component {
       const penguinBooks = response.data.books;
       this.setState({ penguinBooks });
       this.setError({ penguinBooks: null });
-      this.setLoading({ penguinBooks: false });
     } catch (error) {
       this.setError({ penguinBooks: error.response.statusText });
-      this.setLoading({ penguinBooks: false });
     }
+    this.setLoading({ penguinBooks: false });
   };
 
   fetchTrendingCategoryBook = async () => {
@@ -138,11 +134,10 @@ class Home extends Component {
       const trendingCategoryBook = response.data.books[0];
       this.setState({ trendingCategoryBook });
       this.setError({ trendingCategoryBook: null });
-      this.setLoading({ trendingCategoryBook: false });
     } catch (error) {
       this.setError({ trendingCategoryBook: error.response.statusText });
-      this.setLoading({ trendingCategoryBook: false });
     }
+    this.setLoading({ trendingCategoryBook: false });
   };
 
   setLoading(loading) {

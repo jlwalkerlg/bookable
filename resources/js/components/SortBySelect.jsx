@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 
-const SortBySelect = ({ options, value, onSortChange }) => {
+const SortBySelect = ({ options, value, disabled, onSortChange }) => {
   return (
     <Form>
       <Form.Group className="mb-0" controlId="order_by">
@@ -12,6 +12,7 @@ const SortBySelect = ({ options, value, onSortChange }) => {
           as="select"
           value={value}
           onChange={onSortChange}
+          disabled={disabled}
           className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
         >
           {Object.keys(options).map((key, index) => (

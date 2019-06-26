@@ -38,6 +38,7 @@ class Books extends Component {
       max_date: ''
     },
     loading: true,
+    error: null,
     books: null,
     count: null
   };
@@ -91,9 +92,12 @@ class Books extends Component {
   }
 
   handleSortChange = e => {
-    const [order_by, order_dir] = e.target.value.split('.');
-    const queryParams = { ...this.state.queryParams, order_by, order_dir };
-    this.setState({ queryParams }, this.getBooks);
+    const { loading } = this.state;
+    if (!loading) {
+      const [order_by, order_dir] = e.target.value.split('.');
+      const queryParams = { ...this.state.queryParams, order_by, order_dir };
+      this.setState({ queryParams }, this.fetchBooks);
+    }
   };
 
   handleFilterChange = e => {
@@ -152,6 +156,7 @@ class Books extends Component {
                 <h2 className="h5 text-uppercase mb-2 mb-md-0">Books</h2>
                 <SortBySelect
                   options={sortOptions}
+                  disabled={loading}
                   onSortChange={this.handleSortChange}
                 />
               </div>
