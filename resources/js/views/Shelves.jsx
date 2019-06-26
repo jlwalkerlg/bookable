@@ -6,7 +6,7 @@ import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import URL from '../utils/URL';
 import Pagination from '../components/Pagination';
-import Loading from '../components/Loading';
+import Async from '../components/Async';
 import ShelfItemsTable from '../components/ShelfItemsTable';
 import BookListing from '../components/BookListing';
 import { addRating, updateRating } from '../actions/ratings';
@@ -14,62 +14,59 @@ import { removeFromShelf } from '../actions/shelves';
 
 class Shelves extends Component {
   state = {
-    loading: true,
-    user: {},
-    shelves: [],
-    shelfItems: [],
-    ratings: [],
-    userRatings: [],
+    loading: {
+      user: true,
+      shelves: true,
+      shelfItems: true,
+      ratings: true,
+      userRatings: true
+    },
+    errors: {
+      user: null,
+      shelves: null,
+      shelfItems: null,
+      ratings: null,
+      userRatings: null
+    },
+    user: null,
+    shelves: null,
+    shelfItems: null,
+    ratings: null,
+    userRatings: null,
+    bookIds: null,
     count: 0,
     limit: 10
   };
 
-  async componentDidMount() {
-    await this.fetchData();
-    this.setState({ loading: false });
+  componentDidMount() {
+    this.fetchShelves();
+    this.fetchShelfItems();
   }
 
-  async componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps) {
     if (this.needsUpdate(prevProps)) {
-      this.setState({ loading: true });
-      await this.fetchData();
-      this.setState({ loading: false });
+      this.fetchShelves();
+      this.fetchShelfItems();
     }
   }
 
-  async fetchData() {
-    const [{ user }, { items }] = await axios.all([
-      this.fetchShelves(),
-      this.fetchShelfItems()
-    ]);
-
-    const bookIds = items.map(item => item.book_id);
-    const authUser = this.props.user;
-
-    if (authUser.id && user.id !== authUser.id) {
-      await axios.all([
-        this.fetchRatings(bookIds),
-        this.fetchUserRatings(bookIds)
-      ]);
-    } else if (authUser.id) {
-      const { ratings } = await this.fetchRatings(bookIds);
-      this.setState({ userRatings: ratings });
-    }
-  }
-
-  async fetchShelves() {
+  fetchShelves = async () => {
+    this.setLoading({ shelves: true });
     const { userId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/users/${userId}/shelves`);
       const { user, shelves } = response.data;
       this.setState({ user, shelves });
-      return response.data;
+      this.setError({ shelves: null });
+      this.setLoading({ shelves: false });
     } catch (error) {
-      console.log(error);
+      this.setError({ shelves: error.response.statusText });
+      this.setLoading({ shelves: false });
     }
-  }
+  };
 
-  async fetchShelfItems() {
+  fetchShelfItems = async () => {
+    this.setLoading({ shelfItems: true });
     const { userId, shelfId } = this.props.match.params;
     const { limit } = this.state;
     const offset = this.calcOffset();
@@ -84,39 +81,68 @@ class Shelves extends Component {
     try {
       const response = await axios.get('/api/shelves/items', { params });
       const { items, count } = response.data;
-      this.setState({ shelfItems: items, count });
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
+      const bookIds = items.map(item => item.book_id);
+      this.setState({ shelfItems: items, bookIds, count });
+      this.setError({ shelfItems: null });
+      this.setLoading({ shelfItems: false });
 
-  async fetchRatings(bookIds) {
+      this.fetchRatings(bookIds);
+      this.fetchUserRatings(bookIds);
+    } catch (error) {
+      this.setError({ shelfItems: error.response.statusText });
+      this.setLoading({ shelfItems: false });
+    }
+  };
+
+  fetchRatings = async bookIds => {
+    this.setLoading({ ratings: true });
+
+    const book_ids = (bookIds || this.state.bookIds).join(',');
     const { userId } = this.props.match.params;
     try {
       const response = await axios.get('/api/ratings', {
-        params: { user_id: userId, book_ids: bookIds.join(',') }
+        params: { user_id: userId, book_ids }
       });
       const { ratings } = response.data;
       this.setState({ ratings });
-      return response.data;
+      this.setError({ ratings: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ ratings: error.response.statusText });
     }
-  }
+    this.setLoading({ ratings: false });
+  };
 
-  async fetchUserRatings(bookIds) {
-    const { user } = this.props;
-    if (!user.id) return null;
+  fetchUserRatings = async bookIds => {
+    this.setLoading({ userRatings: true });
+
+    const authUser = this.props.user;
+    const userId = parseInt(this.props.match.params.userId);
+    if (!authUser.id || userId === authUser.id) {
+      this.setLoading({ userRatings: false });
+      this.setError({ userRatings: null });
+      return;
+    }
+
+    const book_ids = (bookIds || this.state.bookIds).join(',');
     try {
       const response = await axios.get('/api/ratings', {
-        params: { user_id: user.id, book_ids: bookIds.join(',') }
+        params: { user_id: authUser.id, book_ids }
       });
       const { ratings } = response.data;
       this.setState({ userRatings: ratings });
+      this.setError({ userRatings: null });
     } catch (error) {
-      console.log(error);
+      this.setError({ userRatings: error.response.statusText });
     }
+    this.setLoading({ userRatings: false });
+  };
+
+  setLoading(loading) {
+    this.setState({ loading: { ...this.state.loading, ...loading } });
+  }
+
+  setError(error) {
+    this.setState({ errors: { ...this.state.errors, ...error } });
   }
 
   needsUpdate(prevProps) {
@@ -194,6 +220,7 @@ class Shelves extends Component {
   render() {
     const {
       loading,
+      errors,
       user,
       shelves,
       shelfItems,
@@ -203,117 +230,143 @@ class Shelves extends Component {
       limit
     } = this.state;
 
-    if (loading)
-      return (
-        <div className="vh-min-100">
-          <Loading />
-        </div>
-      );
-
     const authUser = this.props.user;
 
     return (
       <div className="section">
         <Container>
           <Row>
+            {/* Shelves */}
             <Col xs={12} lg={3}>
               <h2 className="h5 text-uppercase">Bookshelves</h2>
-              <ul className="list-unstyled text-secondary d-none d-md-block">
-                <li>
-                  <NavLink
-                    className="sub-nav-link"
-                    to={`/users/${user.id}/shelves`}
-                    exact
-                  >
-                    All
-                  </NavLink>
-                </li>
-                {shelves.map((shelf, index) => (
-                  <li key={index}>
-                    <NavLink
-                      className="sub-nav-link"
-                      to={`/users/${user.id}/shelves/${shelf.id}`}
-                      exact
-                    >
-                      {shelf.name}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-              <Dropdown className="d-block d-md-none w-100">
-                <Dropdown.Toggle variant="info" id="addToShelf">
-                  Select a shelf
-                </Dropdown.Toggle>
+              <Async
+                loading={loading.shelves}
+                error={errors.shelves}
+                retry={this.fetchShelves}
+              >
+                {() => (
+                  <>
+                    <ul className="list-unstyled text-secondary d-none d-md-block">
+                      <li>
+                        <NavLink
+                          className="sub-nav-link"
+                          to={`/users/${user.id}/shelves`}
+                          exact
+                        >
+                          All
+                        </NavLink>
+                      </li>
+                      {shelves.map((shelf, index) => (
+                        <li key={index}>
+                          <NavLink
+                            className="sub-nav-link"
+                            to={`/users/${user.id}/shelves/${shelf.id}`}
+                            exact
+                          >
+                            {shelf.name}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                    <Dropdown className="d-block d-md-none w-100">
+                      <Dropdown.Toggle variant="info" id="addToShelf">
+                        Select a shelf
+                      </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    as={NavLink}
-                    to={`/users/${user.id}/shelves`}
-                    exact
-                    className="d-flex justify-content-between align-items-center"
-                  >
-                    All
-                  </Dropdown.Item>
-                  {shelves.map((shelf, index) => (
-                    <Dropdown.Item
-                      key={index}
-                      as={NavLink}
-                      to={`/users/${user.id}/shelves/${shelf.id}`}
-                      exact
-                      className="d-flex justify-content-between align-items-center"
-                    >
-                      {shelf.name}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
+                      <Dropdown.Menu>
+                        <Dropdown.Item
+                          as={NavLink}
+                          to={`/users/${user.id}/shelves`}
+                          exact
+                          className="d-flex justify-content-between align-items-center"
+                        >
+                          All
+                        </Dropdown.Item>
+                        {shelves.map((shelf, index) => (
+                          <Dropdown.Item
+                            key={index}
+                            as={NavLink}
+                            to={`/users/${user.id}/shelves/${shelf.id}`}
+                            exact
+                            className="d-flex justify-content-between align-items-center"
+                          >
+                            {shelf.name}
+                          </Dropdown.Item>
+                        ))}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </>
+                )}
+              </Async>
             </Col>
+
+            {/* Shelved books */}
             <Col xs={12} lg={9} className="mt-3 mt-md-0">
               <h1 className="h5 text-uppercase mb-0 mb-md-3">Books</h1>
-              <ShelfItemsTable
-                className="d-none d-md-table mt-3"
-                user={user}
-                authUser={authUser}
-                shelfItems={shelfItems}
-                ratings={ratings}
-                userRatings={userRatings}
-                onAddRating={this.addRating}
-                onUpdateRating={this.handleUpdateRating}
-                onDeleteItem={this.removeFromShelf}
-              />
-              <div className="d-md-none mb-3">
-                {shelfItems.map((shelfItem, index) => {
-                  const { book } = shelfItem;
-                  const rating = this.getRating(book);
-                  const userRating = this.getUserRating(book, rating);
-
-                  return (
-                    <BookListing
-                      key={index}
-                      className="product-table__row py-3"
+              <Async
+                loading={
+                  loading.shelfItems || loading.ratings || loading.userRatings
+                }
+                error={
+                  errors.shelfItems || errors.ratings || errors.userRatings
+                }
+                retry={
+                  errors.shelfItems
+                    ? this.fetchShelfItems
+                    : errors.ratings
+                    ? () => this.fetchRatings()
+                    : () => this.fetchUserRatings()
+                }
+              >
+                {() => (
+                  <>
+                    <ShelfItemsTable
+                      className="d-none d-md-table mt-3"
                       user={user}
                       authUser={authUser}
-                      book={book}
-                      author={book.author}
-                      rating={rating}
-                      userRating={userRating}
-                      createdAt={shelfItem.created_at}
+                      shelfItems={shelfItems}
+                      ratings={ratings}
+                      userRatings={userRatings}
                       onAddRating={this.addRating}
                       onUpdateRating={this.handleUpdateRating}
-                      deletable={user.id === authUser.id}
-                      onDelete={e => this.removeFromShelf(e, shelfItem)}
+                      onDeleteItem={this.removeFromShelf}
                     />
-                  );
-                })}
-              </div>
-              <Pagination
-                totalItems={count}
-                currentPage={this.getCurrentPage()}
-                pageSize={limit}
-                maxPages={5}
-                url={`${this.props.location.pathname}?page=`}
-                className="justify-content-center pagination-warning"
-              />
+                    <div className="d-md-none mb-3">
+                      {shelfItems.map((shelfItem, index) => {
+                        const { book } = shelfItem;
+                        const rating = this.getRating(book);
+                        const userRating = this.getUserRating(book, rating);
+
+                        return (
+                          <BookListing
+                            key={index}
+                            className="product-table__row py-3"
+                            user={user}
+                            authUser={authUser}
+                            book={book}
+                            author={book.author}
+                            rating={rating}
+                            userRating={userRating}
+                            createdAt={shelfItem.created_at}
+                            onAddRating={this.addRating}
+                            onUpdateRating={this.handleUpdateRating}
+                            deletable={user.id === authUser.id}
+                            onDelete={e => this.removeFromShelf(e, shelfItem)}
+                          />
+                        );
+                      })}
+                    </div>
+                    <Pagination
+                      totalItems={count}
+                      currentPage={this.getCurrentPage()}
+                      pageSize={limit}
+                      maxPages={5}
+                      url={`${this.props.location.pathname}?page=`}
+                      className="justify-content-center pagination-warning"
+                    />
+                  </>
+                )}
+              </Async>
             </Col>
           </Row>
         </Container>

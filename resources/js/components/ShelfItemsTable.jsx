@@ -79,8 +79,8 @@ class ShelfItemsTable extends Component {
                   </td>
                 )}
                 <td>{shelfItem.created_at}</td>
-                <td>
-                  {user.id === authUser.id && (
+                {user.id === authUser.id && (
+                  <td>
                     <Form
                       action="/"
                       method="POST"
@@ -94,8 +94,8 @@ class ShelfItemsTable extends Component {
                         <i className="material-icons">clear</i>
                       </Button>
                     </Form>
-                  )}
-                </td>
+                  </td>
+                )}
               </tr>
             );
           })}
