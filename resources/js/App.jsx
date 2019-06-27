@@ -22,6 +22,7 @@ import UserQuotes from './views/UserQuotes';
 import BookQuotes from './views/books/BookQuotes';
 import AuthorQuotes from './views/authors/AuthorQuotes';
 import CategoryQuotes from './views/categories/CategoryQuotes';
+import Reviews from './views/Reviews';
 
 const App = ({ loading }) =>
   loading ? (
@@ -59,6 +60,11 @@ const App = ({ loading }) =>
           exact
           path="/users/:userId([0-9]+)/ratings"
           component={Ratings}
+        />
+        <AppRoute
+          exact
+          path="/users/:userId([0-9]+)/reviews"
+          component={Reviews}
         />
         <AppRoute
           exact

@@ -92,6 +92,13 @@ class NavBar extends Component {
                     </NavDropdown.Item>
                     <NavDropdown.Item
                       as={NavLink}
+                      to={`/users/${user.id}/reviews`}
+                      exact
+                    >
+                      My Reviews
+                    </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={NavLink}
                       to={`/users/${user.id}/quotes`}
                       exact
                     >

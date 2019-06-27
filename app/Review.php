@@ -19,4 +19,9 @@ class Review extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return (new \DateTime($value))->format('d M Y');
+    }
 }
