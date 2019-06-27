@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Card, Button, Form } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import Async from '../../components/Async';
 import Pagination from '../../components/Pagination';
-import sanitize from '../../utils/sanitize';
 import URL from '../../utils/URL';
+import QuoteCard from '../../components/QuoteCard';
 
 class UserQuotes extends Component {
   state = {
@@ -200,66 +200,16 @@ class UserQuotes extends Component {
                           const userQuote = this.getUserQuote(quote);
 
                           return (
-                            <Card
+                            <QuoteCard
                               key={index}
-                              className="d-inline-block w-100 mt-3"
-                            >
-                              <Card.Body>
-                                <blockquote className="blockquote mb-0">
-                                  <p
-                                    className="font-size-6"
-                                    dangerouslySetInnerHTML={sanitize.markup(
-                                      quote.quote
-                                    )}
-                                  />
-                                  <footer className="blockquote-footer">
-                                    <Link to={`/authors/${author.id}`}>
-                                      {author.name}
-                                    </Link>{' '}
-                                    in{' '}
-                                    <cite title="Source Title">
-                                      <Link to={`/books/${book.id}`}>
-                                        {book.title}
-                                      </Link>
-                                    </cite>
-                                  </footer>
-                                </blockquote>
-                                {userQuote && (
-                                  <Form
-                                    action="/"
-                                    method="POST"
-                                    className="mt-2"
-                                    onSubmit={e =>
-                                      this.deleteQuote(e, userQuote)
-                                    }
-                                  >
-                                    <Button
-                                      type="submit"
-                                      variant="outline-info"
-                                      size="sm"
-                                    >
-                                      Unsave
-                                    </Button>
-                                  </Form>
-                                )}
-                                {authUser.id && !userQuote && (
-                                  <Form
-                                    action="/"
-                                    method="POST"
-                                    className="mt-2"
-                                    onSubmit={e => this.saveQuote(e, quote)}
-                                  >
-                                    <Button
-                                      type="submit"
-                                      variant="outline-info"
-                                      size="sm"
-                                    >
-                                      Save
-                                    </Button>
-                                  </Form>
-                                )}
-                              </Card.Body>
-                            </Card>
+                              quote={quote}
+                              book={book}
+                              author={author}
+                              userQuote={userQuote}
+                              authUser={authUser}
+                              onSave={this.saveQuote}
+                              onDelete={this.deleteQuote}
+                            />
                           );
                         })}
                       </div>
