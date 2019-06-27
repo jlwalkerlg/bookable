@@ -22,10 +22,6 @@ const sortOptions = {
 
 class Books extends Component {
   state = {
-    categories: new Array(6).fill(0).map((item, index) => ({
-      name: `Category #${index}`,
-      checked: false
-    })),
     queryParams: {
       limit: 20,
       order_by: 'ratings_count',
@@ -37,14 +33,22 @@ class Books extends Component {
       min_date: '',
       max_date: ''
     },
-    loading: true,
-    error: null,
+    loading: {
+      books: true,
+      categories: true
+    },
+    errors: {
+      books: null,
+      categories: null
+    },
     books: null,
+    categories: [],
     count: null
   };
 
   componentDidMount() {
     this.fetchBooks();
+    this.fetchCategories();
   }
 
   componentDidUpdate(prevProps) {
@@ -54,22 +58,53 @@ class Books extends Component {
   }
 
   fetchBooks = async () => {
+    this.setLoading({ books: true });
     const params = this.getParams();
-    this.setState({ loading: true });
     try {
       const response = await axios.get('/api/books', { params });
       const { books, count } = response.data;
-      this.setState({ books, count, loading: false, error: null });
+      this.setState({ books, count });
+      this.setError({ books: null });
     } catch (error) {
-      this.setState({ error: error.response.statusText, loading: false });
+      this.setError({ books: error.response.statusText });
     }
+    this.setLoading({ books: false });
   };
 
-  getParams() {
-    const { queryParams } = this.state;
-    const offset = this.calcOffset();
+  fetchCategories = async () => {
+    this.setLoading({ categories: true });
+    try {
+      const response = await axios.get('/api/categories');
+      const categories = response.data.categories.map(category => ({
+        ...category,
+        checked: false
+      }));
+      this.setState({ categories });
+      this.setError({ categories: null });
+    } catch (error) {
+      this.setError({ categories: error.response.statusText });
+    }
+    this.setLoading({ categories: false });
+  };
 
-    const params = { offset, count: true };
+  setLoading(loading) {
+    this.setState({ loading: { ...this.state.loading, ...loading } });
+  }
+
+  setError(error) {
+    this.setState({ errors: { ...this.state.errors, ...error } });
+  }
+
+  getParams() {
+    const { queryParams, categories } = this.state;
+    const offset = this.calcOffset();
+    const categoryIds = categories.reduce(
+      (result, category) =>
+        category.checked ? [...result, category.id] : result,
+      []
+    );
+
+    const params = { offset, count: true, category_ids: categoryIds.join(',') };
 
     for (const key in queryParams) {
       if (queryParams.hasOwnProperty(key)) {
@@ -93,7 +128,7 @@ class Books extends Component {
 
   handleSortChange = e => {
     const { loading } = this.state;
-    if (!loading) {
+    if (!loading.books) {
       const [order_by, order_dir] = e.target.value.split('.');
       const queryParams = { ...this.state.queryParams, order_by, order_dir };
       this.setState({ queryParams }, this.fetchBooks);
@@ -110,16 +145,16 @@ class Books extends Component {
   handleFilterSubmit = e => {
     e.preventDefault();
     const { loading } = this.state;
-    if (!loading) {
+    if (!loading.books) {
       this.setState({ isFilterOpen: false });
       this.fetchBooks();
     }
   };
 
   handleCategoryChange = e => {
-    const categoryName = e.target.dataset.categoryName;
+    const categoryId = parseInt(e.target.dataset.categoryId);
     const categories = this.state.categories.map(category => {
-      return category.name === categoryName
+      return category.id === categoryId
         ? { ...category, checked: !category.checked }
         : category;
     });
@@ -128,12 +163,12 @@ class Books extends Component {
 
   render() {
     const {
-      categories,
       queryParams,
       books,
+      categories,
       count,
       loading,
-      error
+      errors
     } = this.state;
     const { limit } = queryParams;
 
@@ -142,25 +177,37 @@ class Books extends Component {
         <Container>
           <Row>
             <Col xs={12} md={4} className="mb-4 mb-md-0">
-              <FilterForm
-                queryParams={queryParams}
-                categories={categories}
-                onFilterChange={this.handleFilterChange}
-                onCategoryChange={this.handleCategoryChange}
-                onFilterSubmit={this.handleFilterSubmit}
-                loading={loading}
-              />
+              <Async
+                loading={loading.categories}
+                error={errors.categories}
+                retry={this.fetchCategories}
+              >
+                {() => (
+                  <FilterForm
+                    queryParams={queryParams}
+                    categories={categories}
+                    onFilterChange={this.handleFilterChange}
+                    onCategoryChange={this.handleCategoryChange}
+                    onFilterSubmit={this.handleFilterSubmit}
+                    loading={loading.books}
+                  />
+                )}
+              </Async>
             </Col>
             <Col xs={12} md={8}>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="h5 text-uppercase mb-2 mb-md-0">Books</h2>
                 <SortBySelect
                   options={sortOptions}
-                  disabled={loading}
+                  disabled={loading.books}
                   onSortChange={this.handleSortChange}
                 />
               </div>
-              <Async loading={loading} error={error} retry={this.fetchBooks}>
+              <Async
+                loading={loading.books}
+                error={errors.books}
+                retry={this.fetchBooks}
+              >
                 {() => (
                   <>
                     <div className="browse-products mb-4">

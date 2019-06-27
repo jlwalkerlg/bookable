@@ -53,7 +53,11 @@ class BooksController extends Controller
         }
 
         if ($categoryId = $request->input('category_id')) {
-            $query->join('category_book', 'books.id', '=', 'category_book.book_id')->where('category_id', $categoryId);
+            $query->join('category_book', 'books.id', '=', 'category_book.book_id')->where('category_book.category_id', $categoryId);
+        }
+
+        if ($categoryIds = $request->input('category_ids')) {
+            $query->join('category_book', 'books.id', '=', 'category_book.book_id')->whereIn('category_book.category_id', explode(',', $categoryIds));
         }
 
         $count = $request->has('count') ? (clone $query)->count() : null;

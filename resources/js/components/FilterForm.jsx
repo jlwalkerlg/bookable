@@ -139,7 +139,7 @@ class FilterForm extends Component {
                           className="sr-only"
                           id={`category_${category.name}`}
                           onChange={onCategoryChange}
-                          data-category-name={category.name}
+                          data-category-id={category.id}
                         />
                         <label
                           htmlFor={`category_${category.name}`}
