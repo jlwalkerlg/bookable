@@ -2,7 +2,7 @@ img {
   max-width: 100%;
 }
 
-a {
+a:not(.default) {
   color: inherit;
   &:hover {
     color: $warning;
