@@ -1,6 +1,4 @@
 .product-card {
-  max-width: 200px;
-
   &__img {
     display: block;
     margin-left: auto;
@@ -10,10 +8,11 @@
 
   &__title {
     display: block;
+    max-width: 200px;
+    margin: 0 auto 0;
     font-weight: bold;
     color: $dark;
     font-family: $font-family-display;
-    margin-bottom: 0;
   }
 
   &__author {
