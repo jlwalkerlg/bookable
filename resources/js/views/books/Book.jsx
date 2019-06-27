@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Media,
-  Dropdown
-} from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Scrollspy from 'react-scrollspy';
 import axios from 'axios';
@@ -19,6 +11,7 @@ import { addToCart, removeFromCart } from '../../actions/cart';
 import Loading from '../../components/Loading';
 import BookCarousel from '../../components/BookCarousel';
 import { addToShelf, removeFromShelf } from '../../actions/shelves';
+import Truncate from '../../components/Truncate';
 
 class Show extends Component {
   state = {
@@ -206,9 +199,11 @@ class Show extends Component {
                   <span className="text-secondary">by: </span>
                   <Link to={`/authors/${author.id}`}>{author.name}</Link>
                 </p>
-                <p
+                <Truncate
+                  html={book.description}
+                  length={1000}
+                  btnClassName="font-size-7"
                   className="text-description"
-                  dangerouslySetInnerHTML={sanitize.markup(book.description)}
                 />
                 <p>
                   <span className="text-secondary">Categories: </span>
@@ -412,7 +407,7 @@ class Show extends Component {
                     ))}
                   </ul>
                   <p className="font-weight-bold">
-                    <Link to={`/books/${book.id}/quotes`}>Read More...</Link>
+                    <Link to={`/books/${book.id}/quotes`}>More Quotes...</Link>
                   </p>
                 </section>
               </Col>
@@ -434,12 +429,9 @@ class Show extends Component {
                 <img src={author.image_url} alt={author.name} />
               </Col>
               <Col xs={12} md={8} className="text-md-left">
-                <div
-                  className="mb-3"
-                  dangerouslySetInnerHTML={sanitize.markup(author.about)}
-                />
-                <p className="font-weight-bold">
-                  <Link to={`/authors/${author.id}`}>Read More...</Link>
+                <Truncate html={author.about} length={1000} />
+                <p className="font-weight-bold mt-3">
+                  <Link to={`/authors/${author.id}`}>View Author</Link>
                 </p>
               </Col>
             </Row>

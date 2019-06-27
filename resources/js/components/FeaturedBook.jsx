@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import sanitize from '../utils/sanitize';
+import Truncate from './Truncate';
 
 const FeaturedBookMiddle = ({ book, author, heading }) => (
   <Container>
@@ -33,9 +33,10 @@ const FeaturedBookMiddle = ({ book, author, heading }) => (
         className="d-flex align-items-end text-md-left"
       >
         <div>
-          <p
+          <Truncate
+            html={book.description}
+            length={1000}
             className="text-description"
-            dangerouslySetInnerHTML={sanitize.markup(book.description)}
           />
           <Link
             to={`/books/${book.id}`}
@@ -73,9 +74,10 @@ const FeaturedBookLeft = ({ book, author, heading }) => (
           <Link to={`/authors/${author.id}`}>{author.name}</Link>
         </p>
         <p className="h2 font-weight-bold text-warning mb-4">£{book.price}</p>
-        <p
+        <Truncate
+          html={book.description}
+          length={1000}
           className="text-description"
-          dangerouslySetInnerHTML={sanitize.markup(book.description)}
         />
         <Link
           to={`/books/${book.id}`}
@@ -119,9 +121,10 @@ const FeaturedBookRight = ({ book, author, heading }) => (
         </p>
 
         <p className="h2 font-weight-bold text-warning mb-4">£12.00</p>
-        <p
+        <Truncate
+          html={book.description}
+          length={1000}
           className="text-description text-justify text-md-right"
-          dangerouslySetInnerHTML={sanitize.markup(book.description)}
         />
         <Link
           to={`/books/${book.id}`}

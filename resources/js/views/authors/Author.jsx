@@ -9,6 +9,7 @@ import sanitize from '../../utils/sanitize';
 import ProductCard from '../../components/ProductCard';
 import FeaturedBook from '../../components/FeaturedBook';
 import Async from '../../components/Async';
+import Truncate from '../../components/Truncate';
 
 const slickOptions = {
   infinite: false,
@@ -185,18 +186,24 @@ class Show extends Component {
                     </Col>
                     <Col xs={12} md={6} className="text-md-left">
                       <h1 className="font-display">{author.name}</h1>
-                      <p className="mb-1 font-size-7">
-                        <span className="font-weight-bold">Born:</span>{' '}
-                        {author.birth_date}
-                      </p>
-                      <p className="mb-1 font-size-7">
-                        <span className="font-weight-bold">Died:</span>{' '}
-                        {author.death_date}
-                      </p>
-                      <p className="mb-1 font-size-7">
-                        <span className="font-weight-bold">Hometown:</span>{' '}
-                        {author.hometown}
-                      </p>
+                      {author.birth_date && (
+                        <p className="mb-1 font-size-7">
+                          <span className="font-weight-bold">Born:</span>{' '}
+                          {author.birth_date}
+                        </p>
+                      )}
+                      {author.death_date && (
+                        <p className="mb-1 font-size-7">
+                          <span className="font-weight-bold">Died:</span>{' '}
+                          {author.death_date}
+                        </p>
+                      )}
+                      {author.hometown && (
+                        <p className="mb-1 font-size-7">
+                          <span className="font-weight-bold">Hometown:</span>{' '}
+                          {author.hometown}
+                        </p>
+                      )}
                       <p className="mb-1 font-size-7">
                         <span className="font-weight-bold">
                           Average rating:
@@ -209,9 +216,10 @@ class Show extends Component {
                         </span>{' '}
                         {ratingsCount}
                       </p>
-                      <p
+                      <Truncate
+                        html={author.about}
+                        length={1500}
                         className="text-description text-justify text-md-left"
-                        dangerouslySetInnerHTML={sanitize.markup(author.about)}
                       />
                     </Col>
                   </Row>
