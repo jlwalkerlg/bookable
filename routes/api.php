@@ -56,3 +56,9 @@ Route::delete('/user-quotes/{userQuote}', 'UserQuotesController@delete')->middle
 Route::post('/users/{user}/quotes', 'UserQuotesController@store')->middleware('can:update,user');
 
 Route::get('/users/{user}', 'UsersController@show');
+
+Route::get('/reviews', 'ReviewsController@index');
+Route::get('/users/{user}/reviews', 'UsersController@reviews');
+Route::post('/users/{user}/reviews', 'ReviewsController@store')->middleware('can:update,user');
+Route::delete('/reviews/{review}', 'ReviewsController@destroy')->middleware('can:update,review');
+Route::patch('/reviews/{review}', 'ReviewsController@update')->middleware('can:update,review');

@@ -47,6 +47,29 @@ class UsersController extends Controller
         return $count ? compact('user', 'ratings', 'count') : compact('user', 'ratings');
     }
 
+    public function reviews(Request $request, User $user)
+    {
+        $query = $user->reviews();
+
+        $count = $request->has('count') ? (clone $query)->count() : null;
+
+        if ($limit = $request->input('limit')) {
+            $query->limit($limit);
+        }
+
+        if ($offset = $request->input('offset')) {
+            $query->offset($offset);
+        }
+
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
+
+        $reviews = $query->get();
+
+        return $count ? compact('user', 'reviews', 'count') : compact('user', 'reviews');
+    }
+
     public function shelves(Request $request, User $user)
     {
         $shelves = $user->shelves;
