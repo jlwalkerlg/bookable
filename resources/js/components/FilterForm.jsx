@@ -10,13 +10,17 @@ class FilterForm extends Component {
   toggleFilter = () =>
     this.setState({ isFilterOpen: !this.state.isFilterOpen });
 
+  handleFilterSubmit = e => {
+    this.setState({ isFilterOpen: false });
+    this.props.onFilterSubmit(e);
+  };
+
   render() {
     const {
       queryParams,
       categories,
       onFilterChange,
       onCategoryChange,
-      onFilterSubmit,
       loading
     } = this.props;
     const { isFilterOpen } = this.state;
@@ -45,7 +49,7 @@ class FilterForm extends Component {
         <MediaQuery minWidth={768}>
           {matches => (
             <Collapse in={isFilterOpen || matches}>
-              <Form action="/" method="GET" onSubmit={onFilterSubmit}>
+              <Form action="/" method="GET" onSubmit={this.handleFilterSubmit}>
                 {/* Price */}
                 <Form.Row>
                   <Col xs={6} md={12} lg={6}>

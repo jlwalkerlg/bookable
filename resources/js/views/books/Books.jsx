@@ -43,7 +43,8 @@ class Books extends Component {
     },
     books: null,
     categories: [],
-    count: null
+    count: null,
+    isFilterOpen: false
   };
 
   componentDidMount() {
@@ -142,12 +143,15 @@ class Books extends Component {
     this.setState({ queryParams });
   };
 
-  handleFilterSubmit = e => {
+  handleFilterSubmit = async e => {
     e.preventDefault();
     const { loading } = this.state;
     if (!loading.books) {
-      this.setState({ isFilterOpen: false });
-      this.fetchBooks();
+      const shouldFetch = !URL.query(this.props.location.search).getParam(
+        'page'
+      );
+      this.props.history.push('/books');
+      if (shouldFetch) this.fetchBooks();
     }
   };
 
