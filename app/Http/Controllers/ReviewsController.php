@@ -75,4 +75,13 @@ class ReviewsController extends Controller
         $review->delete();
         return response(null, 204);
     }
+
+    public function show(Request $request, Review $review)
+    {
+        if ($with = $request->input('with')) {
+            $review->load(explode(',', $with));
+        }
+
+        return $review;
+    }
 }

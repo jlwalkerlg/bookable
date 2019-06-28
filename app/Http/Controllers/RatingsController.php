@@ -16,6 +16,10 @@ class RatingsController extends Controller
             $query->where('user_id', $userId);
         }
 
+        if ($userIds = $request->input('user_ids')) {
+            $query->whereIn('user_id', explode(',', $userIds));
+        }
+
         if ($bookId = $request->input('book_id')) {
             $query->where('book_id', $bookId);
         }

@@ -23,6 +23,8 @@ import BookQuotes from './views/books/BookQuotes';
 import AuthorQuotes from './views/authors/AuthorQuotes';
 import CategoryQuotes from './views/categories/CategoryQuotes';
 import Reviews from './views/Reviews';
+import NewReview from './views/NewReview';
+import ReviewShow from './views/ReviewShow';
 
 const App = ({ loading }) =>
   loading ? (
@@ -85,6 +87,16 @@ const App = ({ loading }) =>
           exact
           path="/categories/:categoryId([0-9]+)/quotes"
           component={CategoryQuotes}
+        />
+        <UserRoute
+          exact
+          path="/books/:bookId([0-9]+)/reviews/new"
+          component={NewReview}
+        />
+        <AppRoute
+          exact
+          path="/reviews/:reviewId([0-9]+)"
+          component={ReviewShow}
         />
         <Route component={NotFound} />
       </Switch>

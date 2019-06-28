@@ -12,6 +12,10 @@
     }
   }
 
+  &.disabled > .star {
+    color: $gray-700;
+  }
+
   & > .star.active:before,
   & > .star.active ~ .star:before,
   & > .star.editable:hover:before,

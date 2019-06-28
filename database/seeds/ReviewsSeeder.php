@@ -16,16 +16,16 @@ class ReviewsSeeder extends Seeder
     {
         $faker = \Faker\Factory::create();
 
-        $bookIds = Book::select('id')->get()->map(function ($book) {
+        $bookIds = Book::select('id')->orderBy('id', 'asc')->limit(10)->get()->map(function ($book) {
             return $book->id;
         });
         $userIds = User::select('id')->orderBy('id', 'asc')->get()->map(function ($user) {
             return $user->id;
         });
 
-        foreach ($userIds as $userId) {
+        foreach ($bookIds as $bookId) {
             Review::insert(
-                $bookIds->random(10)->map(function ($bookId) use ($userId, $faker) {
+                $userIds->map(function ($userId) use ($bookId, $faker) {
                     return [
                         'review' => $faker->text(600),
                         'book_id' => $bookId,

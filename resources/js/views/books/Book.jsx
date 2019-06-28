@@ -8,10 +8,15 @@ import axios from 'axios';
 import sanitize from '../../utils/sanitize';
 import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
+import { addRating, updateRating, deleteRating } from '../../actions/ratings';
 import BookCarousel from '../../components/BookCarousel';
 import { addToShelf, removeFromShelf } from '../../actions/shelves';
 import Truncate from '../../components/Truncate';
 import Async from '../../components/Async';
+import BookReviews from '../../components/BookReviews';
+import BookUserReview from '../../components/BookUserReview';
+import { addReview } from '../../actions/reviews';
+import Stars from '../../components/Stars';
 
 class Show extends Component {
   state = {
@@ -19,35 +24,51 @@ class Show extends Component {
       book: true,
       quotes: true,
       shelves: true,
-      shelfItems: true
+      shelfItems: true,
+      reviews: true,
+      userRating: true,
+      userReview: true
     },
     errors: {
       book: null,
       quotes: null,
       shelves: null,
-      shelfItems: null
+      shelfItems: null,
+      reviews: null,
+      userRating: null,
+      userReview: null
+    },
+    processing: {
+      userRating: false
     },
     book: null,
     quotes: null,
     shelves: null,
     shelfItems: null,
+    reviews: null,
+    userRating: null,
+    userReview: null,
     quantity: 1
   };
 
   componentDidMount() {
-    this.fetchBook();
-    this.fetchQuotes();
-    this.fetchShelves();
-    this.fetchShelfItems();
+    this.fetchData();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.match.params.id !== this.props.match.params.id) {
-      this.fetchBook();
-      this.fetchQuotes();
-      this.fetchShelves();
-      this.fetchShelfItems();
+      this.fetchData();
     }
+  }
+
+  fetchData() {
+    this.fetchBook();
+    this.fetchQuotes();
+    this.fetchShelves();
+    this.fetchShelfItems();
+    this.fetchReviews();
+    this.fetchUserRating();
+    this.fetchUserReview();
   }
 
   fetchBook = async () => {
@@ -119,12 +140,85 @@ class Show extends Component {
     this.setLoading({ shelfItems: false });
   };
 
+  fetchReviews = async () => {
+    this.setLoading({ reviews: true });
+    const bookId = this.props.match.params.id;
+    try {
+      const response = await axios.get('/api/reviews', {
+        params: { book_id: bookId, with: 'user' }
+      });
+      const { reviews } = response.data;
+      const userIds = reviews.map(review => review.user_id);
+      const ratings = await this.fetchRatings(userIds);
+      this.setState({
+        reviews: reviews.map(review => ({
+          ...review,
+          rating: ratings.filter(rating => rating.user_id === review.user_id)[0]
+        }))
+      });
+      this.setError({ reviews: null });
+    } catch (error) {
+      this.setError({ reviews: error.response.statusText });
+    }
+    this.setLoading({ reviews: false });
+  };
+
+  fetchRatings = async userIds => {
+    const bookId = this.props.match.params.id;
+    const response = await axios.get('/api/ratings', {
+      params: { book_id: bookId, user_ids: userIds.join(',') }
+    });
+    return response.data.ratings;
+  };
+
+  fetchUserRating = async () => {
+    const { user } = this.props;
+    if (!user.id) return null;
+
+    this.setLoading({ userRating: true });
+    const bookId = this.props.match.params.id;
+    try {
+      const response = await axios.get('/api/ratings', {
+        params: { book_id: bookId, user_id: user.id }
+      });
+      const userRating = response.data.ratings[0];
+      this.setState({ userRating });
+      this.setError({ userRating: null });
+    } catch (error) {
+      this.setError({ userRating: error.response.statusText });
+    }
+    this.setLoading({ userRating: false });
+  };
+
+  fetchUserReview = async () => {
+    const { user } = this.props;
+    if (!user.id) return null;
+
+    this.setLoading({ userReview: true });
+    const bookId = this.props.match.params.id;
+    try {
+      const response = await axios.get('/api/reviews', {
+        params: { book_id: bookId, user_id: user.id }
+      });
+      const userReview = response.data.reviews[0];
+      this.setState({ userReview });
+      this.setError({ userReview: null });
+    } catch (error) {
+      this.setError({ userReview: error.response.statusText });
+    }
+    this.setLoading({ userReview: false });
+  };
+
   setLoading(loading) {
     this.setState({ loading: { ...this.state.loading, ...loading } });
   }
 
   setError(error) {
     this.setState({ errors: { ...this.state.errors, ...error } });
+  }
+
+  setProcessing(processing) {
+    this.setState({ processing: { ...this.state.processing, ...processing } });
   }
 
   changeQuantity = e => {
@@ -186,9 +280,66 @@ class Show extends Component {
     this.setState({ shelfItems });
   };
 
-  render() {
-    const { loading, errors, book, quotes, shelves, quantity } = this.state;
+  addRating = async (e, book) => {
+    e.preventDefault();
+
+    const { processing } = this.state;
+    if (processing.userRating) return;
+
+    this.setProcessing({ userRating: true });
+
+    const rating = 5 - parseInt(e.target.dataset.index);
     const { user } = this.props;
+    const userRating = await addRating(rating, book, user);
+    this.setState({ userRating });
+
+    this.setProcessing({ userRating: false });
+  };
+
+  updateRating = async (rating, newRating) => {
+    await updateRating(rating, newRating);
+    const userRating = { ...this.state.userRating, rating: newRating };
+    this.setState({ userRating });
+  };
+
+  deleteRating = async rating => {
+    await deleteRating(rating);
+    this.setState({ userRating: null });
+  };
+
+  handleUpdateRating = async (e, rating) => {
+    e.preventDefault();
+
+    const { processing } = this.state;
+    if (processing.userRating) return;
+
+    this.setProcessing({ userRating: true });
+
+    const newRating = 5 - parseInt(e.target.dataset.index);
+    newRating === rating.rating
+      ? await this.deleteRating(rating)
+      : await this.updateRating(rating, newRating);
+
+    this.setProcessing({ userRating: false });
+  };
+
+  render() {
+    const {
+      loading,
+      errors,
+      processing,
+      book,
+      quotes,
+      shelves,
+      reviews,
+      userRating,
+      quantity
+    } = this.state;
+    const { user } = this.props;
+
+    const userReview = this.state.userReview
+      ? { ...this.state.userReview, rating: userRating }
+      : null;
 
     return (
       <Async loading={loading.book} error={errors.book} retry={this.fetchBook}>
@@ -212,6 +363,36 @@ class Show extends Component {
                         alt={book.title}
                         className="d-block mx-auto mr-md-0 book-highlight"
                       />
+                      {user.id && (
+                        <Async
+                          loading={loading.userRating}
+                          error={errors.userRating}
+                          retry={this.fetchUserRating}
+                        >
+                          {() => (
+                            <div className="text-center mt-3">
+                              <p>
+                                Your rating:
+                                <Stars
+                                  className={`ml-2${
+                                    processing.userRating ? ' disabled' : ''
+                                  }`}
+                                  editable={!processing.userRating}
+                                  onClick={
+                                    userRating
+                                      ? e =>
+                                          this.handleUpdateRating(e, userRating)
+                                      : e => this.addRating(e, book)
+                                  }
+                                  rating={
+                                    (userRating && userRating.rating) || 0
+                                  }
+                                />
+                              </p>
+                            </div>
+                          )}
+                        </Async>
+                      )}
                     </Col>
                     <Col xs={12} md={8} className="text-center text-md-left">
                       <h1 className="h1 font-display font-weight-bold">
@@ -530,6 +711,46 @@ class Show extends Component {
                       author_id: 1
                     }))}
                   />
+                </Container>
+              </article>
+              <article id="reviews" className="section">
+                <Container>
+                  <h3 className="text-uppercase mb-3 h6">Reviews</h3>
+                  {user.id && (
+                    <Async
+                      loading={loading.userReview}
+                      error={errors.userReview}
+                      retry={this.fetchUserReview}
+                    >
+                      {() =>
+                        userReview ? (
+                          <BookUserReview review={userReview} user={user} />
+                        ) : (
+                          <Link
+                            to={`/books/${book.id}/reviews/new`}
+                            className="default"
+                          >
+                            Write a review.
+                          </Link>
+                        )
+                      }
+                    </Async>
+                  )}
+                  <Async
+                    loading={loading.reviews}
+                    error={errors.reviews}
+                    retry={this.fetchReviews}
+                  >
+                    {() => (
+                      <BookReviews
+                        className="mt-3"
+                        reviews={reviews.filter(
+                          review => review.user_id !== user.id
+                        )}
+                        user={user}
+                      />
+                    )}
+                  </Async>
                 </Container>
               </article>
             </main>

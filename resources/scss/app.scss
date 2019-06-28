@@ -9,6 +9,9 @@ $enable-gradients: true;
 @import '../../node_modules/slick-carousel/slick/slick.css';
 @import './components/slick';
 
+// Draft JS CSS
+@import '../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
 // Custom CSS.
 @import './_mixins';
 @import './_base';

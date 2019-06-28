@@ -9,10 +9,10 @@ export const addReview = async (review, book, user) => {
 };
 
 export const updateReview = async (review, newReview) => {
-  await axios.patch(`/api/reviews/${review.id}`, {
+  const response = await axios.patch(`/api/reviews/${review.id}`, {
     review: newReview
   });
-  return newReview;
+  return response.data;
 };
 
 export const deleteReview = async review => {
