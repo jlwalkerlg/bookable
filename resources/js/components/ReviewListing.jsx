@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Media } from 'react-bootstrap';
 import sanitize from '../utils/sanitize';
 
+const reviewText = review =>
+  review.length > 300 ? review.slice(0, 300).trim() + '...' : review;
+
 const ReviewListing = ({
   book,
   author,
@@ -31,7 +34,7 @@ const ReviewListing = ({
             <p
               className="mt-0"
               dangerouslySetInnerHTML={sanitize.markup(
-                review.review.slice(0, 300) + '...'
+                reviewText(review.review)
               )}
             />
             <p>
@@ -50,7 +53,7 @@ const ReviewListing = ({
             <p
               className="mt-0"
               dangerouslySetInnerHTML={sanitize.markup(
-                userReview.review.slice(0, 300) + '...'
+                reviewText(userReview.review)
               )}
             />
             <Link to={`/reviews/${userReview.id}`}>Read full review</Link>
