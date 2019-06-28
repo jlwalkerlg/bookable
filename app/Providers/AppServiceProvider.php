@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Services\Stripe;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton('guzzle', function () {
             return new \GuzzleHttp\Client();
+        });
+
+        $this->app->singleton('stripe', function () {
+            return new Stripe();
         });
     }
 

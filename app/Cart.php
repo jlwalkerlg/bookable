@@ -13,4 +13,16 @@ class Cart extends Model
     {
         return $this->hasMany('App\CartItem');
     }
+
+    public function books()
+    {
+        return Book::join('cart_items', 'cart_items.book_id', '=', 'books.id')->where('cart_items.cart_id', $this->id)->select('books.*');
+    }
+
+    public function getAmount()
+    {
+        return $this->books()->select('books.price')->get()->reduce(function ($carry, $book) {
+            return $carry + $book->price;
+        }, 0);
+    }
 }

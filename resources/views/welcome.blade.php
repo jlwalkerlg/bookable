@@ -12,6 +12,8 @@
         rel="stylesheet">
     <!-- CSS -->
     {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
+    {{-- Stripe --}}
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body>

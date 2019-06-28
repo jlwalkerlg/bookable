@@ -211,7 +211,9 @@ class Cart extends Component {
                           .toFixed(2)}
                       </span>
                     </Card.Text>
-                    <Button variant="warning">Proceed to checkout</Button>
+                    <Link to="/checkout" className="btn btn-warning">
+                      Proceed to checkout
+                    </Link>
                   </Card.Body>
                 </Card>
               </>

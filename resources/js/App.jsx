@@ -25,6 +25,7 @@ import CategoryQuotes from './views/categories/CategoryQuotes';
 import Reviews from './views/Reviews';
 import NewReview from './views/NewReview';
 import ReviewShow from './views/ReviewShow';
+import Checkout from './views/Checkout';
 
 const App = ({ loading }) =>
   loading ? (
@@ -98,6 +99,7 @@ const App = ({ loading }) =>
           path="/reviews/:reviewId([0-9]+)"
           component={ReviewShow}
         />
+        <UserRoute exact path="/checkout" component={Checkout} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
