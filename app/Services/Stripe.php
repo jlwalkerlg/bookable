@@ -9,11 +9,20 @@ class Stripe
         \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    public function retrieveIntentOrNew(string $paymentIntentId, int $amount)
+    public function updateIntentOrNew(string $paymentIntentId, int $amount)
     {
         $intent = $this->retrieveIntent($paymentIntentId);
-        if ($intent->status === 'requires_payment_method') return $intent;
-        return $this->createIntent($amount);
+        if ($intent->status !== 'requires_payment_method') return $this->createIntent($amount);
+        if ($intent->amount === $amount) return $intent;
+        return $this->updateIntent($intent, $amount);
+    }
+
+    private function updateIntent(\Stripe\PaymentIntent $intent, int $amount)
+    {
+        return \Stripe\PaymentIntent::update(
+            $intent->id,
+            ['amount' => $amount]
+        );
     }
 
     private function retrieveIntent(string $paymentIntentId)
@@ -21,7 +30,7 @@ class Stripe
         return \Stripe\PaymentIntent::retrieve($paymentIntentId);
     }
 
-    public function createIntent($amount)
+    public function createIntent(int $amount)
     {
         return \Stripe\PaymentIntent::create([
             "amount" => $amount,
