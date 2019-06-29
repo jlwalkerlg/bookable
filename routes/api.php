@@ -67,3 +67,4 @@ Route::delete('/reviews/{review}', 'ReviewsController@destroy')->middleware('can
 Route::patch('/reviews/{review}', 'ReviewsController@update')->middleware('can:update,review');
 
 Route::get('/checkout/intent', 'CheckoutController@begin')->middleware('auth');
+Route::post('/checkout/fulfill', 'CheckoutController@fulfill');
