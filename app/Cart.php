@@ -21,8 +21,6 @@ class Cart extends Model
 
     public function getAmount()
     {
-        return $this->books()->select('books.price')->get()->reduce(function ($carry, $book) {
-            return $carry + $book->price;
-        }, 0);
+        return $this->books()->sum('price');
     }
 }
