@@ -46,7 +46,11 @@ class NavBar extends Component {
         className="text-uppercase shadow-sm bg-darker"
       >
         <Container>
-          <Navbar.Brand as={NavLink} to="/" className="font-weight-bold">
+          <Navbar.Brand
+            as={NavLink}
+            to="/"
+            className="font-weight-bold default"
+          >
             Bookable
           </Navbar.Brand>
           {user.id && (
