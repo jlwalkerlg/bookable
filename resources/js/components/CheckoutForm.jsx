@@ -8,16 +8,19 @@ class CheckoutForm extends Component {
     cardElement: null
   };
 
-  submit = async () => {
+  handleSubmit = async () => {
     if (this.state.processing) return;
 
     this.setState({ processing: true });
+    this.props.onSubmit();
 
     const { paymentIntent, error } = await this.props.stripe.handleCardPayment(
       this.props.intentSecret,
       this.state.cardElement,
       {}
     );
+
+    this.setState({ processing: false });
 
     if (error) {
       this.props.onError(error.message);
@@ -36,7 +39,7 @@ class CheckoutForm extends Component {
         <Button
           variant="warning"
           className="rounded-pill mt-3"
-          onClick={this.submit}
+          onClick={this.handleSubmit}
           disabled={this.state.processing}
         >
           Submit Payment

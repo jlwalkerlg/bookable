@@ -5,12 +5,12 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import CheckoutForm from '../components/CheckoutForm';
 import { removeItems } from '../actions/cart';
+import Loading from '../components/Loading';
 
 class Checkout extends Component {
   state = {
     intentSecret: '',
     error: null,
-    success: false,
     loading: true
   };
 
@@ -20,31 +20,36 @@ class Checkout extends Component {
     this.setState({ intentSecret, loading: false });
   }
 
+  handleSubmit = () => this.setState({ error: null });
+
   handleError = error => this.setState({ error });
 
   handleSuccess = () => {
     this.props.removeCartItems();
-    this.setState({ success: true, error: null });
+    this.props.history.push('/checkout/success');
   };
 
   render() {
-    const { success, error, intentSecret, loading } = this.state;
+    const { error, intentSecret, loading } = this.state;
 
     return (
       <StripeProvider apiKey="pk_test_Yz7Xdr8O9u4rnQMYDVdgsu6a">
         <main className="section">
           <Container>
             <h1 className="h4">Checkout</h1>
-            {success && <Alert variant="success">Payment successfull!</Alert>}
             {error && (
-              <Alert variant="danger">Whoops! There was an error.{error}</Alert>
+              <Alert variant="danger">
+                Whoops! There was an error. {error}
+              </Alert>
             )}
-            {!loading && !success && (
+            {loading && <Loading />}
+            {!loading && (
               <Elements>
                 <CheckoutForm
                   intentSecret={intentSecret}
                   onError={this.handleError}
                   onSuccess={this.handleSuccess}
+                  onSubmit={this.handleSubmit}
                 />
               </Elements>
             )}
