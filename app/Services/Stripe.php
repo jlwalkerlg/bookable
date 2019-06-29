@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
+use App\Cart;
 
 class Stripe
 {
@@ -11,11 +12,18 @@ class Stripe
         \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    public function updateIntentOrNew(string $paymentIntentId, int $amount, int $userId)
+    public function updateIntentOrNew(Cart $cart)
     {
-        $intent = $this->retrieveIntent($paymentIntentId);
-        if ($intent->status !== 'requires_payment_method') return $this->createIntent($amount, $userId);
+        if (!$cart->intent_id) return $this->createIntent($cart);
+
+        $intent = $this->retrieveIntent($cart->intent_id);
+
+        if ($intent->status !== 'requires_payment_method') return $this->createIntent($cart);
+
+        $amount = $cart->getAmount() * 100;
+
         if ($intent->amount === $amount) return $intent;
+
         return $this->updateIntent($intent, $amount);
     }
 
@@ -27,19 +35,20 @@ class Stripe
         );
     }
 
-    public function retrieveIntent(string $paymentIntentId)
+    private function retrieveIntent(string $paymentIntentId)
     {
         return \Stripe\PaymentIntent::retrieve($paymentIntentId);
     }
 
-    public function createIntent(int $amount, int $userId)
+    public function createIntent(Cart $cart)
     {
         return \Stripe\PaymentIntent::create([
-            'amount' => $amount,
+            'amount' => $cart->getAmount() * 100,
             'currency' => 'gbp',
             'payment_method_types' => ['card'],
             'metadata' => [
-                'user_id' => $userId
+                'cart_id' => $cart->id,
+                'user_id' => $cart->user_id
             ]
         ]);
     }

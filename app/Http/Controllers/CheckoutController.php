@@ -5,19 +5,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\Stripe;
 use App\Transaction;
+use Illuminate\Support\Facades\DB;
+use App\Cart;
 
 class CheckoutController extends Controller
 {
     public function begin(Request $request, Stripe $stripe)
     {
-        $user = $request->user();
-        $cart = $user->cart;
-        $amount = $cart->getAmount() * 100;
-        $intent = $cart->intent_id ? $stripe->updateIntentOrNew($cart->intent_id, $amount, $user->id) : $stripe->createIntent($amount, $user->id);
+        $cart = $request->user()->cart;
+
+        $intent = $stripe->updateIntentOrNew($cart);
+
         if ($intent->id !== $cart->intent_id) {
             $cart->intent_id = $intent->id;
             $cart->save();
         }
+
         return $intent->client_secret;
     }
 
@@ -34,6 +37,10 @@ class CheckoutController extends Controller
         $intent = $event->data->object;
 
         $transaction = new Transaction;
-        if (!$transaction->createNewFromIntent($intent)) return response('Failed to create transaction.', 500);
+
+        DB::transaction(function () use ($intent, $transaction) {
+            $transaction->createNewFromIntent($intent);
+            Cart::create(['user_id' => $intent->metadata->user_id]);
+        });
     }
 }
