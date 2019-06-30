@@ -16,8 +16,12 @@ class Checkout extends Component {
   handleError = error => this.setState({ error });
 
   handleSuccess = ({ cart, transaction }) => {
+    const oldCart = this.props.cart;
     this.props.hydrateCart({ ...cart, items: [] });
-    this.props.history.push('/checkout/success', { transaction });
+    this.props.history.push('/checkout/success', {
+      transaction,
+      cart: oldCart
+    });
   };
 
   render() {
