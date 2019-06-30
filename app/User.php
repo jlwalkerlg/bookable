@@ -43,9 +43,14 @@ class User extends Authenticatable
         return $this->hasOne('App\Wishlist');
     }
 
+    public function carts()
+    {
+        return $this->hasMany('App\Cart');
+    }
+
     public function cart()
     {
-        return $this->hasOne('App\Cart');
+        return $this->hasOne('App\Cart')->latest();
     }
 
     public function shelves()
@@ -75,6 +80,6 @@ class User extends Authenticatable
 
     public function createNewCart()
     {
-        return Cart::create(['user_id' => $this->id]);
+        return $this->carts()->create();
     }
 }

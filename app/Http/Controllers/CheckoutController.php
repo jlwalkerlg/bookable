@@ -48,8 +48,7 @@ class CheckoutController extends Controller
         $user = $this->request->user();
 
         // Add intent id to user's old cart.
-        $cart = $user->cart;
-        $cart->addIntent($intent);
+        $user->cart->addIntent($intent);
 
         // Give user new cart.
         $user->createNewCart();
