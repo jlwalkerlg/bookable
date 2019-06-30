@@ -72,4 +72,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\UserQuote');
     }
+
+    public function createNewCart()
+    {
+        return Cart::create(['user_id' => $this->id]);
+    }
 }

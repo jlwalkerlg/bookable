@@ -3,12 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Stripe\PaymentIntent;
 
 class Cart extends Model
 {
     protected $table = 'carts';
 
-    protected $fillable = ['user_id'];
+    protected $fillable = ['user_id', 'intent_id'];
 
     public function items()
     {
@@ -23,5 +24,10 @@ class Cart extends Model
     public function getAmount()
     {
         return $this->books()->sum('price');
+    }
+
+    public function addIntent(PaymentIntent $intent)
+    {
+        return $this->update(['intent_id' => $intent->id]);
     }
 }

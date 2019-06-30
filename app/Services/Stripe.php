@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
 use App\Cart;
+use App\User;
 
 class Stripe
 {
@@ -12,56 +12,28 @@ class Stripe
         \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
     }
 
-    public function updateIntentOrNew(Cart $cart)
+    public function confirmIntent(string $payment_intent_id)
     {
-        if (!$cart->intent_id) return $this->createIntent($cart);
-
-        $intent = $this->retrieveIntent($cart->intent_id);
-
-        if ($intent->status !== 'requires_payment_method') return $this->createIntent($cart);
-
-        $amount = $cart->getAmount() * 100;
-
-        if ($intent->amount === $amount) return $intent;
-
-        return $this->updateIntent($intent, $amount);
+        return $this->retrieveIntent($payment_intent_id)->confirm();
     }
 
-    private function updateIntent(\Stripe\PaymentIntent $intent, int $amount)
+    private function retrieveIntent(string $payment_intent_id)
     {
-        return \Stripe\PaymentIntent::update(
-            $intent->id,
-            ['amount' => $amount]
-        );
+        return \Stripe\PaymentIntent::retrieve($payment_intent_id);
     }
 
-    private function retrieveIntent(string $paymentIntentId)
-    {
-        return \Stripe\PaymentIntent::retrieve($paymentIntentId);
-    }
-
-    public function createIntent(Cart $cart)
+    public function createIntent(string $payment_method_id, User $user, Cart $cart)
     {
         return \Stripe\PaymentIntent::create([
+            'payment_method' => $payment_method_id,
             'amount' => $cart->getAmount() * 100,
             'currency' => 'gbp',
-            'payment_method_types' => ['card'],
+            'confirmation_method' => 'manual',
+            'confirm' => true,
             'metadata' => [
                 'cart_id' => $cart->id,
-                'user_id' => $cart->user_id
+                'user_id' => $user->id
             ]
         ]);
-    }
-
-    public function getEventFromWebhook(Request $request)
-    {
-        $payload = $request->getContent();
-        $sig_header = $request->server('HTTP_STRIPE_SIGNATURE');
-
-        return \Stripe\Webhook::constructEvent(
-            $payload,
-            $sig_header,
-            config('services.stripe.webhook.secret')
-        );
     }
 }

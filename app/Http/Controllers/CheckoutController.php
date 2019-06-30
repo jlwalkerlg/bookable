@@ -4,43 +4,59 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\Stripe;
+use Stripe\PaymentIntent;
 use App\Transaction;
-use Illuminate\Support\Facades\DB;
-use App\Cart;
 
 class CheckoutController extends Controller
 {
-    public function begin(Request $request, Stripe $stripe)
+    public function __construct(Request $request)
     {
-        $cart = $request->user()->cart;
-
-        $intent = $stripe->updateIntentOrNew($cart);
-
-        if ($intent->id !== $cart->intent_id) {
-            $cart->intent_id = $intent->id;
-            $cart->save();
-        }
-
-        return $intent->client_secret;
+        $this->request = $request;
     }
 
-    public function fulfill(Request $request, Stripe $stripe)
+    public function confirm(Stripe $stripe)
     {
+        $user = $this->request->user();
         try {
-            $event = $stripe->getEventFromWebhook($request);
-        } catch (\UnexpectedValueException $e) {
-            return response(null, 400);
-        } catch (\Stripe\Error\SignatureVerification $e) {
-            return response(null, 400);
+            if ($payment_method_id = $this->request->post('payment_method_id')) {
+                $intent = $stripe->createIntent($payment_method_id, $user, $user->cart);
+            } elseif ($payment_intent_id = $this->request->post('payment_intent_id')) {
+                $intent = $stripe->confirmIntent($payment_intent_id);
+            } else {
+                return response(null, 400);
+            }
+            return $this->generatePaymentResponse($intent);
+        } catch (\Stripe\Error\Base $e) {
+            return ['error' => $e->getMessage()];
         }
+        return response(null, 500);
+    }
 
-        $intent = $event->data->object;
+    private function generatePaymentResponse(PaymentIntent $intent)
+    {
+        if ($intent->status === 'requires_action' &&  $intent->next_action->type === 'use_stripe_sdk') {
+            return ['requires_action' => true, 'payment_intent_client_secret' => $intent->client_secret];
+        } elseif ($intent->status === 'succeeded') {
+            $this->handleSuccess($intent);
+            return ['success' => true];
+        }
+        return response(['error' => 'Invalid PaymentIntent status.'], 500);
+    }
 
-        $transaction = new Transaction;
+    private function handleSuccess(PaymentIntent $intent)
+    {
+        $user = $this->request->user();
 
-        DB::transaction(function () use ($intent, $transaction) {
-            $transaction->createNewFromIntent($intent);
-            Cart::create(['user_id' => $intent->metadata->user_id]);
-        });
+        // Add intent id to user's old cart.
+        $cart = $user->cart;
+        $cart->addIntent($intent);
+
+        // Give user new cart.
+        $user->createNewCart();
+
+        // Create new transaction.
+        (new Transaction)->newFromIntent($intent);
+
+        // Email user confirmation email.
     }
 }

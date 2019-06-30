@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Http\Request;
 use App\Services\Stripe;
 
@@ -66,5 +67,4 @@ Route::post('/users/{user}/reviews', 'ReviewsController@store')->middleware('can
 Route::delete('/reviews/{review}', 'ReviewsController@destroy')->middleware('can:update,review');
 Route::patch('/reviews/{review}', 'ReviewsController@update')->middleware('can:update,review');
 
-Route::get('/checkout/intent', 'CheckoutController@begin')->middleware('auth');
-Route::post('/checkout/fulfill', 'CheckoutController@fulfill');
+Route::post('/checkout/confirm', 'CheckoutController@confirm')->middleware('auth');

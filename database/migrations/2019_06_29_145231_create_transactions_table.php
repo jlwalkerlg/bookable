@@ -21,9 +21,11 @@ class CreateTransactionsTable extends Migration
             $table->integer('amount');
             $table->timestamp('charged_at');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('cart_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('cart_id')->references('id')->on('carts');
         });
     }
 

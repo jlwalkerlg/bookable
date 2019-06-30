@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { CardElement, injectStripe } from 'react-stripe-elements';
 import { Button, Spinner } from 'react-bootstrap';
+import axios from 'axios';
 
 class CheckoutForm extends Component {
   state = {
@@ -8,28 +9,60 @@ class CheckoutForm extends Component {
     cardElement: null
   };
 
+  handleReady = element => this.setState({ cardElement: element });
+
   handleSubmit = async () => {
     if (this.state.processing) return;
 
     this.setState({ processing: true });
     this.props.onSubmit();
 
-    const { paymentIntent, error } = await this.props.stripe.handleCardPayment(
-      this.props.intentSecret,
+    const {
+      paymentMethod,
+      error
+    } = await this.props.stripe.createPaymentMethod(
+      'card',
       this.state.cardElement,
       {}
     );
 
-    this.setState({ processing: false });
-
     if (error) {
-      this.props.onError(error.message);
+      this.setState({ processing: false });
+      this.props.onError(error);
+    } else {
+      const response = await axios.post('/api/checkout/confirm', {
+        payment_method_id: paymentMethod.id
+      });
+      this.handleServerResponse(response.data);
+    }
+  };
+
+  handleServerResponse = async response => {
+    if (response.error) {
+      this.setState({ processing: false });
+      this.props.onError(response.error);
+    } else if (response.requires_action) {
+      const {
+        error: errorAction,
+        paymentIntent
+      } = await this.props.stripe.handleCardAction(
+        response.payment_intent_client_secret
+      );
+
+      if (errorAction) {
+        this.setState({ processing: false });
+        this.props.onError(errorAction);
+      } else {
+        const response = await axios.post('/api/checkout/confirm', {
+          payment_intent_id: paymentIntent.id
+        });
+
+        this.handleServerResponse(response.data);
+      }
     } else {
       this.props.onSuccess();
     }
   };
-
-  handleReady = element => this.setState({ cardElement: element });
 
   render() {
     return (

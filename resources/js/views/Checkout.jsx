@@ -1,24 +1,14 @@
 import React, { Component } from 'react';
 import { Elements, StripeProvider } from 'react-stripe-elements';
 import { Container, Alert } from 'react-bootstrap';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import CheckoutForm from '../components/CheckoutForm';
 import { removeItems } from '../actions/cart';
-import Loading from '../components/Loading';
 
 class Checkout extends Component {
   state = {
-    intentSecret: '',
-    error: null,
-    loading: true
+    error: null
   };
-
-  async componentDidMount() {
-    const response = await axios.get('/api/checkout/intent');
-    const intentSecret = response.data;
-    this.setState({ intentSecret, loading: false });
-  }
 
   handleSubmit = () => this.setState({ error: null });
 
@@ -30,7 +20,7 @@ class Checkout extends Component {
   };
 
   render() {
-    const { error, intentSecret, loading } = this.state;
+    const { error } = this.state;
 
     return (
       <StripeProvider apiKey="pk_test_Yz7Xdr8O9u4rnQMYDVdgsu6a">
@@ -42,17 +32,13 @@ class Checkout extends Component {
                 Whoops! There was an error. {error}
               </Alert>
             )}
-            {loading && <Loading />}
-            {!loading && (
-              <Elements>
-                <CheckoutForm
-                  intentSecret={intentSecret}
-                  onError={this.handleError}
-                  onSuccess={this.handleSuccess}
-                  onSubmit={this.handleSubmit}
-                />
-              </Elements>
-            )}
+            <Elements>
+              <CheckoutForm
+                onError={this.handleError}
+                onSuccess={this.handleSuccess}
+                onSubmit={this.handleSubmit}
+              />
+            </Elements>
           </Container>
         </main>
       </StripeProvider>
