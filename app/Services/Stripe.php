@@ -22,7 +22,7 @@ class Stripe
         return \Stripe\PaymentIntent::retrieve($payment_intent_id);
     }
 
-    public function createIntent(string $payment_method_id, User $user, Cart $cart)
+    public function createIntent(string $payment_method_id, User $user, Cart $cart, array $metadata = [])
     {
         return \Stripe\PaymentIntent::create([
             'payment_method' => $payment_method_id,
@@ -30,10 +30,10 @@ class Stripe
             'currency' => 'gbp',
             'confirmation_method' => 'manual',
             'confirm' => true,
-            'metadata' => [
+            'metadata' => array_merge($metadata, [
                 'cart_id' => $cart->id,
-                'user_id' => $user->id
-            ]
+                'user_id' => $user->id,
+            ])
         ]);
     }
 }

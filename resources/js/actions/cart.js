@@ -1,10 +1,5 @@
 import axios from 'axios';
-import {
-  CART_ADD,
-  CART_REMOVE,
-  CART_HYDRATE,
-  CART_REMOVE_ITEMS
-} from './types';
+import { CART_ADD, CART_REMOVE, CART_HYDRATE } from './types';
 import store from '../store';
 
 const addItem = item => ({
@@ -40,8 +35,4 @@ export const removeFromCart = book => dispatch => {
     .delete(`/api/carts/${cart.id}/items/${item.id}`)
     .then(() => dispatch(removeItem(item.id)))
     .catch(err => console.log(err));
-};
-
-export const removeItems = {
-  type: CART_REMOVE_ITEMS
 };

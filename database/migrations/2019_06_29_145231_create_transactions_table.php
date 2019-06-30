@@ -20,6 +20,9 @@ class CreateTransactionsTable extends Migration
             $table->string('card_last_four', 4);
             $table->integer('amount');
             $table->timestamp('charged_at');
+            $table->string('street_address');
+            $table->string('city');
+            $table->string('postcode', 8);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('cart_id');
             $table->timestamps();

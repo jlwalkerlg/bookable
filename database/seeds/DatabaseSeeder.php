@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
 
     private function truncateAll()
     {
-        $tables = ['wishlist_items', 'wishlists', 'cart_items', 'carts', 'shelf_items', 'shelves', 'user_quote', 'ratings', 'reviews', 'users', 'category_book', 'category_quote', 'categories', 'quotes', 'books', 'authors'];
+        $tables = ['transactions', 'wishlist_items', 'wishlists', 'cart_items', 'carts', 'shelf_items', 'shelves', 'user_quote', 'ratings', 'reviews', 'users', 'category_book', 'category_quote', 'categories', 'quotes', 'books', 'authors'];
         foreach ($tables as $table) {
             DB::statement("DELETE FROM $table");
             DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1");

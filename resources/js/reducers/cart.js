@@ -1,9 +1,4 @@
-import {
-  CART_ADD,
-  CART_HYDRATE,
-  CART_REMOVE,
-  CART_REMOVE_ITEMS
-} from '../actions/types';
+import { CART_ADD, CART_HYDRATE, CART_REMOVE } from '../actions/types';
 
 function cartReducer(cart = {}, action) {
   switch (action.type) {
@@ -16,8 +11,6 @@ function cartReducer(cart = {}, action) {
       };
     case CART_HYDRATE:
       return action.cart;
-    case CART_REMOVE_ITEMS:
-      return { ...cart, items: [] };
     default:
       return cart;
   }

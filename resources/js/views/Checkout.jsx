@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Elements, StripeProvider } from 'react-stripe-elements';
 import { Container, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import CheckoutForm from '../components/CheckoutForm';
-import { removeItems } from '../actions/cart';
+import { hydrateCart } from '../actions/cart';
 
 class Checkout extends Component {
   state = {
@@ -14,12 +15,15 @@ class Checkout extends Component {
 
   handleError = error => this.setState({ error });
 
-  handleSuccess = () => {
-    this.props.removeCartItems();
-    this.props.history.push('/checkout/success');
+  handleSuccess = ({ cart, transaction }) => {
+    this.props.hydrateCart({ ...cart, items: [] });
+    this.props.history.push('/checkout/success', { transaction });
   };
 
   render() {
+    const { cart } = this.props;
+    if (!cart.items.length) return <Redirect to="/cart" />;
+
     const { error } = this.state;
 
     return (
@@ -46,11 +50,15 @@ class Checkout extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  removeCartItems: () => dispatch(removeItems)
+const mapStateToProps = ({ cart }) => ({
+  cart
 });
 
+const mapDispatchToProps = {
+  hydrateCart
+};
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(Checkout);
