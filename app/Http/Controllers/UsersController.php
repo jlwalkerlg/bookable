@@ -5,9 +5,47 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Shelf;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
+    public function updateAvatar(Request $request, User $user)
+    {
+        $request->validate(['avatar' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:2048']);
+
+        $user = $request->user();
+
+        try {
+            DB::beginTransaction();
+
+            // Get old avatar name.
+            $oldAvatar = $user->avatar;
+
+            // Get avatar name.
+            $avatarName = $user->id . '_avatar' . time() . '.' . $request->avatar->getClientOriginalExtension();
+
+            // Update user in database.
+            $user->avatar = $avatarName;
+            $user->save();
+
+            // Delete old avatar.
+            if ($oldAvatar && Storage::disk('public')->exists('avatars/' . $oldAvatar)) {
+                Storage::disk('public')->delete('avatars/' . $oldAvatar);
+            }
+
+            // Store avatar image.
+            $request->file('avatar')->storeAs('avatars', $avatarName, 'public');
+
+            DB::commit();
+
+            return response($avatarName, 201);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
+    }
+
     public function auth(Request $request)
     {
         $user = $request->user();

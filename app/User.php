@@ -38,6 +38,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected function getAvatarAttribute($value)
+    {
+        return '/storage/avatars/' . ($value ?? 'default.svg');
+    }
+
     public function wishlist()
     {
         return $this->hasOne('App\Wishlist');

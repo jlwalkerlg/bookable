@@ -111,6 +111,13 @@ class NavBar extends Component {
                     <NavDropdown.Item as={NavLink} to="/wishlist" exact>
                       Wishlist
                     </NavDropdown.Item>
+                    <NavDropdown.Item
+                      as={NavLink}
+                      to={`/users/${user.id}/account`}
+                      exact
+                    >
+                      Account
+                    </NavDropdown.Item>
                     <Form inline onSubmit={this.logout}>
                       <NavDropdown.Item
                         as={Button}

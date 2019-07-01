@@ -10,7 +10,8 @@ class Register extends Component {
     values: {
       name: '',
       email: '',
-      password: ''
+      password: '',
+      image: ''
     },
     errors: {}
   };

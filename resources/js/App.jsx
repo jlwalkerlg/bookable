@@ -27,6 +27,7 @@ import NewReview from './views/NewReview';
 import ReviewShow from './views/ReviewShow';
 import Checkout from './views/Checkout';
 import CheckoutSuccess from './views/CheckoutSuccess';
+import Account from './views/Account';
 
 const App = ({ loading }) =>
   loading ? (
@@ -102,6 +103,11 @@ const App = ({ loading }) =>
         />
         <UserRoute exact path="/checkout" component={Checkout} />
         <UserRoute exact path="/checkout/success" component={CheckoutSuccess} />
+        <UserRoute
+          exact
+          path="/users/:userId([0-9]+)/account"
+          component={Account}
+        />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>
