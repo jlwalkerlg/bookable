@@ -14,16 +14,25 @@ class Account extends Component {
   handleSubmit = async e => {
     e.preventDefault();
 
+    const { user } = this.props;
     const { avatar } = this.state;
 
     const data = new FormData();
     data.append('avatar', avatar, avatar.name);
 
-    const response = await axios.post(`/api/users/1/avatar`, data, {
+    const response = await axios.post(`/api/users/${user.id}/avatar`, data, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
 
     console.log(response.data);
+  };
+
+  handleDelete = async e => {
+    e.preventDefault();
+
+    const { user } = this.props;
+
+    await axios.delete(`/api/users/${user.id}/avatar`);
   };
 
   render() {
@@ -33,6 +42,8 @@ class Account extends Component {
       <main className="section">
         <Container>
           <h1 className="h4">Account</h1>
+
+          <Button onClick={this.handleDelete}>Delete Avatar</Button>
 
           <img src={user.avatar} />
 

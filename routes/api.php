@@ -71,3 +71,4 @@ Route::patch('/reviews/{review}', 'ReviewsController@update')->middleware('can:u
 Route::post('/checkout/confirm', 'CheckoutController@confirm')->middleware('auth');
 
 Route::post('/users/{user}/avatar', 'UsersController@updateAvatar')->middleware('can:update,user');
+Route::delete('/users/{user}/avatar', 'UsersController@deleteAvatar')->middleware('can:update,user');

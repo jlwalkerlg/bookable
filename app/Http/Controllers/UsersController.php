@@ -46,6 +46,35 @@ class UsersController extends Controller
         }
     }
 
+    public function deleteAvatar(Request $request, User $user)
+    {
+        $user = $request->user();
+
+        $original = $user->getOriginal('avatar');
+
+        if (!$original) return response(null, 404);
+
+        try {
+            DB::beginTransaction();
+
+            // Update user in database.
+            $user->avatar = null;
+            $user->save();
+
+            // Delete old avatar.
+            if (Storage::disk('public')->exists('avatars/' . $original)) {
+                Storage::disk('public')->delete('avatars/' . $original);
+            }
+
+            DB::commit();
+
+            return response(null, 204);
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
+    }
+
     public function auth(Request $request)
     {
         $user = $request->user();
