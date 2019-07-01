@@ -87,4 +87,9 @@ class User extends Authenticatable
     {
         return $this->carts()->create();
     }
+
+    public function transactions()
+    {
+        return $this->hasMany('App\Transaction');
+    }
 }

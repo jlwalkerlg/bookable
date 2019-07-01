@@ -113,7 +113,7 @@ class NavBar extends Component {
                     </NavDropdown.Item>
                     <NavDropdown.Item
                       as={NavLink}
-                      to={`/users/${user.id}/account`}
+                      to={`/users/${user.id}`}
                       exact
                     >
                       Account

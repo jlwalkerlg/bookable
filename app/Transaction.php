@@ -4,12 +4,23 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Stripe\PaymentIntent;
+use DateTime;
 
 class Transaction extends Model
 {
     protected $table = 'transactions';
 
     protected $fillable = ['payment_intent_id', 'card_brand', 'card_last_four', 'amount', 'charged_at', 'street_address', 'city', 'postcode', 'user_id', 'cart_id'];
+
+    public function getChargedAtAttribute($value)
+    {
+        return (new DateTime($value))->format('d M Y');
+    }
+
+    public function cart()
+    {
+        return $this->belongsTo('App\Cart');
+    }
 
     public function newFromIntent(PaymentIntent $intent)
     {

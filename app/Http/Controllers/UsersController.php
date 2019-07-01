@@ -39,7 +39,7 @@ class UsersController extends Controller
 
             DB::commit();
 
-            return response($user, 201);
+            return response($user->avatar, 201);
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;
@@ -75,6 +75,29 @@ class UsersController extends Controller
         }
     }
 
+    public function transactions(Request $request, User $user)
+    {
+        $query = $user->transactions();
+
+        $count = $request->has('count') ? (clone $query)->count() : null;
+
+        if ($limit = $request->input('limit')) {
+            $query->limit($limit);
+        }
+
+        if ($offset = $request->input('offset')) {
+            $query->offset($offset);
+        }
+
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
+
+        $transactions = $query->get();
+
+        return $count ? compact('transactions', 'count') : compact('transactions');
+    }
+
     public function auth(Request $request)
     {
         $user = $request->user();
@@ -88,7 +111,9 @@ class UsersController extends Controller
 
     public function show(User $user)
     {
-        return $user->only(['id', 'name']);
+        $totalRatings = $user->ratings()->count();
+        $totalReviews = $user->reviews()->count();
+        return compact('user', 'totalRatings', 'totalReviews');
     }
 
     public function ratings(Request $request, User $user)

@@ -15,11 +15,14 @@ class FileInput extends Component {
 
   render() {
     const { value } = this.state;
+    const { file } = this.props;
 
     return (
       <div className="file-group">
-        <div className={`file-value${!value ? ' file-value--empty' : ''}`}>
-          {value || 'Choose a file...'}
+        <div
+          className={`file-value${file && value ? '' : ' file-value--empty'}`}
+        >
+          {(file && value) || 'Choose a file...'}
         </div>
         <Form.Control
           type="file"
