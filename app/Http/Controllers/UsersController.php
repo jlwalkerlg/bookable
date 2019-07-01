@@ -39,7 +39,7 @@ class UsersController extends Controller
 
             DB::commit();
 
-            return response($avatarName, 201);
+            return response($user, 201);
         } catch (\Throwable $th) {
             DB::rollback();
             throw $th;

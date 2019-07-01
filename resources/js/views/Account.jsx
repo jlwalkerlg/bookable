@@ -3,6 +3,7 @@ import { Form, Button, Container } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import FileInput from '../components/FileInput';
+import { addUser } from '../actions/user';
 
 class Account extends Component {
   state = {
@@ -20,11 +21,14 @@ class Account extends Component {
     const data = new FormData();
     data.append('avatar', avatar, avatar.name);
 
-    const response = await axios.post(`/api/users/${user.id}/avatar`, data, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-
-    console.log(response.data);
+    try {
+      const response = await axios.post(`/api/users/${user.id}/avatar`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      this.props.addUser(response.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   handleDelete = async e => {
@@ -32,7 +36,12 @@ class Account extends Component {
 
     const { user } = this.props;
 
-    await axios.delete(`/api/users/${user.id}/avatar`);
+    try {
+      await axios.delete(`/api/users/${user.id}/avatar`);
+      this.props.addUser({ ...user, avatar: '/storage/avatars/default.svg' });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   render() {
@@ -71,4 +80,11 @@ const mapStateToProps = ({ user }) => ({
   user
 });
 
-export default connect(mapStateToProps)(Account);
+const mapDispatchToProps = {
+  addUser
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Account);

@@ -1,15 +1,15 @@
-import { USER_LOGIN, USER_LOGOUT } from './types';
+import { USER_ADD, USER_REMOVE } from './types';
 import { hydrateWishlist } from './wishlist';
 import { hydrateCart } from './cart';
 import axios from 'axios';
 
-const loginUser = user => ({
-  type: USER_LOGIN,
+export const addUser = user => ({
+  type: USER_ADD,
   user
 });
 
-const logoutUser = {
-  type: USER_LOGOUT
+const removeUser = {
+  type: USER_REMOVE
 };
 
 export const register = credentials => dispatch =>
@@ -20,7 +20,7 @@ export const login = credentials => dispatch =>
 
 export const logout = () => dispatch =>
   axios.post('/api/logout').then(response => {
-    dispatch(logoutUser);
+    dispatch(removeUser);
     return response;
   });
 
@@ -31,7 +31,7 @@ export const oauthLogin = () => dispatch =>
     })
     .then(response => {
       const { wishlist, cart, quotes, ...user } = response.data;
-      dispatch(loginUser(user));
+      dispatch(addUser(user));
       dispatch(hydrateWishlist(wishlist));
       dispatch(hydrateCart(cart));
     })
