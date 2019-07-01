@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Stripe\PaymentIntent;
+use Illuminate\Support\Facades\DB;
 
 class Cart extends Model
 {
@@ -23,7 +24,7 @@ class Cart extends Model
 
     public function getAmount()
     {
-        return $this->books()->sum('price');
+        return $this->books()->sum(DB::raw('books.price * cart_items.quantity'));
     }
 
     public function addIntent(PaymentIntent $intent)

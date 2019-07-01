@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Services\Stripe;
+use App\Cart;
 
 /*
 |--------------------------------------------------------------------------

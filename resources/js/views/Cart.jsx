@@ -218,7 +218,8 @@ class Cart extends Component {
                           £
                           {items
                             .reduce(
-                              (prev, current) => prev + current.book.price,
+                              (prev, current) =>
+                                prev + current.book.price * current.quantity,
                               0
                             )
                             .toFixed(2)}
