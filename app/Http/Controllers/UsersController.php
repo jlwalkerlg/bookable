@@ -7,6 +7,7 @@ use App\User;
 use App\Shelf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\AccountDeleted;
 
 class UsersController extends Controller
 {
@@ -128,6 +129,7 @@ class UsersController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+        $user->notify(new AccountDeleted);
         return response(null, 204);
     }
 
