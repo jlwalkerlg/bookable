@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\AccountCreated;
 
 class ApiAuthController extends Controller
 {
@@ -52,6 +53,8 @@ class ApiAuthController extends Controller
             DB::rollback();
             throw $th;
         }
+
+        $user->notify(new AccountCreated);
 
         return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
     }
