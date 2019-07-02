@@ -72,3 +72,6 @@ Route::post('/users/{user}/avatar', 'UsersController@updateAvatar')->middleware(
 Route::delete('/users/{user}/avatar', 'UsersController@deleteAvatar')->middleware('can:update,user');
 
 Route::get('/users/{user}/transactions', 'UsersController@transactions')->middleware('can:update,user');
+
+Route::post('/passwords/reset', 'UsersController@emailPasswordReset');
+Route::post('/passwords/reset/{token}', 'UsersController@resetPassword');

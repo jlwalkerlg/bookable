@@ -35,7 +35,7 @@ class ApiAuthController extends Controller
     {
         $credentials = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
         $credentials['password'] = Hash::make($credentials['password']);

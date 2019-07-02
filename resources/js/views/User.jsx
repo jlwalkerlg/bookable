@@ -104,6 +104,19 @@ class Account extends Component {
     }
   };
 
+  handlePasswordReset = async e => {
+    e.preventDefault();
+    const { user } = this.props;
+    try {
+      const response = await axios.post(`/api/passwords/reset`, {
+        email: user.email
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   render() {
     const {
       user,
@@ -157,11 +170,17 @@ class Account extends Component {
             <Col xs={12} md={4}>
               {user.id === authUser.id && (
                 <div className="card p-2">
+                  {/* Reset password */}
+                  <Button variant="primary" onClick={this.handlePasswordReset}>
+                    Reset password
+                  </Button>
+
                   {/* Update name */}
                   <Form
                     action=""
                     method="POST"
                     onSubmit={this.handleSubmitName}
+                    className="mt-3"
                   >
                     <Form.Control
                       id="name"

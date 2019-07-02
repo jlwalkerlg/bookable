@@ -9,9 +9,57 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\AccountDeleted;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordReset;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UsersController extends Controller
 {
+    public function emailPasswordReset(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $email = $request->email;
+
+        DB::table('password_resets')->where('email', $email)->delete();
+
+        $token = Str::random(40);
+
+        DB::table('password_resets')->insert(['email' => $email, 'token' => $token, 'created_at' => date('Y-m-d H:i:s')]);
+
+        Mail::to($email)->send(new PasswordReset($email, Crypt::encryptString($token)));
+    }
+
+    public function resetPassword(Request $request, string $token)
+    {
+        $token = Crypt::decryptString($token);
+
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8'
+        ]);
+
+        $record = DB::table('password_resets')->where([
+            'email' => $request->email,
+            'token' => $token
+        ])->first();
+
+        if (!$record) return response(null, 404);
+
+        if (Carbon::parse($record->created_at)->diffInHours() > 60) return response(null, 403);
+
+        $user = User::where('email', $record->email)->firstOrFail();
+
+        $user->password = Hash::make($request->password);
+
+        $user->save();
+
+        DB::table('password_resets')->where('email', $record->email)->delete();
+    }
+
     public function updateAvatar(Request $request, User $user)
     {
         $request->validate(['avatar' => 'required|image|mimes:jpeg,jpg,png,gif,svg|max:2048']);

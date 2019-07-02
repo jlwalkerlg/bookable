@@ -29,6 +29,8 @@ import Checkout from './views/Checkout';
 import CheckoutSuccess from './views/CheckoutSuccess';
 import User from './views/User';
 import Orders from './views/Orders';
+import PasswordReset from './views/PasswordReset';
+import ForgotPassword from './views/ForgotPassword';
 
 const App = ({ loading }) =>
   loading ? (
@@ -106,6 +108,12 @@ const App = ({ loading }) =>
         <UserRoute exact path="/checkout/success" component={CheckoutSuccess} />
         <UserRoute exact path="/users/:userId([0-9]+)" component={User} />
         <UserRoute exact path="/orders" component={Orders} />
+        <AppRoute
+          exact
+          path="/passwords/reset/:token"
+          component={PasswordReset}
+        />
+        <AppRoute exact path="/forgot-password" component={ForgotPassword} />
         <Route component={NotFound} />
       </Switch>
     </BrowserRouter>

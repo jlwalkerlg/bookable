@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Form, Button, Alert, Container } from 'react-bootstrap';
 import { login } from '../actions/user';
 
@@ -78,6 +78,11 @@ class Login extends Component {
 
             <Button type="submit">Login</Button>
           </Form>
+          <div className="mt-3">
+            <Link to="/forgot-password" className="default">
+              Forgot your password?
+            </Link>
+          </div>
         </Container>
       </main>
     );
@@ -95,9 +100,7 @@ const mapDispatchToProps = {
   login
 };
 
-export default withRouter(
-  connect(
-    null,
-    mapDispatchToProps
-  )(Login)
-);
+export default connect(
+  null,
+  mapDispatchToProps
+)(Login);
