@@ -11,7 +11,6 @@ use App\Notifications\AccountDeleted;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordReset;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -27,27 +26,25 @@ class UsersController extends Controller
         DB::table('password_resets')->where('email', $email)->delete();
 
         $token = Str::random(40);
+        $hashedToken = Hash::make($token);
 
-        DB::table('password_resets')->insert(['email' => $email, 'token' => $token, 'created_at' => date('Y-m-d H:i:s')]);
+        DB::table('password_resets')->insert(['email' => $email, 'token' => $hashedToken, 'created_at' => date('Y-m-d H:i:s')]);
 
-        Mail::to($email)->send(new PasswordReset($email, Crypt::encryptString($token)));
+        Mail::to($email)->send(new PasswordReset($email, $token));
     }
 
     public function resetPassword(Request $request, string $token)
     {
-        $token = Crypt::decryptString($token);
-
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:8'
         ]);
 
-        $record = DB::table('password_resets')->where([
-            'email' => $request->email,
-            'token' => $token
-        ])->first();
+        $record = DB::table('password_resets')->where('email', $request->email)->first();
 
-        if (!$record) return response(null, 404);
+        if (!$record) return response(null, 403);
+
+        if (!Hash::check($token, $record->token)) return response(null, 403);
 
         if (Carbon::parse($record->created_at)->diffInHours() > 60) return response(null, 403);
 
