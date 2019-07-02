@@ -116,6 +116,12 @@ class UsersController extends Controller
         return compact('user', 'totalRatings', 'totalReviews');
     }
 
+    public function destroy(User $user)
+    {
+        $user->delete();
+        return response(null, 204);
+    }
+
     public function ratings(Request $request, User $user)
     {
         $query = $user->ratings();

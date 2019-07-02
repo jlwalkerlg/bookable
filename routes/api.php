@@ -1,9 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Services\Stripe;
-use App\Cart;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,10 +12,11 @@ use App\Cart;
 */
 
 Route::post('/login', 'ApiAuthController@login')->name('login');
-Route::post('/logout', 'ApiAuthController@logout')->middleware('auth');
+Route::post('/logout', 'ApiAuthController@logout');
 Route::post('/register', 'ApiAuthController@register');
 
 Route::get('/user', 'UsersController@auth')->middleware('auth');
+Route::delete('/users/{user}', 'UsersController@destroy')->middleware('can:delete,user');
 
 Route::get('/books', 'BooksController@index');
 Route::get('/books/{book}', 'BooksController@show');

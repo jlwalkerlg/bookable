@@ -23,11 +23,11 @@ class CreateTransactionsTable extends Migration
             $table->string('street_address');
             $table->string('city');
             $table->string('postcode', 8);
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('cart_id');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('cart_id')->references('id')->on('carts');
         });
     }

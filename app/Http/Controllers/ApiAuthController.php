@@ -26,7 +26,7 @@ class ApiAuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+        if ($request->user()) $request->user()->token()->revoke();
         return response()->json(['message' => 'You have been successfully logged out!'])->cookie('laravel_token', null, -1);
     }
 

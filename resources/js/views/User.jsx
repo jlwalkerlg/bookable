@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import FileInput from '../components/FileInput';
-import { addUser } from '../actions/user';
+import { addUser, logout } from '../actions/user';
 import Loading from '../components/Loading';
 
 class Account extends Component {
@@ -32,9 +32,9 @@ class Account extends Component {
     }
   };
 
-  handleChange = e => this.setState({ file: e.target.files[0] });
+  handleChangeAvatar = e => this.setState({ file: e.target.files[0] });
 
-  handleSubmit = async e => {
+  handleSubmitAvatar = async e => {
     e.preventDefault();
 
     const { user } = this.state;
@@ -54,7 +54,7 @@ class Account extends Component {
     }
   };
 
-  handleDelete = async e => {
+  handleDeleteAvatar = async e => {
     e.preventDefault();
 
     const { user } = this.props;
@@ -65,6 +65,19 @@ class Account extends Component {
       this.setState({
         user: { ...this.state.user, avatar: '/storage/avatars/default.svg' }
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  handleDeleteAccount = async e => {
+    e.preventDefault();
+    if (!confirm('Are you sure you wish to delete your account?')) return;
+
+    const { user } = this.props;
+    try {
+      await axios.delete(`/api/users/${user.id}`);
+      this.props.logout();
     } catch (error) {
       console.log(error);
     }
@@ -118,23 +131,33 @@ class Account extends Component {
               </ul>
             </Col>
 
+            {/* Authenticated Aside */}
             <Col xs={12} md={4}>
-              {/* Authenticated Aside */}
               {user.id === authUser.id && (
                 <div className="card p-2">
+                  <div>
+                    <Button
+                      variant="outline-danger"
+                      onClick={this.handleDeleteAccount}
+                    >
+                      Delete account
+                    </Button>
+                  </div>
+
+                  {/* Avatar */}
                   <Form
                     action="/"
                     method="POST"
                     encType="multipart/form-data"
                     className="mt-4"
-                    onSubmit={this.handleSubmit}
+                    onSubmit={this.handleSubmitAvatar}
                   >
                     <Form.Group controlId="avatar">
                       <Form.Label className="file-label">Avatar</Form.Label>
                       <FileInput
                         name="avatar"
                         file={file}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeAvatar}
                       />
                     </Form.Group>
 
@@ -142,9 +165,12 @@ class Account extends Component {
                   </Form>
 
                   {user.avatar !== '/storage/avatars/default.svg' && (
-                    <Button onClick={this.handleDelete}>Delete Avatar</Button>
+                    <Button onClick={this.handleDeleteAvatar}>
+                      Delete Avatar
+                    </Button>
                   )}
 
+                  {/* Private links */}
                   <ul className="list-unstyled mt-4">
                     <li>
                       <Link to="/orders">Orders</Link>
@@ -165,7 +191,8 @@ const mapStateToProps = ({ user }) => ({
 });
 
 const mapDispatchToProps = {
-  addUser
+  addUser,
+  logout
 };
 
 export default connect(
