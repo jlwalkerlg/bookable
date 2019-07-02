@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Container, Form, Button } from 'react-bootstrap';
+import { EditorState, convertToRaw } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg/dist/react-draft-wysiwyg';
+import draftToHtml from 'draftjs-to-html';
 import Async from '../components/Async';
 import { addReview } from '../actions/reviews';
 
@@ -11,7 +14,8 @@ class NewReview extends Component {
     loading: true,
     error: null,
     processing: false,
-    book: {}
+    book: {},
+    editorState: EditorState.createEmpty()
   };
 
   componentDidMount() {
@@ -33,6 +37,14 @@ class NewReview extends Component {
     this.setState({ loading: false });
   };
 
+  onEditorStateChange = editorState => this.setState({ editorState });
+
+  getEditorHtml = () => {
+    const { editorState } = this.state;
+    const raw = convertToRaw(editorState.getCurrentContent());
+    return draftToHtml(raw);
+  };
+
   handleSubmit = async e => {
     e.preventDefault();
 
@@ -41,12 +53,13 @@ class NewReview extends Component {
 
     this.setState({ processing: true });
 
+    const editorReview = this.getEditorHtml();
+
     const { user } = this.props;
     const { book } = this.state;
     try {
-      const review = await addReview(e.target.review.value, book, user);
+      const review = await addReview(editorReview, book, user);
       this.props.history.push(`/reviews/${review.id}`);
-      this.setState({ processing: false });
     } catch (error) {
       console.log(error);
       this.setState({ error: error.response.statusText });
@@ -55,7 +68,7 @@ class NewReview extends Component {
   };
 
   render() {
-    const { loading, error, processing, book } = this.state;
+    const { loading, error, processing, book, editorState } = this.state;
 
     return (
       <Async loading={loading} error={error} retry={this.fetchBook}>
@@ -76,11 +89,13 @@ class NewReview extends Component {
                 <Form onSubmit={this.handleSubmit}>
                   <Form.Group controlId="review">
                     <Form.Label srOnly>Your review</Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows="3"
-                      placeholder="Write a review for this book..."
-                      className="placeholder-inherit"
+                    {/* Draft JS Editor */}
+                    <Editor
+                      editorState={editorState}
+                      wrapperClassName=""
+                      toolbarClassName="mb-0"
+                      editorClassName="border border-top-0"
+                      onEditorStateChange={this.onEditorStateChange}
                     />
                   </Form.Group>
                   <Button
