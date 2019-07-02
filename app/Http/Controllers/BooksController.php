@@ -83,7 +83,7 @@ class BooksController extends Controller
 
         $books = $query->get();
 
-        return $count ? compact('books', 'count') : compact('books');
+        return !is_null($count) ? compact('books', 'count') : compact('books');
     }
 
     /**

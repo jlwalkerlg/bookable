@@ -20,7 +20,7 @@ class CartItemsController extends Controller
 
         $items = $query->get();
 
-        return $count ? compact('items', 'count') : compact('items');
+        return !is_null($count) ? compact('items', 'count') : compact('items');
     }
 
     public function store(Request $request, Cart $cart)

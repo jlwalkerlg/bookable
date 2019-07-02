@@ -44,7 +44,7 @@ class RatingsController extends Controller
 
         $ratings = $query->get();
 
-        return $count ? compact('ratings', 'count') : compact('ratings');
+        return !is_null($count) ? compact('ratings', 'count') : compact('ratings');
     }
 
     public function store(Request $request, User $user)

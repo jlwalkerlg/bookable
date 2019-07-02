@@ -95,7 +95,7 @@ class UsersController extends Controller
 
         $transactions = $query->get();
 
-        return $count ? compact('transactions', 'count') : compact('transactions');
+        return !is_null($count) ? compact('transactions', 'count') : compact('transactions');
     }
 
     public function auth(Request $request)
@@ -136,7 +136,7 @@ class UsersController extends Controller
 
         $ratings = $query->get();
 
-        return $count ? compact('user', 'ratings', 'count') : compact('user', 'ratings');
+        return !is_null($count) ? compact('user', 'ratings', 'count') : compact('user', 'ratings');
     }
 
     public function reviews(Request $request, User $user)
@@ -159,7 +159,7 @@ class UsersController extends Controller
 
         $reviews = $query->get();
 
-        return $count ? compact('user', 'reviews', 'count') : compact('user', 'reviews');
+        return !is_null($count) ? compact('user', 'reviews', 'count') : compact('user', 'reviews');
     }
 
     public function shelves(Request $request, User $user)
@@ -193,7 +193,7 @@ class UsersController extends Controller
 
         $items = $query->get();
 
-        return $count ? compact('user', 'items', 'count') : compact('user', 'items');
+        return !is_null($count) ? compact('user', 'items', 'count') : compact('user', 'items');
     }
 
     public function quotes(Request $request, User $user)
@@ -220,6 +220,6 @@ class UsersController extends Controller
 
         $quotes = $query->get();
 
-        return $count ? compact('user', 'quotes', 'count') : compact('user', 'quotes');
+        return !is_null($count) ? compact('user', 'quotes', 'count') : compact('user', 'quotes');
     }
 }

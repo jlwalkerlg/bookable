@@ -47,6 +47,6 @@ class QuotesController extends Controller
 
         $quotes = $query->get();
 
-        return $count ? compact('quotes', 'count') : compact('quotes');
+        return !is_null($count) ? compact('quotes', 'count') : compact('quotes');
     }
 }
