@@ -14,6 +14,7 @@ class Account extends Component {
     user: {},
     totalRatings: 0,
     totalReviews: 0,
+    name: this.props.user.name || '',
     file: null
   };
 
@@ -83,6 +84,26 @@ class Account extends Component {
     }
   };
 
+  handleChangeName = e => {
+    this.setState({ name: e.target.value });
+  };
+
+  handleSubmitName = async e => {
+    e.preventDefault();
+    const { user } = this.props;
+    const { name } = this.state;
+    try {
+      const response = await axios.patch(`/api/users/${user.id}`, {
+        name
+      });
+      const updatedUser = response.data;
+      this.setState({ user: { ...this.state.user, name: updatedUser.name } });
+      this.props.addUser({ ...user, name: updatedUser.name });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   render() {
     const {
       user,
@@ -90,7 +111,8 @@ class Account extends Component {
       totalRatings,
       totalReviews,
       loading,
-      error
+      error,
+      name
     } = this.state;
     const authUser = this.props.user;
 
@@ -135,7 +157,26 @@ class Account extends Component {
             <Col xs={12} md={4}>
               {user.id === authUser.id && (
                 <div className="card p-2">
-                  <div>
+                  {/* Update name */}
+                  <Form
+                    action=""
+                    method="POST"
+                    onSubmit={this.handleSubmitName}
+                  >
+                    <Form.Control
+                      id="name"
+                      name="name"
+                      placeholder="Change user name..."
+                      value={name}
+                      onChange={this.handleChangeName}
+                    />
+                    <Button variant="dark" type="submit">
+                      Change Name
+                    </Button>
+                  </Form>
+
+                  {/* Delete account */}
+                  <div className="mt-3">
                     <Button
                       variant="outline-danger"
                       onClick={this.handleDeleteAccount}

@@ -17,6 +17,7 @@ Route::post('/register', 'ApiAuthController@register');
 
 Route::get('/user', 'UsersController@auth')->middleware('auth');
 Route::delete('/users/{user}', 'UsersController@destroy')->middleware('can:delete,user');
+Route::patch('/users/{user}', 'UsersController@update')->middleware('can:update,user');
 
 Route::get('/books', 'BooksController@index');
 Route::get('/books/{book}', 'BooksController@show');

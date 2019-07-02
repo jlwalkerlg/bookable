@@ -116,6 +116,15 @@ class UsersController extends Controller
         return compact('user', 'totalRatings', 'totalReviews');
     }
 
+    public function update(Request $request, User $user)
+    {
+        $attributes = $request->validate([
+            'name' => 'required|string|max:255'
+        ]);
+
+        return $user->update($attributes) ? $user : response(null, 500);
+    }
+
     public function destroy(User $user)
     {
         $user->delete();
