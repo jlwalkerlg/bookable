@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Services\Stripe;
 use Stripe\PaymentIntent;
 use App\Transaction;
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\PurchaseSuccessful;
 
 class CheckoutController extends Controller
 {
@@ -48,7 +50,8 @@ class CheckoutController extends Controller
         $user = $this->request->user();
 
         // Add intent id to user's old cart.
-        $user->cart->addIntent($intent);
+        $oldCart = $user->cart;
+        $oldCart->addIntent($intent);
 
         // Give user new cart.
         $cart = $user->createNewCart();
@@ -57,6 +60,7 @@ class CheckoutController extends Controller
         $transaction = (new Transaction)->newFromIntent($intent);
 
         // Email user confirmation email.
+        $user->notify(new PurchaseSuccessful($oldCart, $transaction));
 
         return compact('cart', 'transaction');
     }
