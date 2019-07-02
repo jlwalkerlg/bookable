@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { connect } from 'react-redux';
 import { Container, Form, Button } from 'react-bootstrap';
 import Async from '../components/Async';
 import { addReview } from '../actions/reviews';
@@ -32,7 +33,7 @@ class NewReview extends Component {
     this.setState({ loading: false });
   };
 
-  async handleSubmit(e) {
+  handleSubmit = async e => {
     e.preventDefault();
 
     const { processing } = this.state;
@@ -47,10 +48,11 @@ class NewReview extends Component {
       this.props.history.push(`/reviews/${review.id}`);
       this.setState({ processing: false });
     } catch (error) {
+      console.log(error);
       this.setState({ error: error.response.statusText });
       this.setState({ processing: false });
     }
-  }
+  };
 
   render() {
     const { loading, error, processing, book } = this.state;
@@ -99,4 +101,8 @@ class NewReview extends Component {
   }
 }
 
-export default NewReview;
+const mapStateToProps = ({ user }) => ({
+  user
+});
+
+export default connect(mapStateToProps)(NewReview);
