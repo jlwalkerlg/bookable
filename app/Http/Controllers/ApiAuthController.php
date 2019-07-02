@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class ApiAuthController extends Controller
 {
@@ -38,9 +39,19 @@ class ApiAuthController extends Controller
         ]);
         $credentials['password'] = Hash::make($credentials['password']);
 
-        $user = User::create($credentials);
-
-        $token = $user->createToken('BookOn Personal Access Client')->accessToken;
+        try {
+            DB::beginTransaction();
+            $user = User::create($credentials);
+            $user->carts()->create();
+            $user->wishlist()->create();
+            $user->shelves()->create(['name' => 'Read']);
+            $user->shelves()->create(['name' => 'To Read']);
+            $token = $user->createToken('Bookable Personal Access Client')->accessToken;
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollback();
+            throw $th;
+        }
 
         return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
     }
