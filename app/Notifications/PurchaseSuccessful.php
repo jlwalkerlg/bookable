@@ -9,9 +9,12 @@ use Illuminate\Notifications\Messages\MailMessage;
 use App\Cart;
 use App\Transaction;
 
-class PurchaseSuccessful extends Notification
+class PurchaseSuccessful extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public $items;
+    public $transaction;
 
     /**
      * Create a new notification instance.
@@ -20,8 +23,8 @@ class PurchaseSuccessful extends Notification
      */
     public function __construct(Cart $cart, Transaction $transaction)
     {
-        $this->transaction = $transaction;
         $this->items = $cart->items()->with('book.author')->get();
+        $this->transaction = $transaction;
     }
 
     /**

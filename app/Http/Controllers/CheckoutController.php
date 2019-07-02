@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Services\Stripe;
 use Stripe\PaymentIntent;
 use App\Transaction;
-use Illuminate\Support\Facades\Mail;
 use App\Notifications\PurchaseSuccessful;
 
 class CheckoutController extends Controller
