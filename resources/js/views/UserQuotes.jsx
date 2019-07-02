@@ -51,7 +51,7 @@ class UserQuotes extends Component {
     const { userId } = this.props.match.params;
     try {
       const response = await axios.get(`/api/users/${userId}`);
-      const user = response.data;
+      const { user } = response.data;
       this.setState({ user });
       this.setError({ user: null });
     } catch (error) {
