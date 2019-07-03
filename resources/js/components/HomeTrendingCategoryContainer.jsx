@@ -4,19 +4,25 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import Loading from './Loading';
 import HomeTrendingCategory from './HomeTrendingCategory';
+import { addTrendingBook } from '../actions/home';
 
 class HomeTrendingCategoryContainer extends Component {
-  state = {
-    loading: true,
-    error: null,
-    book: {}
-  };
+  constructor(props) {
+    super(props);
 
-  category = this.props.categories[0];
+    this.state = {
+      loading: true,
+      error: null
+    };
 
-  source = axios.CancelToken.source();
+    this.source = axios.CancelToken.source();
+
+    this.category = props.categories[0];
+  }
 
   async componentDidMount() {
+    if (this.props.book.id) return this.setState({ loading: false });
+
     try {
       const response = await axios.get('/api/books', {
         cancelToken: this.source.token,
@@ -29,9 +35,10 @@ class HomeTrendingCategoryContainer extends Component {
         }
       });
       const book = response.data.books[0];
-      this.setState({ book, loading: false });
+      this.props.addTrendingBook(book);
+      this.setState({ loading: false });
     } catch (error) {
-      if (!axios.isCancel(error)) this.setError({ error, loading: false });
+      if (!axios.isCancel(error)) this.setState({ error, loading: false });
     }
   }
 
@@ -40,7 +47,8 @@ class HomeTrendingCategoryContainer extends Component {
   }
 
   render() {
-    const { loading, error, book } = this.state;
+    const { loading, error } = this.state;
+    const { book } = this.props;
 
     if (loading) return <Loading />;
 
@@ -54,8 +62,16 @@ HomeTrendingCategoryContainer.propTypes = {
   categories: PropTypes.array.isRequired
 };
 
-const mapStateToProps = ({ categories }) => ({
+const mapStateToProps = ({ home, categories }) => ({
+  book: home.trendingBook,
   categories
 });
 
-export default connect(mapStateToProps)(HomeTrendingCategoryContainer);
+const mapDispatchToProps = {
+  addTrendingBook
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomeTrendingCategoryContainer);

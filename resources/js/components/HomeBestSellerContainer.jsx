@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import HomeBestSeller from './HomeBestSeller';
 import Loading from './Loading';
+import { addBestSeller } from '../actions/home';
 
 class HomeBestSellerContainer extends Component {
-  state = {
-    loading: true,
-    error: null,
-    book: {}
-  };
+  constructor(props) {
+    super(props);
 
-  source = axios.CancelToken.source();
+    this.state = {
+      loading: true,
+      error: null
+    };
+
+    this.source = axios.CancelToken.source();
+  }
 
   async componentDidMount() {
+    if (this.props.book.id) return this.setState({ loading: false });
+
     try {
       const response = await axios.get('/api/books', {
         cancelToken: this.source.token,
@@ -24,7 +32,8 @@ class HomeBestSellerContainer extends Component {
         }
       });
       const book = response.data.books[0];
-      this.setState({ book, loading: false });
+      this.props.addBestSeller(book);
+      this.setState({ loading: false });
     } catch (error) {
       if (!axios.isCancel(error)) this.setState({ error, loading: false });
     }
@@ -35,7 +44,8 @@ class HomeBestSellerContainer extends Component {
   }
 
   render() {
-    const { loading, error, book } = this.state;
+    const { loading, error } = this.state;
+    const { book } = this.props;
 
     if (loading) return <Loading />;
 
@@ -45,4 +55,20 @@ class HomeBestSellerContainer extends Component {
   }
 }
 
-export default HomeBestSellerContainer;
+HomeBestSellerContainer.propTypes = {
+  book: PropTypes.object.isRequired,
+  addBestSeller: PropTypes.func.isRequired
+};
+
+const mapStateToProps = ({ home }) => ({
+  book: home.bestSeller
+});
+
+const mapDispatchToProps = {
+  addBestSeller
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomeBestSellerContainer);

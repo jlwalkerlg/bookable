@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import Loading from './Loading';
 import HomeNewBooks from './HomeNewBooks';
+import { addNewBooks } from '../actions/home';
 
 class HomeNewBooksContainer extends Component {
-  state = {
-    loading: true,
-    error: null,
-    books: []
-  };
+  constructor(props) {
+    super(props);
 
-  source = axios.CancelToken.source();
+    this.state = {
+      loading: true,
+      error: null
+    };
+
+    this.source = axios.CancelToken.source();
+  }
 
   async componentDidMount() {
+    if (this.props.books.length) return this.setState({ loading: false });
+
     try {
       const response = await axios.get('/api/books', {
         cancelToken: this.source.token,
@@ -24,7 +31,8 @@ class HomeNewBooksContainer extends Component {
         }
       });
       const { books } = response.data;
-      this.setState({ books, loading: false });
+      this.props.addNewBooks(books);
+      this.setState({ loading: false });
     } catch (error) {
       if (!axios.isCancel(error)) this.setState({ error, loading: false });
     }
@@ -35,7 +43,8 @@ class HomeNewBooksContainer extends Component {
   }
 
   render() {
-    const { loading, error, books } = this.state;
+    const { loading, error } = this.state;
+    const { books } = this.props;
 
     if (loading) return <Loading />;
 
@@ -45,4 +54,15 @@ class HomeNewBooksContainer extends Component {
   }
 }
 
-export default HomeNewBooksContainer;
+const mapStateToProps = ({ home }) => ({
+  books: home.newBooks
+});
+
+const mapDispatchToProps = {
+  addNewBooks
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomeNewBooksContainer);

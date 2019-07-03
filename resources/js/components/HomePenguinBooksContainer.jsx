@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import HomePenguinBooks from './HomePenguinBooks';
 import Loading from './Loading';
+import { addPenguinBooks } from '../actions/home';
 
 class HomePenguinBooksContainer extends Component {
-  state = {
-    loading: true,
-    error: null,
-    books: []
-  };
+  constructor(props) {
+    super(props);
 
-  source = axios.CancelToken.source();
+    this.state = {
+      loading: true,
+      error: null
+    };
+
+    this.source = axios.CancelToken.source();
+  }
 
   async componentDidMount() {
+    if (this.props.books.length) return this.setState({ loading: false });
+
     try {
       const response = await axios.get('/api/books', {
         cancelToken: this.source.token,
@@ -23,7 +30,8 @@ class HomePenguinBooksContainer extends Component {
         }
       });
       const { books } = response.data;
-      this.setState({ books, loading: false });
+      this.props.addPenguinBooks(books);
+      this.setState({ loading: false });
     } catch (error) {
       if (!axios.isCancel(error)) this.setState({ error, loading: false });
     }
@@ -34,7 +42,8 @@ class HomePenguinBooksContainer extends Component {
   }
 
   render() {
-    const { loading, error, books } = this.state;
+    const { loading, error } = this.state;
+    const { books } = this.props;
 
     if (loading) return <Loading />;
 
@@ -44,4 +53,15 @@ class HomePenguinBooksContainer extends Component {
   }
 }
 
-export default HomePenguinBooksContainer;
+const mapStateToProps = ({ home }) => ({
+  books: home.penguinBooks
+});
+
+const mapDispatchToProps = {
+  addPenguinBooks
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HomePenguinBooksContainer);
