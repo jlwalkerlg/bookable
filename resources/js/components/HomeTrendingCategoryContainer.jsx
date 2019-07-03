@@ -11,7 +11,7 @@ class HomeTrendingCategoryContainer extends Component {
     super(props);
 
     this.state = {
-      loading: true,
+      isLoading: true,
       error: null
     };
 
@@ -21,7 +21,7 @@ class HomeTrendingCategoryContainer extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.book.id) return this.setState({ loading: false });
+    if (this.props.book.id) return this.setState({ isLoading: false });
 
     try {
       const response = await axios.get('/api/books', {
@@ -36,9 +36,9 @@ class HomeTrendingCategoryContainer extends Component {
       });
       const book = response.data.books[0];
       this.props.addTrendingBook(book);
-      this.setState({ loading: false });
+      this.setState({ isLoading: false });
     } catch (error) {
-      if (!axios.isCancel(error)) this.setState({ error, loading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
@@ -47,10 +47,10 @@ class HomeTrendingCategoryContainer extends Component {
   }
 
   render() {
-    const { loading, error } = this.state;
+    const { isLoading, error } = this.state;
     const { book } = this.props;
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
 
     if (error) return <p>Something went wrong: {error.message}.</p>;
 
@@ -59,6 +59,7 @@ class HomeTrendingCategoryContainer extends Component {
 }
 
 HomeTrendingCategoryContainer.propTypes = {
+  book: PropTypes.object.isRequired,
   categories: PropTypes.array.isRequired
 };
 

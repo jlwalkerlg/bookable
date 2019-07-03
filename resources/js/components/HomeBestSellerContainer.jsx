@@ -11,7 +11,7 @@ class HomeBestSellerContainer extends Component {
     super(props);
 
     this.state = {
-      loading: true,
+      isLoading: true,
       error: null
     };
 
@@ -19,7 +19,7 @@ class HomeBestSellerContainer extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.book.id) return this.setState({ loading: false });
+    if (this.props.book.id) return this.setState({ isLoading: false });
 
     try {
       const response = await axios.get('/api/books', {
@@ -33,9 +33,9 @@ class HomeBestSellerContainer extends Component {
       });
       const book = response.data.books[0];
       this.props.addBestSeller(book);
-      this.setState({ loading: false });
+      this.setState({ isLoading: false });
     } catch (error) {
-      if (!axios.isCancel(error)) this.setState({ error, loading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
@@ -44,10 +44,10 @@ class HomeBestSellerContainer extends Component {
   }
 
   render() {
-    const { loading, error } = this.state;
+    const { isLoading, error } = this.state;
     const { book } = this.props;
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
 
     if (error) return <p>Something went wrong: {error.message}.</p>;
 

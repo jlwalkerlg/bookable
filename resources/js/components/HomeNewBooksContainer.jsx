@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Loading from './Loading';
@@ -10,7 +11,7 @@ class HomeNewBooksContainer extends Component {
     super(props);
 
     this.state = {
-      loading: true,
+      isLoading: true,
       error: null
     };
 
@@ -18,7 +19,7 @@ class HomeNewBooksContainer extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.books.length) return this.setState({ loading: false });
+    if (this.props.books.length) return this.setState({ isLoading: false });
 
     try {
       const response = await axios.get('/api/books', {
@@ -32,9 +33,9 @@ class HomeNewBooksContainer extends Component {
       });
       const { books } = response.data;
       this.props.addNewBooks(books);
-      this.setState({ loading: false });
+      this.setState({ isLoading: false });
     } catch (error) {
-      if (!axios.isCancel(error)) this.setState({ error, loading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
@@ -43,16 +44,21 @@ class HomeNewBooksContainer extends Component {
   }
 
   render() {
-    const { loading, error } = this.state;
+    const { isLoading, error } = this.state;
     const { books } = this.props;
 
-    if (loading) return <Loading />;
+    if (isLoading) return <Loading />;
 
     if (error) return <p>Something went wrong: {error.message}.</p>;
 
     return <HomeNewBooks books={books} />;
   }
 }
+
+HomeNewBooksContainer.propTypes = {
+  books: PropTypes.array.isRequired,
+  addNewBooks: PropTypes.func.isRequired
+};
 
 const mapStateToProps = ({ home }) => ({
   books: home.newBooks
