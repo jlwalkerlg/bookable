@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row, Col, Form } from 'react-bootstrap';
 import axios from 'axios';
-import ProductCard from '../../components/ProductCard';
+import { Container, Row, Col } from 'react-bootstrap';
 import URL from '../../utils/URL';
-import Async from '../../components/Async';
-import Pagination from '../../components/Pagination';
-import FilterForm from '../../components/FilterForm';
 import SortBySelect from '../../components/SortBySelect';
+import BooksFilterFormContainer from '../../components/BooksFilterFormContainer';
+import BooksResults from '../../components/BooksResults';
 
 const sortOptions = {
   'ratings_count.desc': 'Ratings (desc)',
@@ -22,7 +20,11 @@ const sortOptions = {
 
 class Books extends Component {
   state = {
-    queryParams: {
+    isLoadingBooks: true,
+    isLoadingCategories: true,
+    errorCategories: null,
+    errorBooks: null,
+    params: {
       limit: 20,
       order_by: 'ratings_count',
       order_dir: 'desc',
@@ -33,18 +35,9 @@ class Books extends Component {
       min_date: '',
       max_date: ''
     },
-    loading: {
-      books: true,
-      categories: true
-    },
-    errors: {
-      books: null,
-      categories: null
-    },
-    books: null,
     categories: [],
-    count: null,
-    isFilterOpen: false
+    books: [],
+    count: 0
   };
 
   componentDidMount() {
@@ -59,185 +52,154 @@ class Books extends Component {
   }
 
   fetchBooks = async () => {
-    this.setLoading({ books: true });
-    const params = this.getParams();
+    this.setState({ isLoadingBooks: true });
+
+    const params = this.collectParams();
+
     try {
       const response = await axios.get('/api/books', { params });
       const { books, count } = response.data;
-      this.setState({ books, count });
-      this.setError({ books: null });
+      this.setState({ books, count, isLoadingBooks: false });
     } catch (error) {
-      this.setError({ books: error.response.statusText });
+      this.setState({ errorBooks: error, isLoadingBooks: false });
     }
-    this.setLoading({ books: false });
   };
 
-  fetchCategories = async () => {
-    this.setLoading({ categories: true });
+  async fetchCategories() {
     try {
       const response = await axios.get('/api/categories');
       const categories = response.data.categories.map(category => ({
         ...category,
         checked: false
       }));
-      this.setState({ categories });
-      this.setError({ categories: null });
+      this.setState({ categories, isLoadingCategories: false });
     } catch (error) {
-      this.setError({ categories: error.response.statusText });
+      this.setState({ errorCategories: error, isLoadingCategories: false });
     }
-    this.setLoading({ categories: false });
-  };
-
-  setLoading(loading) {
-    this.setState({ loading: { ...this.state.loading, ...loading } });
   }
 
-  setError(error) {
-    this.setState({ errors: { ...this.state.errors, ...error } });
-  }
+  collectParams() {
+    const { params, categories } = this.state;
 
-  getParams() {
-    const { queryParams, categories } = this.state;
-    const offset = this.calcOffset();
     const categoryIds = categories.reduce(
       (result, category) =>
         category.checked ? [...result, category.id] : result,
       []
     );
 
-    const params = { offset, count: true, category_ids: categoryIds.join(',') };
+    const result = {
+      offset: this.calcOffset(),
+      count: true
+    };
 
-    for (const key in queryParams) {
-      if (queryParams.hasOwnProperty(key)) {
-        params[key] = queryParams[key];
+    if (categoryIds.length) {
+      result.category_ids = categoryIds.join(',');
+    }
+
+    for (const key in params) {
+      if (params.hasOwnProperty(key) && params[key]) {
+        result[key] = params[key];
       }
     }
 
-    return params;
+    return result;
   }
 
   calcOffset() {
-    const page = this.getCurrentPage();
-    const { limit } = this.state.queryParams;
+    const { limit } = this.state.params;
+    const page = this.getPage();
     return (page - 1) * limit;
   }
 
-  getCurrentPage() {
-    const queryString = this.props.location.search;
-    return parseInt(URL.query(queryString).getParam('page')) || 1;
+  getPage() {
+    return (
+      parseInt(URL.query(this.props.location.search).getParam('page')) || 1
+    );
   }
 
-  handleSortChange = e => {
-    const { loading } = this.state;
-    if (!loading.books) {
-      const [order_by, order_dir] = e.target.value.split('.');
-      const queryParams = { ...this.state.queryParams, order_by, order_dir };
-      this.setState({ queryParams }, this.fetchBooks);
-    }
+  handleFilterSubmit = async () => {
+    if (this.state.isLoadingBooks) return;
+
+    const shouldFetch = !URL.query(this.props.location.search).getParam('page');
+    this.props.history.push('/books');
+    if (shouldFetch) this.fetchBooks();
   };
 
   handleFilterChange = e => {
-    const paramName = e.target.id;
-    const value = e.target.value;
-    const queryParams = { ...this.state.queryParams, [paramName]: value };
-    this.setState({ queryParams });
-  };
-
-  handleFilterSubmit = async e => {
-    e.preventDefault();
-    const { loading } = this.state;
-    if (!loading.books) {
-      const shouldFetch = !URL.query(this.props.location.search).getParam(
-        'page'
-      );
-      this.props.history.push('/books');
-      if (shouldFetch) this.fetchBooks();
-    }
+    this.setState({
+      params: { ...this.state.params, [e.target.id]: e.target.value }
+    });
   };
 
   handleCategoryChange = e => {
     const categoryId = parseInt(e.target.dataset.categoryId);
-    const categories = this.state.categories.map(category => {
-      return category.id === categoryId
-        ? { ...category, checked: !category.checked }
-        : category;
+    this.setState({
+      categories: this.state.categories.map(category => {
+        return category.id === categoryId
+          ? { ...category, checked: !category.checked }
+          : category;
+      })
     });
-    this.setState({ categories });
+  };
+
+  handleSortChange = e => {
+    if (this.state.isLoadingBooks) return;
+
+    const [order_by, order_dir] = e.target.value.split('.');
+    const params = { ...this.state.params, order_by, order_dir };
+    this.setState({ params }, this.fetchBooks);
   };
 
   render() {
     const {
-      queryParams,
+      isLoadingBooks,
+      isLoadingCategories,
+      errorBooks,
+      errorCategories,
       books,
-      categories,
       count,
-      loading,
-      errors
+      categories,
+      params
     } = this.state;
-    const { limit } = queryParams;
+    const { limit } = params;
+    const page = this.getPage();
 
     return (
-      <main className="section">
+      <div className="section">
         <Container>
           <Row>
             <Col xs={12} md={4} className="mb-4 mb-md-0">
-              <Async
-                loading={loading.categories}
-                error={errors.categories}
-                retry={this.fetchCategories}
-              >
-                {() => (
-                  <FilterForm
-                    queryParams={queryParams}
-                    categories={categories}
-                    onFilterChange={this.handleFilterChange}
-                    onCategoryChange={this.handleCategoryChange}
-                    onFilterSubmit={this.handleFilterSubmit}
-                    loading={loading.books}
-                  />
-                )}
-              </Async>
+              <BooksFilterFormContainer
+                isLoading={isLoadingCategories}
+                error={errorCategories}
+                categories={categories}
+                params={params}
+                onSubmit={this.handleFilterSubmit}
+                onChange={this.handleFilterChange}
+                onCategoryChange={this.handleCategoryChange}
+              />
             </Col>
             <Col xs={12} md={8}>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2 className="h5 text-uppercase mb-2 mb-md-0">Books</h2>
                 <SortBySelect
                   options={sortOptions}
-                  disabled={loading.books}
-                  onSortChange={this.handleSortChange}
+                  disabled={isLoadingBooks}
+                  onChange={this.handleSortChange}
                 />
               </div>
-              <Async
-                loading={loading.books}
-                error={errors.books}
-                retry={this.fetchBooks}
-              >
-                {() => (
-                  <>
-                    <div className="browse-products mb-4">
-                      {books.map((book, index) => (
-                        <ProductCard
-                          key={index}
-                          book={book}
-                          size="large"
-                          wishlistButton
-                        />
-                      ))}
-                    </div>
-                    <Pagination
-                      totalItems={count}
-                      currentPage={this.getCurrentPage()}
-                      pageSize={limit}
-                      url="/books?page="
-                      className="justify-content-center pagination-warning"
-                    />
-                  </>
-                )}
-              </Async>
+              <BooksResults
+                isLoading={isLoadingBooks}
+                error={errorBooks}
+                books={books}
+                count={count}
+                page={page}
+                limit={limit}
+              />
             </Col>
           </Row>
         </Container>
-      </main>
+      </div>
     );
   }
 }
@@ -245,6 +207,9 @@ class Books extends Component {
 Books.propTypes = {
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
+  }).isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
   }).isRequired
 };
 

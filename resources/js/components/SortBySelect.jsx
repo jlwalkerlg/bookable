@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
 
-const SortBySelect = ({ options, value, disabled, onSortChange }) => {
+const SortBySelect = ({ options, value, disabled, onChange }) => {
   return (
     <Form>
       <Form.Group className="mb-0" controlId="order_by">
@@ -11,7 +12,7 @@ const SortBySelect = ({ options, value, disabled, onSortChange }) => {
         <Form.Control
           as="select"
           value={value}
-          onChange={onSortChange}
+          onChange={onChange}
           disabled={disabled}
           className="w-auto d-inline-block font-size-7 border-top-0 border-left-0 border-right-0"
         >
@@ -24,6 +25,13 @@ const SortBySelect = ({ options, value, disabled, onSortChange }) => {
       </Form.Group>
     </Form>
   );
+};
+
+SortBySelect.propTypes = {
+  options: PropTypes.object.isRequired,
+  value: PropTypes.string,
+  onChange: PropTypes.func,
+  disabled: PropTypes.bool
 };
 
 export default SortBySelect;
