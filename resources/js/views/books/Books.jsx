@@ -6,6 +6,7 @@ import URL from '../../utils/URL';
 import SortBySelect from '../../components/SortBySelect';
 import BooksFilterFormContainer from '../../components/BooksFilterFormContainer';
 import BooksResults from '../../components/BooksResults';
+import withPagination from '../../components/withPagination';
 
 const sortOptions = {
   'ratings_count.desc': 'Ratings (desc)',
@@ -46,7 +47,7 @@ class Books extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.location.search !== this.props.location.search) {
+    if (prevProps.page !== this.props.page) {
       this.fetchBooks();
     }
   }
@@ -88,7 +89,7 @@ class Books extends Component {
     );
 
     const result = {
-      offset: this.calcOffset(),
+      offset: this.props.calcOffset(params.limit),
       count: true
     };
 
@@ -103,18 +104,6 @@ class Books extends Component {
     }
 
     return result;
-  }
-
-  calcOffset() {
-    const { limit } = this.state.params;
-    const page = this.getPage();
-    return (page - 1) * limit;
-  }
-
-  getPage() {
-    return (
-      parseInt(URL.query(this.props.location.search).getParam('page')) || 1
-    );
   }
 
   handleFilterSubmit = async () => {
@@ -162,7 +151,7 @@ class Books extends Component {
       params
     } = this.state;
     const { limit } = params;
-    const page = this.getPage();
+    const { page } = this.props;
 
     return (
       <div className="section">
@@ -205,6 +194,7 @@ class Books extends Component {
 }
 
 Books.propTypes = {
+  page: PropTypes.number.isRequired,
   location: PropTypes.shape({
     search: PropTypes.string.isRequired
   }).isRequired,
@@ -213,4 +203,4 @@ Books.propTypes = {
   }).isRequired
 };
 
-export default Books;
+export default withPagination(Books);
