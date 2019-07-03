@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import SocialIcon from '../components/SocialIcon';
 
-const Footer = ({ categories }) => {
+const Footer = ({ user, categories }) => {
   return (
     <footer className="section site-foot">
       <Container>
@@ -18,17 +19,21 @@ const Footer = ({ categories }) => {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/">Books</Link>
+                <Link to="/books">Books</Link>
               </li>
               <li>
-                <Link to="/">Wishlist</Link>
+                <Link to="/categories">Categories</Link>
               </li>
-              <li>
-                <Link to="/">Account</Link>
-              </li>
-              <li>
-                <Link to="/">Contact</Link>
-              </li>
+              {user.id && (
+                <>
+                  <li>
+                    <Link to="/wishlist">Wishlist</Link>
+                  </li>
+                  <li>
+                    <Link to="/account">Account</Link>
+                  </li>
+                </>
+              )}
             </ul>
           </Col>
           <Col xs={12} md={4}>
@@ -52,12 +57,20 @@ const Footer = ({ categories }) => {
                 <a href="mailto:info@bookable.com">info@bookable.com</a>
               </p>
               <div>
-                <Link to="/" className="d-inline-block mr-2">
+                <a
+                  href="https://facebook.com"
+                  target="__blank"
+                  className="d-inline-block mr-2"
+                >
                   <SocialIcon variant="facebook" width="30" />
-                </Link>
-                <Link to="/" className="d-inline-block mr-2">
+                </a>
+                <a
+                  href="https://twitter.com"
+                  target="__blank"
+                  className="d-inline-block mr-2"
+                >
                   <SocialIcon variant="twitter" width="30" />
-                </Link>
+                </a>
               </div>
             </address>
           </Col>
@@ -67,7 +80,13 @@ const Footer = ({ categories }) => {
   );
 };
 
-const mapStateToProps = ({ categories }) => ({
+Footer.propTypes = {
+  user: PropTypes.object.isRequired,
+  categories: PropTypes.array.isRequired
+};
+
+const mapStateToProps = ({ user, categories }) => ({
+  user,
   categories
 });
 
