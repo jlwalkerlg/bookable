@@ -1,6 +1,7 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { Container, Row, Col } from 'react-bootstrap';
 import Truncate from './Truncate';
 
 const FeaturedBookMiddle = ({ book, author, heading }) => (
@@ -146,6 +147,12 @@ const FeaturedBook = ({ book, author, title, variant }) => {
     return <FeaturedBookRight book={book} author={author} heading={heading} />;
   if (variant === 'middle')
     return <FeaturedBookMiddle book={book} author={author} heading={heading} />;
+};
+
+FeaturedBook.propTypes = {
+  book: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired
 };
 
 export default FeaturedBook;

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Slider from 'react-slick';
 import ProductCard from './ProductCard';
 import SlickArrow from './SlickArrow';
@@ -50,6 +51,12 @@ const BookCarousel = ({ books, jagged, cardClassName }) => {
       })}
     </Slider>
   );
+};
+
+BookCarousel.propTypes = {
+  books: PropTypes.array.isRequired,
+  jagged: PropTypes.bool,
+  cardClassName: PropTypes.string
 };
 
 export default BookCarousel;
