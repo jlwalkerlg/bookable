@@ -10,16 +10,23 @@ class HomeFeaturedBooksContainer extends Component {
     books: []
   };
 
+  source = axios.CancelToken.source();
+
   async componentDidMount() {
     try {
       const response = await axios.get('/api/books', {
+        cancelToken: this.source.token,
         params: { limit: 15, order_by: 'random', with: 'author' }
       });
       const { books } = response.data;
       this.setState({ books, loading: false });
     } catch (error) {
-      this.setError({ error, loading: false });
+      if (!axios.isCancel(error)) this.setState({ error, loading: false });
     }
+  }
+
+  componentWillUnmount() {
+    this.source.cancel();
   }
 
   render() {

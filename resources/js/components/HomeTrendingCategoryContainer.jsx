@@ -6,21 +6,20 @@ import Loading from './Loading';
 import HomeTrendingCategory from './HomeTrendingCategory';
 
 class HomeTrendingCategoryContainer extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    loading: true,
+    error: null,
+    book: {}
+  };
 
-    this.category = props.categories[0];
+  category = this.props.categories[0];
 
-    this.state = {
-      loading: true,
-      error: null,
-      book: {}
-    };
-  }
+  source = axios.CancelToken.source();
 
   async componentDidMount() {
     try {
       const response = await axios.get('/api/books', {
+        cancelToken: this.source.token,
         params: {
           limit: 1,
           order_by: 'ratings_count',
@@ -32,8 +31,12 @@ class HomeTrendingCategoryContainer extends Component {
       const book = response.data.books[0];
       this.setState({ book, loading: false });
     } catch (error) {
-      this.setError({ error, loading: false });
+      if (!axios.isCancel(error)) this.setError({ error, loading: false });
     }
+  }
+
+  componentWillUnmount() {
+    this.source.cancel();
   }
 
   render() {

@@ -10,9 +10,12 @@ class HomeNewBooksContainer extends Component {
     books: []
   };
 
+  source = axios.CancelToken.source();
+
   async componentDidMount() {
     try {
       const response = await axios.get('/api/books', {
+        cancelToken: this.source.token,
         params: {
           limit: 15,
           order_by: 'publication_date',
@@ -23,8 +26,12 @@ class HomeNewBooksContainer extends Component {
       const { books } = response.data;
       this.setState({ books, loading: false });
     } catch (error) {
-      this.setState({ error, loading: false });
+      if (!axios.isCancel(error)) this.setState({ error, loading: false });
     }
+  }
+
+  componentWillUnmount() {
+    this.source.cancel();
   }
 
   render() {
