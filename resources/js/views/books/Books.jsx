@@ -41,9 +41,15 @@ class Books extends Component {
     count: 0
   };
 
+  source = axios.CancelToken.source();
+
   componentDidMount() {
     this.fetchBooks();
     this.fetchCategories();
+  }
+
+  componentWillUnmount() {
+    this.source.cancel();
   }
 
   componentDidUpdate(prevProps) {
@@ -58,24 +64,31 @@ class Books extends Component {
     const params = this.collectParams();
 
     try {
-      const response = await axios.get('/api/books', { params });
+      const response = await axios.get('/api/books', {
+        cancelToken: this.source.token,
+        params
+      });
       const { books, count } = response.data;
       this.setState({ books, count, isLoadingBooks: false });
     } catch (error) {
-      this.setState({ errorBooks: error, isLoadingBooks: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorBooks: error, isLoadingBooks: false });
     }
   };
 
   async fetchCategories() {
     try {
-      const response = await axios.get('/api/categories');
+      const response = await axios.get('/api/categories', {
+        cancelToken: this.source.token
+      });
       const categories = response.data.categories.map(category => ({
         ...category,
         checked: false
       }));
       this.setState({ categories, isLoadingCategories: false });
     } catch (error) {
-      this.setState({ errorCategories: error, isLoadingCategories: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorCategories: error, isLoadingCategories: false });
     }
   }
 
