@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import NavBarContainer from '../components/NavBarContainer';
 import Footer from '../components/Footer';
 
 class AppRoute extends Component {
@@ -13,7 +13,7 @@ class AppRoute extends Component {
   render() {
     return (
       <>
-        <NavBar {...this.props} />
+        <NavBarContainer {...this.props} />
         <Route {...this.props} />
         <Footer {...this.props} />
       </>
