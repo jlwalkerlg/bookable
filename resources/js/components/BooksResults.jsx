@@ -10,7 +10,7 @@ const BooksResults = ({ isLoading, error, books, count, page, limit }) => {
   if (error) return <p>Something went wrong: {error.message}.</p>;
 
   return (
-    <>
+    <main>
       <div className="browse-products mb-4">
         {books.map((book, index) => (
           <ProductCard key={index} book={book} size="large" wishlistButton />
@@ -24,7 +24,7 @@ const BooksResults = ({ isLoading, error, books, count, page, limit }) => {
         url="/books?page="
         className="justify-content-center pagination-warning"
       />
-    </>
+    </main>
   );
 };
 
