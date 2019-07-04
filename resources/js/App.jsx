@@ -45,7 +45,7 @@ const App = ({ loading }) =>
         <GuestRoute exact path="/register" component={Register} />
         <AppRoute exact path="/books/:id([0-9]+)" component={Book} />
         <AppRoute exact path="/books" component={Books} />
-        <AppRoute exact path="/authors/:id([0-9]+)" component={Author} />
+        <AppRoute exact path="/authors/:authorId([0-9]+)" component={Author} />
         <UserRoute exact path="/wishlist" component={Wishlist} />
         <UserRoute exact path="/cart" component={Cart} />
         <AppRoute exact path="/categories" component={Categories} />
