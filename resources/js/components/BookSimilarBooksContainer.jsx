@@ -14,7 +14,9 @@ class BookSimilarBooksContainer extends Component {
   async componentDidMount() {
     const { bookId } = this.props;
     try {
-      const response = await axios.get(`/api/books/${bookId}/similar`);
+      const response = await axios.get(`/api/books/${bookId}/similar`, {
+        params: { limit: 15 }
+      });
       const books = response.data;
       this.setState({ books, isLoading: false });
     } catch (error) {
