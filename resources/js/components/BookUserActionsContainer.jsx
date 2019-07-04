@@ -1,0 +1,93 @@
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import BookWishlistForm from './BookWishlistForm';
+import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
+import { addToCart, removeFromCart } from '../actions/cart';
+import BookCartForm from './BookCartForm';
+import BookShelvesFormContainer from './BookShelvesFormContainer';
+
+class BookUserActionsContainer extends Component {
+  state = {
+    cartQuantity: 1
+  };
+
+  isInWishlist() {
+    const { wishlist, book } = this.props;
+    return !!wishlist.items.filter(item => item.book_id === book.id)[0];
+  }
+
+  handleAddToWishlist = e => {
+    e.preventDefault();
+    this.props.addToWishlist(this.props.book);
+  };
+
+  handleRemoveFromWishlist = e => {
+    e.preventDefault();
+    this.props.removeFromWishlist(this.props.book);
+  };
+
+  isInCart() {
+    const { cart, book } = this.props;
+    return !!cart.items.filter(item => item.book_id === book.id)[0];
+  }
+
+  handleChangeCartQuantity = e => {
+    this.setState({ cartQuantity: parseInt(e.target.value) });
+  };
+
+  handleAddToCart = e => {
+    e.preventDefault();
+    this.props.addToCart(this.props.book, this.state.cartQuantity);
+  };
+
+  handleRemoveFromCart = e => {
+    e.preventDefault();
+    this.props.removeFromCart(this.props.book);
+  };
+
+  render() {
+    const { book, user } = this.props;
+    const { cartQuantity } = this.state;
+
+    return (
+      <>
+        <BookCartForm
+          quantity={cartQuantity}
+          onChange={this.handleChangeCartQuantity}
+          isInCart={this.isInCart()}
+          addToCart={this.handleAddToCart}
+          removeFromCart={this.handleRemoveFromCart}
+        />
+
+        <BookWishlistForm
+          book={book}
+          isInWishlist={this.isInWishlist()}
+          removeFromWishlist={this.handleRemoveFromWishlist}
+          addToWishlist={this.handleAddToWishlist}
+        />
+
+        <div>
+          <BookShelvesFormContainer book={book} user={user} />
+        </div>
+      </>
+    );
+  }
+}
+
+const mapStateToProps = ({ user, cart, wishlist }) => ({
+  user,
+  cart,
+  wishlist
+});
+
+const mapDispatchToProps = {
+  addToWishlist,
+  removeFromWishlist,
+  addToCart,
+  removeFromCart
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BookUserActionsContainer);

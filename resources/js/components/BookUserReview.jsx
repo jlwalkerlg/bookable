@@ -2,8 +2,22 @@ import React from 'react';
 import { Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Stars from './Stars';
+import Loading from './Loading';
 
-const BookUserReview = ({ review, user }) => {
+const BookUserReview = ({ review, user, isLoading, error, bookId }) => {
+  if (isLoading) return <Loading />;
+
+  if (error) return <p>Something went wrong: {error.message}.</p>;
+
+  if (!review.id)
+    return (
+      <div className="mt-3">
+        <Link to={`/books/${bookId}/reviews/new`} className="default">
+          Write a review.
+        </Link>
+      </div>
+    );
+
   return (
     <section className="mb-5">
       <div>

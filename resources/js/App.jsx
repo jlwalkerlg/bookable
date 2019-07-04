@@ -106,7 +106,7 @@ const App = ({ loading }) =>
         />
         <UserRoute exact path="/checkout" component={Checkout} />
         <UserRoute exact path="/checkout/success" component={CheckoutSuccess} />
-        <UserRoute exact path="/users/:userId([0-9]+)" component={User} />
+        <AppRoute exact path="/users/:userId([0-9]+)" component={User} />
         <UserRoute exact path="/orders" component={Orders} />
         <AppRoute
           exact
