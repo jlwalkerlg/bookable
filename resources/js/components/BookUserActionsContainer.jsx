@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import BookWishlistForm from './BookWishlistForm';
 import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
@@ -46,7 +47,15 @@ class BookUserActionsContainer extends Component {
   };
 
   render() {
-    const { book, user } = this.props;
+    const {
+      book,
+      user,
+      shelves,
+      isLoadingShelves,
+      errorShelves,
+      addToShelf,
+      removeFromShelf
+    } = this.props;
     const { cartQuantity } = this.state;
 
     return (
@@ -67,12 +76,30 @@ class BookUserActionsContainer extends Component {
         />
 
         <div>
-          <BookShelvesFormContainer book={book} user={user} />
+          <BookShelvesFormContainer
+            book={book}
+            user={user}
+            shelves={shelves}
+            isLoading={isLoadingShelves}
+            error={errorShelves}
+            addToShelf={addToShelf}
+            removeFromShelf={removeFromShelf}
+          />
         </div>
       </>
     );
   }
 }
+
+BookUserActionsContainer.propTypes = {
+  user: PropTypes.object.isRequired,
+  cart: PropTypes.object.isRequired,
+  wishlist: PropTypes.object.isRequired,
+  addToWishlist: PropTypes.func.isRequired,
+  removeFromWishlist: PropTypes.func.isRequired,
+  addToCart: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired
+};
 
 const mapStateToProps = ({ user, cart, wishlist }) => ({
   user,

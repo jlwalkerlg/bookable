@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Form, Button } from 'react-bootstrap';
 
 const BookWishlistForm = ({
@@ -23,6 +24,13 @@ const BookWishlistForm = ({
       </Button>
     </Form>
   );
+};
+
+BookWishlistForm.propTypes = {
+  book: PropTypes.object.isRequired,
+  isInWishlist: PropTypes.bool.isRequired,
+  removeFromWishlist: PropTypes.func.isRequired,
+  addToWishlist: PropTypes.func.isRequired
 };
 
 export default BookWishlistForm;

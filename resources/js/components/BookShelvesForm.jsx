@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Dropdown, Form } from 'react-bootstrap';
 
 const BookShelvesForm = ({
@@ -41,6 +42,13 @@ const BookShelvesForm = ({
       </Dropdown.Menu>
     </Dropdown>
   );
+};
+
+BookShelvesForm.propTypes = {
+  shelves: PropTypes.array.isRequired,
+  onRemoveShelfItem: PropTypes.func.isRequired,
+  onAddShelfItem: PropTypes.func.isRequired,
+  isProcessing: PropTypes.bool.isRequired
 };
 
 export default BookShelvesForm;

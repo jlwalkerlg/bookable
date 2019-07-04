@@ -1,10 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Truncate from './Truncate';
 import BookUserActionsContainer from './BookUserActionsContainer';
+import BookUserRating from './BookUserRating';
 
-const BookDisplay = ({ book, user }) => {
+const BookDisplay = ({
+  book,
+  user,
+  shelves,
+  isLoadingShelves,
+  errorShelves,
+  addToShelf,
+  removeFromShelf,
+  isProcessingRating,
+  userRating,
+  onAddRating,
+  onUpdateRating
+}) => {
   const { author, categories } = book;
 
   return (
@@ -20,25 +34,14 @@ const BookDisplay = ({ book, user }) => {
             />
 
             {/* User Rating */}
-            {/* {user.id && (
-              <div className="text-center mt-3">
-                <p>
-                  Your rating:
-                  <Stars
-                    className={`ml-2${
-                      processing.userRating ? ' disabled' : ''
-                    }`}
-                    editable={!processing.userRating}
-                    onClick={
-                      userRating
-                        ? e => this.handleUpdateRating(e, userRating)
-                        : e => this.addRating(e, book)
-                    }
-                    rating={(userRating && userRating.rating) || 0}
-                  />
-                </p>
-              </div>
-            )} */}
+            {user.id && (
+              <BookUserRating
+                isProcessing={isProcessingRating}
+                userRating={userRating}
+                onAddRating={onAddRating}
+                onUpdateRating={onUpdateRating}
+              />
+            )}
           </Col>
 
           <Col xs={12} md={8} className="text-center text-md-left">
@@ -62,7 +65,7 @@ const BookDisplay = ({ book, user }) => {
               <span className="text-secondary">Categories: </span>
               {categories.length ? (
                 categories.map((category, index) => (
-                  <React.Fragment key={index}>
+                  <React.Fragment key={category.id}>
                     {index !== 0 && ', '}
                     <Link to={`/category/${category.id}`}>{category.name}</Link>
                   </React.Fragment>
@@ -77,12 +80,35 @@ const BookDisplay = ({ book, user }) => {
             {/* Book price */}
             <p className="font-weight-bold h2 mt-3">£{book.price}</p>
 
-            {user.id && <BookUserActionsContainer book={book} />}
+            {user.id && (
+              <BookUserActionsContainer
+                book={book}
+                shelves={shelves}
+                isLoadingShelves={isLoadingShelves}
+                errorShelves={errorShelves}
+                addToShelf={addToShelf}
+                removeFromShelf={removeFromShelf}
+              />
+            )}
           </Col>
         </Row>
       </Container>
     </main>
   );
+};
+
+BookDisplay.propTypes = {
+  book: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  shelves: PropTypes.array.isRequired,
+  isLoadingShelves: PropTypes.bool.isRequired,
+  errorShelves: PropTypes.object,
+  addToShelf: PropTypes.func.isRequired,
+  removeFromShelf: PropTypes.func.isRequired,
+  isProcessingRating: PropTypes.bool.isRequired,
+  userRating: PropTypes.object.isRequired,
+  onAddRating: PropTypes.func.isRequired,
+  onUpdateRating: PropTypes.func.isRequired
 };
 
 export default BookDisplay;

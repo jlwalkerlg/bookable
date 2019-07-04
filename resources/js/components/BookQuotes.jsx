@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Loading from './Loading';
 import sanitize from '../utils/sanitize';
@@ -25,6 +26,13 @@ const BookQuotes = ({ book, quotes, isLoading, error }) => {
       </p>
     </section>
   );
+};
+
+BookQuotes.propTypes = {
+  book: PropTypes.object.isRequired,
+  quotes: PropTypes.array.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.object
 };
 
 export default BookQuotes;

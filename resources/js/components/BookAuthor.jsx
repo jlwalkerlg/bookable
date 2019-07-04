@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import Truncate from './Truncate';
@@ -47,6 +48,12 @@ const BookAuthor = ({ author }) => {
       </article>
     </>
   );
+};
+
+BookAuthor.propTypes = {
+  author: PropTypes.shape({
+    books: PropTypes.array.isRequired
+  }).isRequired
 };
 
 export default BookAuthor;

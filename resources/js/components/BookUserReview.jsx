@@ -1,10 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Stars from './Stars';
 import Loading from './Loading';
 
-const BookUserReview = ({ review, user, isLoading, error, bookId }) => {
+const BookUserReview = ({ review, user, isLoading, error, book }) => {
   if (isLoading) return <Loading />;
 
   if (error) return <p>Something went wrong: {error.message}.</p>;
@@ -12,7 +13,7 @@ const BookUserReview = ({ review, user, isLoading, error, bookId }) => {
   if (!review.id)
     return (
       <div className="mt-3">
-        <Link to={`/books/${bookId}/reviews/new`} className="default">
+        <Link to={`/books/${book.id}/reviews/new`} className="default">
           Write a review.
         </Link>
       </div>
@@ -57,6 +58,14 @@ const BookUserReview = ({ review, user, isLoading, error, bookId }) => {
       </div>
     </section>
   );
+};
+
+BookUserReview.propTypes = {
+  review: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.object,
+  book: PropTypes.object.isRequired
 };
 
 export default BookUserReview;

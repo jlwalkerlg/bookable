@@ -2,150 +2,390 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { addToWishlist, removeFromWishlist } from '../../actions/wishlist';
-import { addToCart, removeFromCart } from '../../actions/cart';
+import { Container } from 'react-bootstrap';
 import { addRating, updateRating, deleteRating } from '../../actions/ratings';
 import { addToShelf, removeFromShelf } from '../../actions/shelves';
-import BookDisplayContainer from '../../components/BookDisplayContainer';
-import BookReviewsContainer from '../../components/BookReviewsContainer';
-import BookSimilarBooksContainer from '../../components/BookSimilarBooksContainer';
+import Loading from '../../components/Loading';
+import BookDisplay from '../../components/BookDisplay';
+import BookAbout from '../../components/BookAbout';
+import BookAuthor from '../../components/BookAuthor';
+import BookSimilarBooks from '../../components/BookSimilarBooks';
+import BookUserReview from '../../components/BookUserReview';
+import BookReviews from '../../components/BookReviews';
 
-class Show extends Component {
+class Book extends Component {
   state = {
-    isLoadingUserRating: true,
-    errorUserRating: null,
-    userRating: {},
-    processing: {
-      userRating: false
-    },
-    quantity: 1
+    isLoading: true,
+    isProcessingRating: false
   };
 
+  initState(callback) {
+    this.setState(
+      {
+        isLoadingBook: true,
+        isLoadingBooks: true,
+        isLoadingQuotes: true,
+        isLoadingReviews: true,
+        isLoadingUserReview: true,
+        isLoadingUserRating: true,
+        isLoadingShelves: true,
+        errorBook: null,
+        errorBooks: null,
+        errorQuotes: null,
+        errorReviews: null,
+        errorUserReview: null,
+        errorUserRating: null,
+        errorShelves: null,
+        book: {},
+        books: [],
+        quotes: [],
+        reviews: [],
+        userReview: {},
+        userRating: {},
+        shelves: []
+      },
+      callback
+    );
+  }
+
   componentDidMount() {
-    const { user } = this.props;
-    if (user.id) {
-      this.fetchUserRating();
-    }
+    this.initState(this.fetchData);
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.match.params.id !== this.props.match.params.id) {
+    if (prevProps.match.params.bookId !== this.props.match.params.bookId) {
+      this.initState(this.fetchData);
+    }
+  }
+
+  fetchData() {
+    const { user } = this.props;
+
+    this.fetchBook();
+    this.fetchSimilarBooks();
+    this.fetchReviews();
+    this.fetchQuotes();
+    if (user.id) {
       this.fetchUserRating();
+      this.fetchUserReview();
+      this.fetchShelfData();
+    } else {
+      this.setState({ isLoadingUserRating: false, isLoadingUserReview: false });
+    }
+
+    this.setState({ isLoading: false });
+  }
+
+  async fetchBook() {
+    const { bookId } = this.props.match.params;
+
+    try {
+      const response = await axios.get(`/api/books/${bookId}`, {
+        params: { with: 'author.books,categories' }
+      });
+      const book = response.data;
+      this.setState({ book, isLoadingBook: false });
+    } catch (error) {
+      this.setState({ errorBook: error, isLoadingBook: false });
+    }
+  }
+
+  async fetchQuotes() {
+    const { bookId } = this.props.match.params;
+
+    try {
+      const response = await axios.get('/api/quotes', {
+        params: { book_id: bookId, limit: 5 }
+      });
+      const { quotes } = response.data;
+      this.setState({ quotes, isLoadingQuotes: false });
+    } catch (error) {
+      this.setError({ errorQuotes: error, isLoadingQuotes: false });
     }
   }
 
   async fetchUserRating() {
     const { user } = this.props;
-    const bookId = this.props.match.params.id;
+    const { bookId } = this.props.match.params;
+
     try {
       const response = await axios.get('/api/ratings', {
         params: { book_id: bookId, user_id: user.id }
       });
-      const userRating = response.data.ratings[0];
+      const userRating = response.data.ratings[0] || {};
       this.setState({ userRating, isLoadingUserRating: false });
     } catch (error) {
-      console.log(error);
       this.setState({ errorUserRating: error, isLoadingUserRating: false });
     }
   }
 
-  setProcessing(processing) {
-    this.setState({ processing: { ...this.state.processing, ...processing } });
+  async fetchReviews() {
+    const { bookId } = this.props.match.params;
+
+    try {
+      const response = await axios.get('/api/reviews', {
+        params: { book_id: bookId, with: 'user' }
+      });
+      let { reviews } = response.data;
+
+      const ratings = await this.fetchRatings(reviews);
+
+      reviews = reviews
+        .filter(review => review.user_id !== this.props.user.id)
+        .map(review => ({
+          ...review,
+          rating: ratings.filter(rating => rating.user_id === review.user_id)[0]
+        }));
+
+      this.setState({ reviews, isLoadingReviews: false });
+    } catch (error) {
+      this.setState({ errorReviews: error, isLoadingReviews: false });
+    }
   }
 
-  addRating = async (e, book) => {
-    e.preventDefault();
+  async fetchRatings(reviews) {
+    const userIds = reviews.map(review => review.user_id).join(',');
+    const { bookId } = this.props.match.params;
 
-    const { processing } = this.state;
-    if (processing.userRating) return;
+    const response = await axios.get('/api/ratings', {
+      params: { book_id: bookId, user_ids: userIds }
+    });
+    return response.data.ratings;
+  }
 
-    this.setProcessing({ userRating: true });
-
-    const rating = 5 - parseInt(e.target.dataset.index);
+  async fetchUserReview() {
     const { user } = this.props;
-    const userRating = await addRating(rating, book, user);
-    this.setState({ userRating });
+    const { bookId } = this.props.match.params;
 
-    this.setProcessing({ userRating: false });
+    try {
+      const response = await axios.get('/api/reviews', {
+        params: { book_id: bookId, user_id: user.id }
+      });
+      const userReview = response.data.reviews[0];
+      this.setState({
+        userReview,
+        isLoadingUserReview: false
+      });
+    } catch (error) {
+      this.setState({ errorUserReview: error, isLoadingUserReview: false });
+    }
+  }
+
+  async fetchSimilarBooks() {
+    const { bookId } = this.props.match.params;
+
+    try {
+      const response = await axios.get(`/api/books/${bookId}/similar`, {
+        params: { limit: 15 }
+      });
+      const books = response.data;
+      this.setState({ books, isLoadingBooks: false });
+    } catch (error) {
+      this.setState({ errorBooks, isLoadingBooks: false });
+    }
+  }
+
+  async fetchShelfData() {
+    try {
+      const [userShelves, userShelfItems] = await axios.all([
+        this.fetchUserShelves(),
+        this.fetchUserShelfItems()
+      ]);
+
+      const shelves = userShelves.map(shelf => ({
+        ...shelf,
+        items: userShelfItems.filter(item => item.shelf_id === shelf.id)
+      }));
+
+      this.setState({ shelves, isLoadingShelves: false });
+    } catch (error) {
+      this.setState({ errorShelves, isLoadingShelves: false });
+    }
+  }
+
+  async fetchUserShelves() {
+    const { user } = this.props;
+
+    const response = await axios.get('/api/shelves', {
+      params: { user_id: user.id }
+    });
+    return response.data.shelves;
+  }
+
+  async fetchUserShelfItems() {
+    const { user } = this.props;
+    const { bookId } = this.props.match.params;
+
+    const response = await axios.get('/api/shelves/items', {
+      params: { book_id: bookId, user_id: user.id }
+    });
+    return response.data.items;
+  }
+
+  addToShelf = async shelf => {
+    const { book } = this.state;
+
+    try {
+      const item = await addToShelf(book, shelf);
+      const shelves = this.state.shelves.map(shelf =>
+        shelf.id !== item.shelf_id ? shelf : { ...shelf, items: [item] }
+      );
+      this.setState({ shelves });
+    } catch (error) {
+      this.setState({ errorShelves: error });
+    }
   };
 
-  updateRating = async (rating, newRating) => {
-    await updateRating(rating, newRating);
-    const userRating = { ...this.state.userRating, rating: newRating };
-    this.setState({ userRating });
+  removeFromShelf = async item => {
+    try {
+      await removeFromShelf(item);
+      const shelves = this.state.shelves.map(shelf =>
+        shelf.id !== item.shelf_id ? shelf : { ...shelf, items: [] }
+      );
+      this.setState({ shelves });
+    } catch (error) {
+      this.setState({ errorShelves });
+    }
   };
 
-  deleteRating = async rating => {
-    await deleteRating(rating);
-    this.setState({ userRating: null });
-  };
-
-  handleUpdateRating = async (e, rating) => {
+  handleAddRating = async e => {
     e.preventDefault();
 
-    const { processing } = this.state;
-    if (processing.userRating) return;
+    const { isProcessingRating } = this.state;
+    if (isProcessingRating) return;
 
-    this.setProcessing({ userRating: true });
+    this.setState({ isProcessingRating: true });
 
-    const newRating = 5 - parseInt(e.target.dataset.index);
-    newRating === rating.rating
-      ? await this.deleteRating(rating)
-      : await this.updateRating(rating, newRating);
+    const { user } = this.props;
+    const { book } = this.state;
+    const rating = 5 - parseInt(e.target.dataset.index);
 
-    this.setProcessing({ userRating: false });
+    try {
+      const userRating = await addRating(rating, book, user);
+      this.setState({ userRating, isProcessingRating: false });
+    } catch (error) {
+      console.log(error);
+      this.setState({ errorUserRating: error, isProcessingRating: false });
+    }
   };
+
+  handleUpdateRating = async e => {
+    e.preventDefault();
+
+    const { isProcessingRating } = this.state;
+    if (isProcessingRating) return;
+
+    this.setState({ isProcessingRating: true });
+
+    const { userRating } = this.state;
+    let newRating = 5 - parseInt(e.target.dataset.index);
+
+    try {
+      newRating === userRating.rating
+        ? await this.deleteRating()
+        : await this.updateRating(newRating);
+      this.setState({ isProcessingRating: false });
+    } catch (error) {
+      this.setState({ errorUserRating: error, isProcessingRating: false });
+    }
+  };
+
+  async updateRating(newRating) {
+    const { userRating } = this.state;
+
+    await updateRating(userRating, newRating);
+
+    this.setState({
+      userRating: { ...this.state.userRating, rating: newRating }
+    });
+  }
+
+  async deleteRating() {
+    const { userRating } = this.state;
+
+    await deleteRating(userRating);
+
+    this.setState({ userRating: {} });
+  }
 
   render() {
-    const bookId = this.props.match.params.id;
+    const { isLoading, isLoadingBook, errorBook } = this.state;
+
+    if (isLoading || isLoadingBook) return <Loading />;
+
+    if (errorBook) return <p>Something went wrong: {errorBook.message}.</p>;
+
     const { user } = this.props;
-    const { userRating } = this.state;
+
+    const userReview = {
+      ...this.state.userReview,
+      rating: this.state.userRating
+    };
 
     return (
       <>
-        <BookDisplayContainer bookId={bookId} />
-
-        <BookSimilarBooksContainer bookId={bookId} />
-
-        <BookReviewsContainer
-          bookId={bookId}
-          user={user}
-          userRating={userRating}
+        <BookDisplay
+          book={this.state.book}
+          user={this.props.user}
+          shelves={this.state.shelves}
+          isLoadingShelves={this.state.isLoadingShelves}
+          errorShelves={this.state.errorShelves}
+          addToShelf={this.addToShelf}
+          removeFromShelf={this.removeFromShelf}
+          isProcessingRating={this.state.isProcessingRating}
+          userRating={this.state.userRating}
+          onAddRating={this.handleAddRating}
+          onUpdateRating={this.handleUpdateRating}
         />
+        <BookAbout
+          book={this.state.book}
+          quotes={this.state.quotes}
+          isLoadingQuotes={this.state.isLoadingQuotes}
+          errorQuotes={this.state.errorQuotes}
+        />
+        <BookAuthor author={this.state.book.author} />
+        <BookSimilarBooks
+          books={this.state.books}
+          isLoading={this.state.isLoadingBooks}
+          error={this.state.errorBooks}
+        />
+        <article id="reviews" className="section">
+          <Container>
+            <h3 className="text-uppercase mb-3 h6">Reviews</h3>
+            {user.id && (
+              <BookUserReview
+                book={this.state.book}
+                isLoading={this.state.isLoadingUserReview}
+                error={this.state.errorUserReview}
+                review={userReview}
+                user={user}
+              />
+            )}
+            <div className="mt-3">
+              <BookReviews
+                isLoading={this.state.isLoadingReviews}
+                error={this.state.errorReviews}
+                reviews={this.state.reviews}
+              />
+            </div>
+          </Container>
+        </article>
       </>
     );
   }
 }
 
-Show.propTypes = {
+Book.propTypes = {
   user: PropTypes.object.isRequired,
-  wishlist: PropTypes.object.isRequired,
-  cart: PropTypes.object.isRequired,
-  addToWishlist: PropTypes.func.isRequired,
-  removeFromWishlist: PropTypes.func.isRequired,
-  addToCart: PropTypes.func.isRequired,
-  removeFromCart: PropTypes.func.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
-      id: PropTypes.string.isRequired
+      bookId: PropTypes.string.isRequired
     }).isRequired
   }).isRequired
 };
 
-const mapStateToProps = ({ user, wishlist, cart }) => ({
-  user,
-  wishlist,
-  cart
+const mapStateToProps = ({ user }) => ({
+  user
 });
 
-const mapDispatchToProps = {
-  addToWishlist,
-  removeFromWishlist,
-  addToCart,
-  removeFromCart
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Show);
+export default connect(mapStateToProps)(Book);

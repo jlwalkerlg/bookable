@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Form, Button } from 'react-bootstrap';
 
 const BookCartForm = ({
@@ -45,6 +46,14 @@ const BookCartForm = ({
       </div>
     </Form>
   );
+};
+
+BookCartForm.propTypes = {
+  quantity: PropTypes.number.isRequired,
+  onChange: PropTypes.func.isRequired,
+  isInCart: PropTypes.bool.isRequired,
+  addToCart: PropTypes.func.isRequired,
+  removeFromCart: PropTypes.func.isRequired
 };
 
 export default BookCartForm;
