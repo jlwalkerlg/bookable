@@ -122,4 +122,37 @@ class BooksController extends Controller
 
         return $book;
     }
+
+    /**
+     * Get all books from carts in which the book in question was purchased.
+     */
+    public function similarBooks(Request $request, $bookId)
+    {
+        $query = Book::select('books.*')
+            ->join('cart_items', 'cart_items.book_id', '=', 'books.id')
+            ->whereIn('cart_items.cart_id', function ($query) use ($bookId) {
+                $query->select('cart_id')->from('cart_items')->where('book_id', $bookId)->groupBy('cart_id');
+            })->where('books.id', '!=', $bookId);
+
+        if ($limit = $request->input('limit')) {
+            $query->limit($limit);
+        }
+
+        if ($offset = $request->input('offset')) {
+            $query->offset($offset);
+        }
+
+        if ($orderBy = $request->input('order_by')) {
+            if ($column = $this->getOrderByColumn($orderBy)) {
+                $direction = $this->getOrderByDirection($request->input('order_dir'));
+                $query->orderBy($column, $direction);
+            }
+        }
+
+        if ($with = $request->input('with')) {
+            $query->with(explode(',', $with));
+        }
+
+        return $query->get();
+    }
 }

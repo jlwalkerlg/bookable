@@ -1,25 +1,44 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Container } from 'react-bootstrap';
 import BookCarousel from './BookCarousel';
-
-const books = new Array(15).fill(0).map(() => ({
-  id: 1,
-  image_url: 'https://images.gr-assets.com/books/1483412266m/865.jpg',
-  title: 'The Alchemist',
-  author: { id: 1, name: 'Paulo Coelho' },
-  price: 14.99,
-  author_id: 1
-}));
+import Loading from './Loading';
 
 class BookSimilarBooksContainer extends Component {
-  render() {
+  state = {
+    isLoading: true,
+    error: null,
+    books: []
+  };
+
+  async componentDidMount() {
     const { bookId } = this.props;
+    try {
+      const response = await axios.get(`/api/books/${bookId}/similar`);
+      const books = response.data;
+      this.setState({ books, isLoading: false });
+    } catch (error) {
+      this.setState({ error, isLoading: false });
+    }
+  }
+
+  render() {
+    const { isLoading, error, books } = this.state;
+
+    if (isLoading)
+      return (
+        <div>
+          <Loading />
+        </div>
+      );
+
+    if (error) return <p>Something went wrong: {error.message}.</p>;
 
     return (
       <article className="section text-center bg-beige">
         <Container>
           <h2 className="heading mb-4">
-            <span>Readers also enjoyed</span>
+            <span>Customers also bought</span>
           </h2>
           <BookCarousel books={books} />
         </Container>

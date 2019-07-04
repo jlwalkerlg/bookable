@@ -75,3 +75,5 @@ Route::get('/users/{user}/transactions', 'UsersController@transactions')->middle
 
 Route::post('/passwords/reset', 'UsersController@emailPasswordReset');
 Route::post('/passwords/reset/{token}', 'UsersController@resetPassword');
+
+Route::get('/books/{bookId}/similar', 'BooksController@similarBooks');
