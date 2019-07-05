@@ -13,7 +13,7 @@ import Books from './views/books/Books';
 import Book from './views/books/Book';
 import Author from './views/authors/Author';
 import Categories from './views/categories/Categories';
-import Category from './views/categories/Category';
+import Category from './views/categories/CategoryContainer';
 import Wishlist from './views/Wishlist';
 import Cart from './views/Cart';
 import Shelves from './views/Shelves';

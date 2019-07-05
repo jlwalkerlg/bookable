@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pagination } from 'react-bootstrap';
+import BPagination from 'react-bootstrap/Pagination';
 import { Link } from 'react-router-dom';
 import paginate from 'jw-paginate';
 
-const MyPagination = ({
+const Pagination = ({
   totalItems,
   currentPage,
   pageSize,
@@ -16,17 +16,17 @@ const MyPagination = ({
   const { pages, totalPages } = pagination;
 
   return (
-    <Pagination className={className}>
+    <BPagination className={className}>
       {pages[0] > 1 && (
         <>
-          <Pagination.Item as={Link} href={url + '1'} to={url + '1'}>
+          <BPagination.Item as={Link} href={url + '1'} to={url + '1'}>
             1
-          </Pagination.Item>
-          <Pagination.Ellipsis disabled />
+          </BPagination.Item>
+          <BPagination.Ellipsis disabled />
         </>
       )}
       {pages.map((page, index) => (
-        <Pagination.Item
+        <BPagination.Item
           key={index}
           as={page !== currentPage ? Link : undefined}
           href={url + page}
@@ -34,25 +34,25 @@ const MyPagination = ({
           active={page === currentPage}
         >
           {page}
-        </Pagination.Item>
+        </BPagination.Item>
       ))}
       {pages[pages.length - 1] < totalPages && (
         <>
-          <Pagination.Ellipsis disabled />
-          <Pagination.Item
+          <BPagination.Ellipsis disabled />
+          <BPagination.Item
             as={Link}
             href={url + totalPages}
             to={url + totalPages}
           >
             {totalPages}
-          </Pagination.Item>
+          </BPagination.Item>
         </>
       )}
-    </Pagination>
+    </BPagination>
   );
 };
 
-MyPagination.propTypes = {
+Pagination.propTypes = {
   totalItems: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   pageSize: PropTypes.number,
@@ -61,4 +61,4 @@ MyPagination.propTypes = {
   className: PropTypes.string
 };
 
-export default MyPagination;
+export default Pagination;
