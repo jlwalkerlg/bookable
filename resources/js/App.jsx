@@ -6,7 +6,7 @@ import GuestRoute from './routes/GuestRoute';
 import AppRoute from './routes/AppRoute';
 import Loading from './components/Loading';
 import Home from './views/Home';
-import Login from './views/Login';
+import Login from './views/users/LoginContainer';
 import Register from './views/Register';
 import NotFound from './views/NotFound';
 import Books from './views/books/Books';
@@ -119,8 +119,8 @@ const App = ({ loading }) =>
     </BrowserRouter>
   );
 
-const mapStateToProps = state => ({
-  loading: state.loading
+const mapStateToProps = ({ loading }) => ({
+  loading
 });
 
 export default connect(mapStateToProps)(App);

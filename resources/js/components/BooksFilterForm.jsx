@@ -116,7 +116,11 @@ const BooksFilterForm = ({
       </div>
 
       {/* Submit */}
-      <SubmitButton variant="warning" isLoading={isLoading}>
+      <SubmitButton
+        className="rounded-pill"
+        variant="warning"
+        isLoading={isLoading}
+      >
         Apply Filter
       </SubmitButton>
     </Form>

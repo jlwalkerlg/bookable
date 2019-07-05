@@ -3,14 +3,11 @@ import PropTypes from 'prop-types';
 import { Button, Spinner } from 'react-bootstrap';
 
 const SubmitButton = ({ isLoading, variant, className, onClick, children }) => {
-  const classes = 'rounded-pill';
-  if (className) classes += ` ${className}`;
-
   return (
     <Button
       type="submit"
       variant={variant}
-      className={classes}
+      className={className}
       disabled={isLoading}
       onClick={onClick}
     >
