@@ -23,6 +23,8 @@ class ShelvesItemsContainer extends Component {
 
   limit = 20;
 
+  source = axios.CancelToken.source();
+
   componentDidMount() {
     this.fetchData();
   }
@@ -33,6 +35,10 @@ class ShelvesItemsContainer extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.source.cancel();
+  }
+
   async fetchData() {
     const { userId, shelfId, user } = this.props;
     const userIdInt = parseInt(userId);
@@ -40,6 +46,7 @@ class ShelvesItemsContainer extends Component {
 
     try {
       const response = await axios.get('/api/shelves/items', {
+        cancelToken: this.source.token,
         params: {
           limit: this.limit,
           offset,
@@ -85,13 +92,14 @@ class ShelvesItemsContainer extends Component {
         isLoading: false
       });
     } catch (error) {
-      this.setState({ error, isLoading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
   async fetchRatings(book_ids) {
     const { userId } = this.props;
     const response = await axios.get('/api/ratings', {
+      cancelToken: this.source.token,
       params: { user_id: userId, book_ids }
     });
     return response.data.ratings;
@@ -100,6 +108,7 @@ class ShelvesItemsContainer extends Component {
   async fetchUserRatings(book_ids) {
     const { user } = this.props;
     const response = await axios.get('/api/ratings', {
+      cancelToken: this.source.token,
       params: { user_id: user.id, book_ids }
     });
     return response.data.ratings;

@@ -12,15 +12,23 @@ class ShelvesListContainer extends Component {
     user: {}
   };
 
+  source = axios.CancelToken.source();
+
   async componentDidMount() {
     const { userId } = this.props;
     try {
-      const response = await axios.get(`/api/users/${userId}/shelves`);
+      const response = await axios.get(`/api/users/${userId}/shelves`, {
+        cancelToken: this.source.token
+      });
       const { user, shelves } = response.data;
       this.setState({ user, shelves, isLoading: false });
     } catch (error) {
-      this.setState({ error, isLoading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
+  }
+
+  componentWillUnmount() {
+    this.source.cancel();
   }
 
   render() {
