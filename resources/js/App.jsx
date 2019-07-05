@@ -7,7 +7,7 @@ import AppRoute from './routes/AppRoute';
 import Loading from './components/Loading';
 import Home from './views/Home';
 import Login from './views/users/LoginContainer';
-import Register from './views/Register';
+import Register from './views/users/RegisterContainer';
 import NotFound from './views/NotFound';
 import Books from './views/books/Books';
 import Book from './views/books/Book';

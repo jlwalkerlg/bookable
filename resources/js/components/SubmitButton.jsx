@@ -2,7 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Spinner } from 'react-bootstrap';
 
-const SubmitButton = ({ isLoading, variant, className, onClick, children }) => {
+const SubmitButton = ({
+  isLoading,
+  variant = 'primary',
+  className,
+  onClick,
+  children
+}) => {
   return (
     <Button
       type="submit"
