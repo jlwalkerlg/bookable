@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Stars = ({ rating, editable, className, onClick }) => {
+const Stars = ({ rating, editable, className, onClick, ...props }) => {
   return (
     <span className={`stars ${className || ''}`}>
       {new Array(5).fill(0).map((item, index) => (
         <span
           key={index}
           data-index={index}
+          {...props}
           onClick={editable ? onClick : undefined}
           className={`star${editable ? ' editable' : ''}${
             5 - index === rating ? ' active' : ''

@@ -1,21 +1,24 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Media, Button, Form } from 'react-bootstrap';
 import Stars from './Stars';
 
 const BookListing = ({
+  className,
+  user,
+  userId,
   book,
   author,
   rating,
   userRating,
-  user,
-  authUser,
+  createdAt,
   onAddRating,
   onUpdateRating,
-  createdAt,
+  isProcessingRating,
   deletable,
   onDelete,
-  className
+  isProcessingDelete
 }) => {
   return (
     <Media className={className}>
@@ -26,9 +29,15 @@ const BookListing = ({
             action="/"
             method="POST"
             className="float-right"
-            onSubmit={e => onDelete(e)}
+            data-book-id={book.id}
+            onSubmit={onDelete}
           >
-            <Button variant="link" type="submit" className="text-body p-0">
+            <Button
+              variant="link"
+              type="submit"
+              className="text-body p-0"
+              disabled={isProcessingDelete}
+            >
               <i className="material-icons">clear</i>
             </Button>
           </Form>
@@ -44,23 +53,22 @@ const BookListing = ({
           <span className="text-secondary">Average rating:</span>{' '}
           {book.avg_rating.toFixed(2)}
         </p>
-        {user.id !== authUser.id && (
+        {user.id !== userId && (
           <p className="mb-2">
             <span className="text-secondary font-size-7">User Rating:</span>{' '}
-            <Stars rating={(rating && rating.rating) || 0} />
+            <Stars rating={rating || 0} />
           </p>
         )}
-        {authUser.id && (
+        {user.id && (
           <p className="mb-2">
             <span className="text-secondary font-size-7">Your rating:</span>{' '}
             <Stars
-              rating={(userRating && userRating.rating) || 0}
+              rating={userRating || 0}
               editable
-              onClick={
-                userRating
-                  ? e => onUpdateRating(e, userRating)
-                  : e => onAddRating(e, book)
-              }
+              data-rating={userRating}
+              data-book-id={book.id}
+              onClick={userRating ? onUpdateRating : onAddRating}
+              className={isProcessingRating && 'disabled'}
             />
           </p>
         )}
@@ -70,6 +78,23 @@ const BookListing = ({
       </Media.Body>
     </Media>
   );
+};
+
+BookListing.propTypes = {
+  className: PropTypes.string,
+  user: PropTypes.object.isRequired,
+  userId: PropTypes.string.isRequired,
+  book: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  rating: PropTypes.number,
+  userRating: PropTypes.number,
+  createdAt: PropTypes.string.isRequired,
+  onAddRating: PropTypes.func.isRequired,
+  onUpdateRating: PropTypes.func.isRequired,
+  isProcessingRating: PropTypes.bool,
+  deletable: PropTypes.bool,
+  onDelete: PropTypes.func,
+  isProcessingDelete: PropTypes.bool
 };
 
 export default BookListing;

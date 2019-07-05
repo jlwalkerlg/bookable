@@ -7,6 +7,6 @@ export const addToShelf = async (book, shelf) => {
   return response.data;
 };
 
-export const removeFromShelf = async shelfItem => {
-  return await axios.delete(`/api/shelves/items/${shelfItem.id}`);
+export const removeFromShelf = async shelfItemId => {
+  return await axios.delete(`/api/shelves/items/${shelfItemId}`);
 };

@@ -1,21 +1,19 @@
 import axios from 'axios';
 
-export const addRating = async (rating, book, user) => {
-  const response = await axios.post(`/api/users/${user.id}/ratings`, {
+export const addRating = async (rating, bookId, userId) => {
+  const response = await axios.post(`/api/users/${userId}/ratings`, {
     rating,
-    book_id: book.id
+    book_id: bookId
   });
   return response.data;
 };
 
-export const updateRating = async (rating, newRating) => {
-  await axios.patch(`/api/ratings/${rating.id}`, {
+export const updateRating = async (ratingId, newRating) => {
+  const response = await axios.patch(`/api/ratings/${ratingId}`, {
     rating: newRating
   });
-  return newRating;
+  return response.data;
 };
 
-export const deleteRating = async rating => {
-  await axios.delete(`/api/ratings/${rating.id}`);
-  return rating;
-};
+export const deleteRating = async ratingId =>
+  await axios.delete(`/api/ratings/${ratingId}`);

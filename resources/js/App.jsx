@@ -16,7 +16,7 @@ import Categories from './views/categories/Categories';
 import Category from './views/categories/CategoryContainer';
 import Wishlist from './views/Wishlist';
 import Cart from './views/Cart';
-import Shelves from './views/Shelves';
+import Shelves from './views/shelves/Shelves';
 import Ratings from './views/Ratings';
 import UserQuotes from './views/UserQuotes';
 import BookQuotes from './views/books/BookQuotes';
