@@ -20,6 +20,8 @@ const BookListing = ({
   onDelete,
   isProcessingDelete
 }) => {
+  const userIdInt = parseInt(userId);
+
   return (
     <Media className={className}>
       <img src={book.image_url} alt={book.title} className="mr-3" />
@@ -53,7 +55,7 @@ const BookListing = ({
           <span className="text-secondary">Average rating:</span>{' '}
           {book.avg_rating.toFixed(2)}
         </p>
-        {user.id !== userId && (
+        {user.id !== userIdInt && (
           <p className="mb-2">
             <span className="text-secondary font-size-7">User Rating:</span>{' '}
             <Stars rating={rating || 0} />

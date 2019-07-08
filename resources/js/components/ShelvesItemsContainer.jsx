@@ -63,7 +63,7 @@ class ShelvesItemsContainer extends Component {
 
       const [ratings, userRatings] = await axios.all([
         user.id !== userIdInt ? this.fetchRatings(bookIds) : [],
-        user.id && user.id !== userIdInt
+        user.id !== userIdInt
           ? this.fetchUserRatings(bookIds)
           : this.fetchRatings(bookIds)
       ]);
