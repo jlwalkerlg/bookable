@@ -27,11 +27,10 @@ export const addToWishlist = book => dispatch => {
     .catch(err => console.log(err));
 };
 
-export const removeFromWishlist = book => dispatch => {
+export const removeFromWishlist = bookId => dispatch => {
   const wishlist = store.getState().wishlist;
-  const item = wishlist.items.filter(item => item.book_id === book.id)[0];
+  const item = wishlist.items.filter(item => item.book_id === bookId)[0];
   return axios
     .delete(`/api/wishlists/${wishlist.id}/items/${item.id}`)
-    .then(() => dispatch(removeItem(item.id)))
-    .catch(err => console.log(err));
+    .then(() => dispatch(removeItem(item.id)));
 };

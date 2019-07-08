@@ -17,15 +17,14 @@ export const hydrateCart = cart => ({
   cart
 });
 
-export const addToCart = (book, quantity = 1) => dispatch => {
+export const addToCart = (bookId, quantity = 1) => dispatch => {
   const cart = store.getState().cart;
-  axios
+  return axios
     .post(`/api/carts/${cart.id}/items`, {
-      book_id: book.id,
+      book_id: bookId,
       quantity
     })
-    .then(response => dispatch(addItem(response.data)))
-    .catch(err => console.log(err));
+    .then(response => dispatch(addItem(response.data)));
 };
 
 export const removeFromCart = bookId => dispatch => {

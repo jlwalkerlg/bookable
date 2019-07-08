@@ -14,7 +14,7 @@ import Book from './views/books/Book';
 import Author from './views/authors/Author';
 import Categories from './views/categories/Categories';
 import Category from './views/categories/CategoryContainer';
-import Wishlist from './views/Wishlist';
+import Wishlist from './views/users/WishlistContainer';
 import Cart from './views/users/CartContainer';
 import Shelves from './views/users/Shelves';
 import Ratings from './views/users/RatingsContainer';

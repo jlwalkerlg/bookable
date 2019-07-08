@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import Loading from '../../components/Loading';
-import MediaResponsive from 'react-responsive';
+import Media from 'react-responsive';
 import ProductRow from '../../components/ProductRow';
 import ProductListing from '../../components/ProductListing';
 import CartCheckoutCard from '../../components/CartCheckoutCard';
@@ -15,12 +15,7 @@ const Cart = ({
   isProcessingDelete,
   onDeleteItem
 }) => {
-  if (isLoading)
-    return (
-      <div className="vh-100">
-        <Loading />
-      </div>
-    );
+  if (isLoading) return <Loading />;
 
   if (error) return <p>Something went wrong: {error.message}.</p>;
 
@@ -36,7 +31,7 @@ const Cart = ({
 
   return (
     <>
-      <MediaResponsive minWidth={760}>
+      <Media minWidth={768}>
         {matches =>
           matches ? (
             <div className="product-table mb-4">
@@ -79,7 +74,7 @@ const Cart = ({
             </div>
           )
         }
-      </MediaResponsive>
+      </Media>
 
       <CartCheckoutCard items={items} />
     </>

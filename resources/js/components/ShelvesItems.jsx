@@ -21,7 +21,7 @@ const ShelvesItems = ({
 }) => {
   return (
     <>
-      <MediaQuery minWidth={760}>
+      <MediaQuery minWidth={768}>
         {matches =>
           matches ? (
             <ShelfItemsTable
