@@ -13,14 +13,16 @@ class ProductCard extends Component {
     return items && !!items.filter(item => item.book_id === bookId).length;
   }
 
-  addToWishlist = (e, book) => {
+  addToWishlist = e => {
     e.preventDefault();
-    this.props.addToWishlist(book);
+    const bookId = parseInt(e.target.dataset.bookId);
+    this.props.addToWishlist(bookId);
   };
 
-  removeFromWishlist = (e, book) => {
+  removeFromWishlist = e => {
     e.preventDefault();
-    this.props.removeFromWishlist(book);
+    const bookId = parseInt(e.target.dataset.bookId);
+    this.props.removeFromWishlist(bookId);
   };
 
   render() {
@@ -38,11 +40,8 @@ class ProductCard extends Component {
           <Form
             action="/"
             method="POST"
-            onSubmit={
-              inWishlist
-                ? e => this.removeFromWishlist(e, book)
-                : e => this.addToWishlist(e, book)
-            }
+            data-book-id={book.id}
+            onSubmit={inWishlist ? this.removeFromWishlist : this.addToWishlist}
             className="float-right"
           >
             <Button

@@ -17,14 +17,13 @@ export const hydrateWishlist = wishlist => ({
   wishlist
 });
 
-export const addToWishlist = book => dispatch => {
+export const addToWishlist = bookId => dispatch => {
   const wishlist = store.getState().wishlist;
   axios
     .post(`/api/wishlists/${wishlist.id}/items`, {
-      book_id: book.id
+      book_id: bookId
     })
-    .then(response => dispatch(addItem(response.data)))
-    .catch(err => console.log(err));
+    .then(response => dispatch(addItem(response.data)));
 };
 
 export const removeFromWishlist = bookId => dispatch => {
