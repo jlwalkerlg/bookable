@@ -28,11 +28,10 @@ export const addToCart = (book, quantity = 1) => dispatch => {
     .catch(err => console.log(err));
 };
 
-export const removeFromCart = book => dispatch => {
+export const removeFromCart = bookId => dispatch => {
   const cart = store.getState().cart;
-  const item = cart.items.filter(item => item.book_id === book.id)[0];
+  const item = cart.items.filter(item => item.book_id === bookId)[0];
   return axios
     .delete(`/api/carts/${cart.id}/items/${item.id}`)
-    .then(() => dispatch(removeItem(item.id)))
-    .catch(err => console.log(err));
+    .then(() => dispatch(removeItem(item.id)));
 };
