@@ -32,6 +32,10 @@ class RatingsContainer extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.source.cancel();
+  }
+
   async fetchData() {
     try {
       let { user, ratings, count } = await this.fetchRatings();
@@ -54,7 +58,7 @@ class RatingsContainer extends Component {
 
       this.setState({ user, ratings, count, userRatings, isLoading: false });
     } catch (error) {
-      this.setState({ error, isLoading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
@@ -63,6 +67,7 @@ class RatingsContainer extends Component {
     const offset = this.props.calcOffset(this.limit);
 
     const response = await axios.get(`/api/users/${userId}/ratings`, {
+      cancelToken: this.source.token,
       params: { limit: this.limit, offset, count: true, with: 'book.author' }
     });
 
@@ -73,6 +78,7 @@ class RatingsContainer extends Component {
     const { user } = this.props;
 
     const response = await axios.get(`/api/ratings`, {
+      cancelToken: this.source.token,
       params: { user_id: user.id, book_ids: bookIds }
     });
 
