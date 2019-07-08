@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Media } from 'react-bootstrap';
 import sanitize from '../utils/sanitize';
@@ -6,16 +7,11 @@ import sanitize from '../utils/sanitize';
 const reviewText = review =>
   review.length > 300 ? review.slice(0, 300).trim() + '...' : review;
 
-const ReviewListing = ({
-  book,
-  author,
-  review,
-  userReview,
-  createdAt,
-  className
-}) => {
+const ReviewListing = ({ user, userId, book, author, review }) => {
+  const userIdInt = parseInt(userId);
+
   return (
-    <Media className={className}>
+    <Media className="mt-3 py-2 border-bottom">
       <img src={book.image_url} alt={book.title} className="mr-3" />
       <Media.Body>
         <p className="h5">
@@ -26,42 +22,42 @@ const ReviewListing = ({
           <Link to={`/authors/${author.id}`}>{author.name}</Link>
         </p>
         <p className="font-size-7 mb-3">
-          <span className="text-secondary">Date Added:</span> {createdAt}
+          <span className="text-secondary">Date Added:</span>{' '}
+          {review.created_at}
         </p>
-        {review && (
-          <div className="mb-2">
-            <p className="text-secondary font-size-7 mb-0">User Review:</p>
-            <p
-              className="mt-0"
-              dangerouslySetInnerHTML={sanitize.markup(
-                reviewText(review.review)
-              )}
-            />
-            <p>
+        <div className="mb-2">
+          <p className="text-secondary font-size-7 mb-0">
+            {user.id === userIdInt ? 'Your' : 'User'} Review:
+          </p>
+          <p
+            className="mt-0"
+            dangerouslySetInnerHTML={sanitize.markup(reviewText(review.review))}
+          />
+          <div>
+            {user.id !== userIdInt && (
               <Link to={`/reviews/${review.id}`}>Read full review</Link>
-            </p>
-            {userReview && (
-              <p>
-                <Link to={`/reviews/${userReview.id}`}>Read your review</Link>
-              </p>
+            )}
+            {user.id !== userIdInt && review.userReview && (
+              <span className="d-inline-block mx-2">&#183;</span>
+            )}
+            {review.userReview && (
+              <Link to={`/reviews/${review.userReview.id}`}>
+                Read your review
+              </Link>
             )}
           </div>
-        )}
-        {!review && userReview && (
-          <div className="mb-2">
-            <p className="text-secondary font-size-7 mb-0">Your Review:</p>
-            <p
-              className="mt-0"
-              dangerouslySetInnerHTML={sanitize.markup(
-                reviewText(userReview.review)
-              )}
-            />
-            <Link to={`/reviews/${userReview.id}`}>Read full review</Link>
-          </div>
-        )}
+        </div>
       </Media.Body>
     </Media>
   );
+};
+
+ReviewListing.propTypes = {
+  user: PropTypes.object.isRequired,
+  userId: PropTypes.string.isRequired,
+  book: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  review: PropTypes.object.isRequired
 };
 
 export default ReviewListing;

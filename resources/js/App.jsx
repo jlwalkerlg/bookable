@@ -22,7 +22,7 @@ import UserQuotes from './views/UserQuotes';
 import BookQuotes from './views/books/BookQuotes';
 import AuthorQuotes from './views/authors/AuthorQuotes';
 import CategoryQuotes from './views/categories/CategoryQuotes';
-import Reviews from './views/Reviews';
+import Reviews from './views/users/ReviewsContainer';
 import NewReview from './views/NewReview';
 import ReviewShow from './views/ReviewShow';
 import Checkout from './views/Checkout';
