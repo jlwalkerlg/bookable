@@ -80,7 +80,7 @@ class User extends Authenticatable
 
     public function quotes()
     {
-        return $this->hasMany('App\UserQuote');
+        return $this->belongsToMany('App\Quote', 'user_quote');
     }
 
     public function createNewCart()

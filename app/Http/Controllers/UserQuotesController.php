@@ -13,19 +13,23 @@ class UserQuotesController extends Controller
         $attributes = $request->validate([
             'quote_id' => 'required|int'
         ]);
+        $attributes['user_id'] = $user->id;
 
-        $quote = $user->quotes()->create($attributes);
+        $userQuote = UserQuote::create($attributes);
 
         if ($with = $request->input('with')) {
-            $quote->load(explode(',', $with));
+            $userQuote->load(explode(',', $with));
         }
 
-        return $quote;
+        return $userQuote;
     }
 
-    public function delete(UserQuote $userQuote)
+    public function delete(User $user, $quoteId)
     {
-        $userQuote->delete();
-        return response(null, 204);
+        $result = UserQuote::where([
+            'user_id' => $user->id,
+            'quote_id' => $quoteId
+        ])->limit(1)->delete();
+        return $result ? response(null, 204) : response(null, 404);
     }
 }

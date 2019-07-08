@@ -18,7 +18,7 @@ import Wishlist from './views/users/WishlistContainer';
 import Cart from './views/users/CartContainer';
 import Shelves from './views/users/Shelves';
 import Ratings from './views/users/RatingsContainer';
-import UserQuotes from './views/UserQuotes';
+import UsersQuotes from './views/users/QuotesContainer';
 import BookQuotes from './views/books/BookQuotes';
 import AuthorQuotes from './views/authors/AuthorQuotes';
 import CategoryQuotes from './views/categories/CategoryQuotes';
@@ -77,7 +77,7 @@ const App = ({ loading }) =>
         <AppRoute
           exact
           path="/users/:userId([0-9]+)/quotes"
-          component={UserQuotes}
+          component={UsersQuotes}
         />
         <AppRoute
           exact

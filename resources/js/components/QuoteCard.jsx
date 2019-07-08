@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import sanitize from '../utils/sanitize';
+import SubmitButton from './SubmitButton';
 
 const QuoteCard = ({
   quote,
@@ -10,11 +11,9 @@ const QuoteCard = ({
   userQuote,
   authUser,
   onSave,
-  onDelete
+  onDelete,
+  isProcessing
 }) => {
-  const handleSave = e => onSave(e, quote);
-  const handleDelete = e => onDelete(e, userQuote);
-
   return (
     <Card className="d-inline-block w-100 mt-3">
       <Card.Body>
@@ -30,23 +29,36 @@ const QuoteCard = ({
             </cite>
           </footer>
         </blockquote>
+
         {userQuote && (
           <Form
             action="/"
             method="POST"
             className="mt-2"
-            onSubmit={handleDelete}
+            data-quote-id={quote.id}
+            onSubmit={onDelete}
           >
-            <Button type="submit" variant="outline-info" size="sm">
+            <SubmitButton variant="info" size="sm" isLoading={isProcessing}>
               Unsave
-            </Button>
+            </SubmitButton>
           </Form>
         )}
+
         {authUser.id && !userQuote && (
-          <Form action="/" method="POST" className="mt-2" onSubmit={handleSave}>
-            <Button type="submit" variant="outline-info" size="sm">
+          <Form
+            action="/"
+            method="POST"
+            className="mt-2"
+            data-quote-id={quote.id}
+            onSubmit={onSave}
+          >
+            <SubmitButton
+              variant="outline-info"
+              size="sm"
+              isLoading={isProcessing}
+            >
               Save
-            </Button>
+            </SubmitButton>
           </Form>
         )}
       </Card.Body>
