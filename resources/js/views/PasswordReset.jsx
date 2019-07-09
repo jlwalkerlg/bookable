@@ -1,81 +1,136 @@
 import React, { Component } from 'react';
-import { Form, Button, Container, Alert } from 'react-bootstrap';
+import { Form, Container, Alert } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import URL from '../utils/URL';
+import SubmitButton from '../components/SubmitButton';
 
 class PasswordReset extends Component {
   state = {
     email: URL.query(this.props.location.search).getParam('email') || '',
     password: '',
-    success: false
+    isProcessing: false,
+    success: false,
+    validationErrors: {}
   };
+
+  handleChange = e =>
+    this.setState({
+      [e.target.name]: e.target.value,
+      validationErrors: {
+        ...this.state.validationErrors,
+        [e.target.name]: null
+      }
+    });
 
   handleSubmit = async e => {
     e.preventDefault();
+
+    if (this.state.isProcessing) return;
+
+    this.setState({ error: null, isProcessing: true });
+
     const { token } = this.props.match.params;
     const { email, password } = this.state;
+
     try {
-      const response = await axios.post(`/api/passwords/reset/${token}`, {
+      await axios.post(`/api/passwords/reset/${token}`, {
         email,
         password
       });
-      this.setState({ success: true });
+      this.setState({ success: true, isProcessing: false });
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data.errors) {
+        this.setState({
+          validationErrors: error.response.data.errors,
+          isProcessing: false
+        });
+      } else {
+        this.setState({ error, isProcessing: false });
+      }
     }
   };
 
-  handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
-  };
-
   render() {
-    const { email, password, success } = this.state;
+    const {
+      email,
+      password,
+      isProcessing,
+      success,
+      error,
+      validationErrors
+    } = this.state;
     const { token } = this.props.match.params;
 
     return (
-      <div className="section">
-        <Container>
+      <main>
+        <Container className="section container-narrow min-vh-100-nav d-flex justify-content-center flex-column">
           {success && (
             <Alert variant="success">
               Password successfully reset. You may now{' '}
-              <Link to="/login">login</Link> with your new password.
+              <strong>
+                <Link to="/login">login</Link>
+              </strong>{' '}
+              with your new password.
             </Alert>
           )}
+
+          {error && (
+            <Alert variant="danger">
+              Something went wrong: {error.message}.
+            </Alert>
+          )}
+
+          <h1>Reset Password</h1>
+
           {!success && (
             <Form onSubmit={this.handleSubmit}>
               {/* Email */}
               <Form.Group controlId="email">
                 <Form.Label>Email</Form.Label>
+
                 <Form.Control
                   name="email"
                   placeholder="Your email..."
                   value={email}
                   onChange={this.handleChange}
+                  isInvalid={!!validationErrors.email}
                 />
+
+                <Form.Control.Feedback type="invalid">
+                  {validationErrors.email}
+                </Form.Control.Feedback>
               </Form.Group>
+
               {/* Password */}
               <Form.Group controlId="password">
                 <Form.Label>New Password</Form.Label>
+
                 <Form.Control
                   type="password"
                   name="password"
                   placeholder="Your new password..."
                   value={password}
                   onChange={this.handleChange}
+                  isInvalid={!!validationErrors.password}
                 />
+
+                <Form.Control.Feedback type="invalid">
+                  {validationErrors.password}
+                </Form.Control.Feedback>
               </Form.Group>
+
               {/* Token */}
               <Form.Control hidden readOnly value={token} name="token" />
+
               {/* Submit */}
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
+              <div className="text-right">
+                <SubmitButton isLoading={isProcessing}>Submit</SubmitButton>
+              </div>
             </Form>
           )}
         </Container>
-      </div>
+      </main>
     );
   }
 }

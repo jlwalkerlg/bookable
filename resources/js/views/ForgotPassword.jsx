@@ -84,9 +84,14 @@ class ForgotPassword extends Component {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <SubmitButton className="border-radius-4" isLoading={isProcessing}>
-              Submit
-            </SubmitButton>
+            <div className="text-right">
+              <SubmitButton
+                className="border-radius-4"
+                isLoading={isProcessing}
+              >
+                Submit
+              </SubmitButton>
+            </div>
           </Form>
         </Container>
       </main>
