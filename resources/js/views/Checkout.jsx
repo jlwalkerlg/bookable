@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Elements, StripeProvider } from 'react-stripe-elements';
 import { Container, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import CheckoutForm from '../components/CheckoutForm';
+import CheckoutFormContainer from '../components/CheckoutFormContainer';
 import { hydrateCart } from '../actions/cart';
 
 class Checkout extends Component {
@@ -25,8 +26,7 @@ class Checkout extends Component {
   };
 
   render() {
-    const { cart } = this.props;
-    if (!cart.items.length) return <Redirect to="/cart" />;
+    if (!this.props.cart.items.length) return <Redirect to="/cart" />;
 
     const { error } = this.state;
 
@@ -34,14 +34,18 @@ class Checkout extends Component {
       <StripeProvider apiKey="pk_test_Yz7Xdr8O9u4rnQMYDVdgsu6a">
         <main className="section">
           <Container>
-            <h1 className="h4">Checkout</h1>
             {error && (
               <Alert variant="danger">
-                Whoops! There was an error. {error}
+                Whoops! There was an error. {error.message}
               </Alert>
             )}
+
+            <h1 className="h4">Checkout</h1>
+
+            <p className="font-size-5">Enter your payment details.</p>
+
             <Elements>
-              <CheckoutForm
+              <CheckoutFormContainer
                 onError={this.handleError}
                 onSuccess={this.handleSuccess}
                 onSubmit={this.handleSubmit}
@@ -53,6 +57,14 @@ class Checkout extends Component {
     );
   }
 }
+
+Checkout.propTypes = {
+  cart: PropTypes.object.isRequired,
+  hydrateCart: PropTypes.func.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired
+};
 
 const mapStateToProps = ({ cart }) => ({
   cart

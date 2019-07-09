@@ -19,12 +19,12 @@ class BookUserActionsContainer extends Component {
 
   handleAddToWishlist = e => {
     e.preventDefault();
-    this.props.addToWishlist(this.props.book);
+    this.props.addToWishlist(this.props.book.id);
   };
 
   handleRemoveFromWishlist = e => {
     e.preventDefault();
-    this.props.removeFromWishlist(this.props.book);
+    this.props.removeFromWishlist(this.props.book.id);
   };
 
   isInCart() {
@@ -38,12 +38,12 @@ class BookUserActionsContainer extends Component {
 
   handleAddToCart = e => {
     e.preventDefault();
-    this.props.addToCart(this.props.book, this.state.cartQuantity);
+    this.props.addToCart(this.props.book.id, this.state.cartQuantity);
   };
 
   handleRemoveFromCart = e => {
     e.preventDefault();
-    this.props.removeFromCart(this.props.book);
+    this.props.removeFromCart(this.props.book.id);
   };
 
   render() {
