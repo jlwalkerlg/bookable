@@ -20,8 +20,15 @@ const Register = ({
             There was an issue with the login attempt.
           </Alert>
         )}
+
         <h1>Register</h1>
-        <Form action="/register" method="POST" onSubmit={onSubmit}>
+
+        <Form
+          action="/register"
+          method="POST"
+          onSubmit={onSubmit}
+          className="mt-3"
+        >
           {/* Name */}
           <Form.Group controlId="name">
             <Form.Label>Name</Form.Label>
@@ -32,11 +39,9 @@ const Register = ({
               value={name}
               onChange={onChange}
             />
-            {validationErrors.name && (
-              <Form.Control.Feedback type="invalid">
-                {validationErrors.name}
-              </Form.Control.Feedback>
-            )}
+            <Form.Control.Feedback type="invalid">
+              {validationErrors.name}
+            </Form.Control.Feedback>
           </Form.Group>
 
           {/* Email */}
@@ -50,11 +55,9 @@ const Register = ({
               value={email}
               onChange={onChange}
             />
-            {validationErrors.email && (
-              <Form.Control.Feedback type="invalid">
-                {validationErrors.email}
-              </Form.Control.Feedback>
-            )}
+            <Form.Control.Feedback type="invalid">
+              {validationErrors.email}
+            </Form.Control.Feedback>
           </Form.Group>
 
           {/* Password */}
@@ -68,19 +71,17 @@ const Register = ({
               value={password}
               onChange={onChange}
             />
-            {validationErrors.password && (
-              <Form.Control.Feedback type="invalid">
-                {validationErrors.password}
-              </Form.Control.Feedback>
-            )}
+            <Form.Control.Feedback type="invalid">
+              {validationErrors.password}
+            </Form.Control.Feedback>
             <Form.Text className="text-secondary">
               Password must be at least 8 characters long.
             </Form.Text>
           </Form.Group>
 
-          <SubmitButton variant="primary" isLoading={isProcessing}>
-            Register
-          </SubmitButton>
+          <div className="text-right">
+            <SubmitButton isLoading={isProcessing}>Register</SubmitButton>
+          </div>
         </Form>
       </Container>
     </main>

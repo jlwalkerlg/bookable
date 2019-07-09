@@ -19,8 +19,15 @@ const Login = ({
             There was an issue with the login attempt.
           </Alert>
         )}
+
         <h1>Login</h1>
-        <Form action="/login" method="POST" onSubmit={onSubmit}>
+
+        <Form
+          action="/login"
+          method="POST"
+          onSubmit={onSubmit}
+          className="mt-3"
+        >
           {/* Email */}
           <Form.Group controlId="email">
             <Form.Label>Email</Form.Label>
@@ -47,15 +54,13 @@ const Login = ({
             />
           </Form.Group>
 
-          <SubmitButton isLoading={isProcessing} variant="primary">
-            Login
-          </SubmitButton>
+          <div className="d-flex justify-content-between flex-wrap">
+            <Link to="/forgot-password" className="default">
+              Forgot your password?
+            </Link>
+            <SubmitButton isLoading={isProcessing}>Login</SubmitButton>
+          </div>
         </Form>
-        <div className="mt-3">
-          <Link to="/forgot-password" className="default">
-            Forgot your password?
-          </Link>
-        </div>
       </Container>
     </main>
   );
