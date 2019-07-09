@@ -46,7 +46,7 @@ class ReviewsController extends Controller
     public function store(Request $request, User $user)
     {
         $attributes = $request->validate([
-            'review' => 'required|string|max:65535',
+            'review' => 'required|string|min:50|max:65535',
             'book_id' => 'required|int'
         ]);
 
@@ -62,7 +62,7 @@ class ReviewsController extends Controller
     public function update(Request $request, Review $review)
     {
         $attributes = $request->validate([
-            'review' => 'required|string|max:65535'
+            'review' => 'required|string|min:50|max:65535'
         ]);
 
         $review->update($attributes);
