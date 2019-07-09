@@ -24,7 +24,7 @@ import AuthorQuotes from './views/authors/AuthorQuotes';
 import CategoryQuotes from './views/categories/CategoryQuotes';
 import Reviews from './views/users/ReviewsContainer';
 import NewReview from './views/reviews/NewReview';
-import ReviewShow from './views/ReviewShow';
+import ReviewShow from './views/reviews/ReviewContainer';
 import Checkout from './views/Checkout';
 import CheckoutSuccess from './views/CheckoutSuccess';
 import User from './views/User';

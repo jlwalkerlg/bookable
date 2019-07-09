@@ -54,7 +54,7 @@ class NewReview extends Component {
     const { book } = this.state;
 
     try {
-      const review = await addReview(editorReview, book, user);
+      const review = await addReview(editorReview, book, user.id);
 
       this.props.history.push(`/reviews/${review.id}`);
     } catch (error) {

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Container, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { Editor } from 'react-draft-wysiwyg/dist/react-draft-wysiwyg';
 import SubmitButton from './SubmitButton';
 
