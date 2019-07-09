@@ -16,7 +16,16 @@ class CheckoutFormContainer extends Component {
     validationErrors: {}
   };
 
-  handleReady = cardElement => this.setState({ cardElement });
+  componentDidMount() {
+    this.unmounted = false;
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
+  handleReady = cardElement =>
+    !this.unmounted && this.setState({ cardElement });
 
   handleChange = e => {
     const field = e.target.id;
@@ -41,7 +50,7 @@ class CheckoutFormContainer extends Component {
       this.state.cardElement
     );
 
-    if (error) {
+    if (error && !this.unmounted) {
       this.setState({ isProcessing: false });
       this.props.onError(error);
       return;
@@ -55,6 +64,7 @@ class CheckoutFormContainer extends Component {
 
       this.handleServerResponse(response.data);
     } catch (error) {
+      if (this.unmounted) return;
       if (
         error.response &&
         error.response.status === 422 &&
@@ -70,7 +80,7 @@ class CheckoutFormContainer extends Component {
   };
 
   handleServerResponse = async response => {
-    if (response.error) {
+    if (response.error && !this.unmounted) {
       this.setState({ isProcessing: false });
       return this.props.onError(new Error(response.error));
     }
@@ -88,8 +98,10 @@ class CheckoutFormContainer extends Component {
         return this.handleServerResponse(response.data);
       }
 
-      this.setState({ isProcessing: false });
-      return this.props.onError(error);
+      if (!this.unmounted) {
+        this.setState({ isProcessing: false });
+        return this.props.onError(error);
+      }
     }
 
     return this.props.onSuccess(response);
