@@ -1,0 +1,34 @@
+.avatar-wrapper {
+  max-width: 200px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+.avatar-wrapper__overlay {
+  position: absolute;
+  bottom: 0;
+  height: 0;
+  border: none;
+  padding: 0;
+  width: 100%;
+  color: $light;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+
+  transition: height ease-out 0.2s;
+
+  &:hover {
+    text-decoration: none;
+    color: $light;
+    background: rgba(0, 0, 0, 0.9);
+  }
+
+  .avatar-wrapper:hover & {
+    height: 50%;
+  }
+}

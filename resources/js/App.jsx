@@ -27,8 +27,8 @@ import NewReview from './views/reviews/NewReview';
 import ReviewShow from './views/reviews/ReviewContainer';
 import Checkout from './views/checkout/Checkout';
 import CheckoutSuccess from './views/checkout/CheckoutSuccessContainer';
-import User from './views/User';
-import Orders from './views/Orders';
+import User from './views/users/User';
+import Orders from './views/users/Orders';
 import PasswordReset from './views/PasswordReset';
 import ForgotPassword from './views/ForgotPassword';
 

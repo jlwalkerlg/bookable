@@ -1,34 +1,42 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import URL from '../utils/URL';
-import Pagination from '../components/Pagination';
+import URL from '../../utils/URL';
+import Pagination from '../../components/Pagination';
+import withPagination from '../../components/withPagination';
 
 class Orders extends Component {
   state = {
     transactions: [],
-    count: 0,
-    limit: 10
+    count: 0
   };
+
+  limit = 10;
 
   componentDidMount() {
     this.fetchOrders();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.location.search !== this.props.location.search) {
+    if (prevProps.page !== this.props.page) {
       this.fetchOrders();
     }
   }
 
   fetchOrders = async () => {
     const { user } = this.props;
-    const { limit } = this.state;
-    const offset = this.calcOffset();
+    const offset = this.props.calcOffset(this.limit);
+
     try {
       const response = await axios.get(`/api/users/${user.id}/transactions`, {
-        params: { with: 'cart.items.book.author', limit, offset, count: true }
+        params: {
+          with: 'cart.items.book.author',
+          limit: this.limit,
+          offset,
+          count: true
+        }
       });
+
       const { transactions, count } = response.data;
       this.setState({ transactions, count });
     } catch (error) {
@@ -36,20 +44,8 @@ class Orders extends Component {
     }
   };
 
-  calcOffset() {
-    const page = this.getCurrentPage();
-    const { limit } = this.state;
-    return (page - 1) * limit;
-  }
-
-  getCurrentPage() {
-    return (
-      parseInt(URL.query(this.props.location.search).getParam('page')) || 1
-    );
-  }
-
   render() {
-    const { transactions, count, limit } = this.state;
+    const { transactions, count } = this.state;
 
     return (
       <div>
@@ -80,8 +76,8 @@ class Orders extends Component {
 
         <Pagination
           totalItems={count}
-          currentPage={this.getCurrentPage()}
-          pageSize={limit}
+          currentPage={this.props.page}
+          pageSize={this.limit}
           maxPages={5}
           url={`${this.props.location.pathname}?page=`}
           className="mt-3 justify-content-center pagination-warning"
@@ -95,4 +91,4 @@ const mapStateToProps = ({ user }) => ({
   user
 });
 
-export default connect(mapStateToProps)(Orders);
+export default withPagination(connect(mapStateToProps)(Orders));

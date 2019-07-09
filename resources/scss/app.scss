@@ -23,6 +23,7 @@ $enable-gradients: true;
 @import './components/_pagination';
 @import './components/_tag';
 @import './components/_file-input';
+@import './components/_avatar-wrapper';
 @import './_site-foot';
 @import './pages/_home';
 @import './pages/_show';
@@ -30,6 +31,13 @@ $enable-gradients: true;
 @import './pages/_categories';
 @import './pages/_browse';
 @import './_helpers';
+
+.username-edit-icon {
+  position: absolute;
+  right: -27px;
+  top: 0;
+  font-size: 20px;
+}
 
 .container-narrow {
   max-width: 600px;

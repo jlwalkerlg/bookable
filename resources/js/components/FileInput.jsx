@@ -15,7 +15,7 @@ class FileInput extends Component {
 
   render() {
     const { value } = this.state;
-    const { file } = this.props;
+    const { file, validationError } = this.props;
 
     return (
       <div className="file-group">
@@ -29,7 +29,11 @@ class FileInput extends Component {
           name={this.props.name}
           className="file-input"
           onChange={this.handleChange}
+          isInvalid={!!validationError}
         />
+        <Form.Control.Feedback type="invalid">
+          {validationError}
+        </Form.Control.Feedback>
       </div>
     );
   }
