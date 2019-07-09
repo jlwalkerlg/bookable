@@ -4,8 +4,8 @@ import { Elements, StripeProvider } from 'react-stripe-elements';
 import { Container, Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import CheckoutFormContainer from '../components/CheckoutFormContainer';
-import { hydrateCart } from '../actions/cart';
+import CheckoutFormContainer from '../../components/CheckoutFormContainer';
+import { hydrateCart } from '../../actions/cart';
 
 class Checkout extends Component {
   state = {
