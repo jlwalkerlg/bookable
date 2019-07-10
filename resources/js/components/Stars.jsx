@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Stars = ({ rating, editable, className, onClick, ...props }) => {
+const Stars = ({ rating = 0, editable, className, onClick, ...props }) => {
   return (
     <span className={`stars ${className || ''}`}>
       {new Array(5).fill(0).map((item, index) => (
@@ -25,7 +25,7 @@ const Stars = ({ rating, editable, className, onClick, ...props }) => {
 };
 
 Stars.propTypes = {
-  rating: PropTypes.number.isRequired,
+  rating: PropTypes.number,
   editable: PropTypes.bool
 };
 

@@ -25,7 +25,7 @@ class Book extends Component {
         isLoadingBook: true,
         isLoadingBooks: true,
         isLoadingQuotes: true,
-        isLoadingReviews: true,
+        isLoadingReviews: false,
         isLoadingUserReview: true,
         isLoadingUserRating: true,
         isLoadingShelves: true,
@@ -42,7 +42,9 @@ class Book extends Component {
         reviews: [],
         userReview: {},
         userRating: {},
-        shelves: []
+        shelves: [],
+        countReviews: 0,
+        offsetReviews: 0
       },
       callback
     );
@@ -119,14 +121,25 @@ class Book extends Component {
     }
   }
 
-  async fetchReviews() {
+  fetchReviews = async () => {
+    if (this.state.isLoadingReviews) return;
+
+    this.setState({ isLoadingReviews: true });
+
     const { bookId } = this.props.match.params;
+    const { offsetReviews } = this.state;
 
     try {
       const response = await axios.get('/api/reviews', {
-        params: { book_id: bookId, with: 'user' }
+        params: {
+          book_id: bookId,
+          with: 'user',
+          limit: 5,
+          count: true,
+          offset: offsetReviews
+        }
       });
-      let { reviews } = response.data;
+      let { reviews, count } = response.data;
 
       const ratings = await this.fetchRatings(reviews);
 
@@ -137,11 +150,19 @@ class Book extends Component {
           rating: ratings.filter(rating => rating.user_id === review.user_id)[0]
         }));
 
-      this.setState({ reviews, isLoadingReviews: false });
+      this.setState({
+        reviews: [...this.state.reviews, ...reviews],
+        countReviews: count,
+        offsetReviews: offsetReviews + response.data.reviews.length,
+        isLoadingReviews: false
+      });
     } catch (error) {
-      this.setState({ errorReviews: error, isLoadingReviews: false });
+      this.setState({
+        errorReviews: error,
+        isLoadingReviews: false
+      });
     }
-  }
+  };
 
   async fetchRatings(reviews) {
     const userIds = reviews.map(review => review.user_id).join(',');
@@ -366,6 +387,9 @@ class Book extends Component {
                 isLoading={this.state.isLoadingReviews}
                 error={this.state.errorReviews}
                 reviews={this.state.reviews}
+                onFetchReviews={this.fetchReviews}
+                countReviews={this.state.countReviews}
+                countUserReview={this.state.userReview.id ? 1 : 0}
               />
             </div>
           </Container>
