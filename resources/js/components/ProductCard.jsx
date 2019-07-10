@@ -61,6 +61,7 @@ class ProductCard extends Component {
     return (
       <div className={`product-card ${className || ''}`}>
         <img src={image} alt={book.title} className="product-card__img" />
+
         {user.id && wishlistButton && (
           <Form
             action="/"
@@ -84,15 +85,24 @@ class ProductCard extends Component {
             </Button>
           </Form>
         )}
+
         <Link to={`/books/${book.id}`} className="product-card__title">
           {book.title}
         </Link>
+
         {author && (
           <p className="product-card__author">
             <span className="text-secondary">by: </span>
             <Link to={`/authors/${author.id}`}>{author.name}</Link>
           </p>
         )}
+
+        <p className="product-card__rating">
+          Average Rating: {book.avg_rating.toFixed(2)}
+        </p>
+
+        <p className="product-card__date">Published: {book.publication_date}</p>
+
         <p className="product-card__price">£{book.price.toFixed(2)}</p>
       </div>
     );

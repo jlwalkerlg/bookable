@@ -19,6 +19,13 @@
     margin-bottom: 0;
   }
 
+  &__rating,
+  &__date {
+    margin: 0.3rem 0;
+    font-size: 0.8rem;
+    color: $secondary;
+  }
+
   &__price {
     color: $warning;
   }

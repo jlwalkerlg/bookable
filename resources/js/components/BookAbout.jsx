@@ -61,6 +61,10 @@ const BookAbout = ({ book, quotes, isLoadingQuotes, errorQuotes }) => {
                   <span className="font-weight-bold">Page Count:</span>{' '}
                   {book.num_pages}
                 </li>
+                <li>
+                  <span className="font-weight-bold">Average Rating:</span>{' '}
+                  {book.avg_rating.toFixed(2)}
+                </li>
               </ul>
             </section>
             <BookQuotes

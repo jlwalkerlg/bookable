@@ -47,6 +47,8 @@ const BookDisplay = ({
           <Col xs={12} md={8} className="text-center text-md-left">
             {/* Book title */}
             <h1 className="h1 font-display font-weight-bold">{book.title}</h1>
+
+            {/* Book author */}
             <p>
               <span className="text-secondary">by: </span>
               <Link to={`/authors/${author.id}`}>{author.name}</Link>
