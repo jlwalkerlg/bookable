@@ -125,6 +125,7 @@ class BooksController extends Controller
 
     /**
      * Get all books from carts in which the book in question was purchased.
+     * If less books are returned than requested, include some books from the same category.
      */
     public function similarBooks(Request $request, $bookId)
     {
@@ -153,6 +154,27 @@ class BooksController extends Controller
             $query->with(explode(',', $with));
         }
 
-        return $query->get();
+        $books = $query->get();
+
+        $remaining = $limit - $books->count();
+
+        if ($remaining > 0) {
+            $bookIds = $books->map(function ($book) {
+                return $book->id;
+            })->push($bookId);
+
+            $remainingBooks = Book::select('books.*')
+                ->join('category_book', 'category_book.book_id', '=', 'books.id')
+                ->whereIn('category_book.category_id', function ($query) use ($bookId) {
+                    $query->select('categories.id')->from('categories')->join('category_book', 'category_book.category_id', '=', 'categories.id')->where('category_book.book_id', $bookId);
+                })
+                ->whereNotIn('books.id', $bookIds)
+                ->limit($remaining)
+                ->get();
+
+            $books = $books->merge($remainingBooks);
+        }
+
+        return $books;
     }
 }
