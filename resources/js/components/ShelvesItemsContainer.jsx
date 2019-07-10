@@ -30,7 +30,10 @@ class ShelvesItemsContainer extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.page !== this.props.page) {
+    if (
+      prevProps.page !== this.props.page ||
+      prevProps.match.params.shelfId !== this.props.match.params.shelfId
+    ) {
       this.setState({ isLoading: true }, this.fetchData);
     }
   }
