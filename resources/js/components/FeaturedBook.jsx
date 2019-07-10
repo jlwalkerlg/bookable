@@ -18,6 +18,17 @@ const FeaturedBookMiddle = ({ book, author, heading }) => (
           <span className="text-secondary">by:</span>{' '}
           <Link to={`/authors/${author.id}`}>{author.name}</Link>
         </p>
+
+        <p>
+          <span className="text-secondary">Average Rating:</span>{' '}
+          {book.avg_rating.toFixed(2)}
+        </p>
+
+        <p>
+          <span className="text-secondary">Publication Date:</span>{' '}
+          {book.publication_date}
+        </p>
+
         <p className="h2 font-weight-bold text-warning">£{book.price}</p>
       </Col>
       <Col xs={12} md={6} lg={4} className="mb-5 mb-md-0">
@@ -74,6 +85,17 @@ const FeaturedBookLeft = ({ book, author, heading }) => (
           <span className="text-secondary">by:</span>{' '}
           <Link to={`/authors/${author.id}`}>{author.name}</Link>
         </p>
+
+        <p>
+          <span className="text-secondary">Average Rating:</span>{' '}
+          {book.avg_rating.toFixed(2)}
+        </p>
+
+        <p>
+          <span className="text-secondary">Publication Date:</span>{' '}
+          {book.publication_date}
+        </p>
+
         <p className="h2 font-weight-bold text-warning mb-4">£{book.price}</p>
         <Truncate
           html={book.description}
@@ -119,6 +141,16 @@ const FeaturedBookRight = ({ book, author, heading }) => (
         <p>
           <span className="text-secondary">by:</span>{' '}
           <Link to={`/authors/${author.id}`}>{author.name}</Link>
+        </p>
+
+        <p>
+          <span className="text-secondary">Average Rating:</span>{' '}
+          {book.avg_rating.toFixed(2)}
+        </p>
+
+        <p>
+          <span className="text-secondary">Publication Date:</span>{' '}
+          {book.publication_date}
         </p>
 
         <p className="h2 font-weight-bold text-warning mb-4">£12.00</p>
