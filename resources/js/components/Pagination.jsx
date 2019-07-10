@@ -25,9 +25,9 @@ const Pagination = ({
           <BPagination.Ellipsis disabled />
         </>
       )}
-      {pages.map((page, index) => (
+      {pages.map(page => (
         <BPagination.Item
-          key={index}
+          key={page}
           as={page !== currentPage ? Link : undefined}
           href={url + page}
           to={url + page}

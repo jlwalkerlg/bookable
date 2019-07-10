@@ -41,8 +41,8 @@ const Footer = ({ user, categories }) => {
               <span>Categories</span>
             </p>
             <ul className="list-unstyled">
-              {categories.map((category, index) => (
-                <li key={index}>
+              {categories.map(category => (
+                <li key={category.id}>
                   <Link to={`/categories/${category.id}`}>{category.name}</Link>
                 </li>
               ))}

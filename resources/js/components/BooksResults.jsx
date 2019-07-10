@@ -12,8 +12,8 @@ const BooksResults = ({ isLoading, error, books, count, page, limit }) => {
   return (
     <main>
       <div className="browse-products mb-4">
-        {books.map((book, index) => (
-          <ProductCard key={index} book={book} size="large" wishlistButton />
+        {books.map(book => (
+          <ProductCard key={book.id} book={book} size="large" wishlistButton />
         ))}
       </div>
       <Pagination

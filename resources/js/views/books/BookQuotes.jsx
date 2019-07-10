@@ -195,13 +195,13 @@ class UserQuotes extends Component {
                   {() => (
                     <>
                       <div className="col-count-2">
-                        {quotes.map((quote, index) => {
+                        {quotes.map(quote => {
                           const { author } = quote;
                           const userQuote = this.getUserQuote(quote);
 
                           return (
                             <QuoteCard
-                              key={index}
+                              key={quote.id}
                               quote={quote}
                               book={book}
                               author={author}

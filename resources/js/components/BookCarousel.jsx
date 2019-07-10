@@ -35,8 +35,8 @@ const BookCarousel = ({ books, jagged, cardClassName }) => {
   if (books.length < 5)
     return (
       <div className="d-flex justify-content-center flex-wrap">
-        {books.map((book, index) => (
-          <ProductCard key={index} book={book} className="mx-3" />
+        {books.map(book => (
+          <ProductCard key={book.id} book={book} className="mx-3" />
         ))}
       </div>
     );
@@ -47,7 +47,7 @@ const BookCarousel = ({ books, jagged, cardClassName }) => {
         const cardClass =
           (cardClassName || '') + (jagged && index % 2 !== 0 ? ' mt-lg-4' : '');
 
-        return <ProductCard key={index} book={book} className={cardClass} />;
+        return <ProductCard key={book.id} book={book} className={cardClass} />;
       })}
     </Slider>
   );

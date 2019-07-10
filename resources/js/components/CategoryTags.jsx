@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 const CategoryTags = ({ categories, onChange }) => {
   return (
     <>
-      {categories.map((category, index) => (
-        <div key={index} className="mr-2">
+      {categories.map(category => (
+        <div key={category.id} className="mr-2">
           <input
             type="checkbox"
             className="sr-only"

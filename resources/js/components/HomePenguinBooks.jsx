@@ -11,8 +11,8 @@ const HomePenguinBooks = ({ books }) => {
           <span>Penguin Classics</span>
         </h2>
         <div className="d-flex justify-content-center flex-wrap mb-4">
-          {books.map((book, index) => (
-            <ProductCard key={index} book={book} className="mx-3" />
+          {books.map(book => (
+            <ProductCard key={book.id} book={book} className="mx-3" />
           ))}
         </div>
       </Container>

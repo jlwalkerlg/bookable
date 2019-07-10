@@ -13,9 +13,9 @@ const BookQuotes = ({ book, quotes, isLoading, error }) => {
     <section id="quotes" className="mb-4">
       <h3 className="text-uppercase font-size-6">Quotes</h3>
       <ul className="list-unstyled mb-3">
-        {quotes.map((quote, index) => (
+        {quotes.map(quote => (
           <li
-            key={index}
+            key={quote.id}
             className="quote mb-3"
             dangerouslySetInnerHTML={sanitize.markup(quote.quote)}
           />
