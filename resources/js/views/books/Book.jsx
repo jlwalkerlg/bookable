@@ -304,7 +304,7 @@ class Book extends Component {
     const rating = 5 - parseInt(e.target.dataset.index);
 
     try {
-      const userRating = await addRating(rating, book, user);
+      const userRating = await addRating(rating, book.id, user.id);
       this.setState({ userRating, isProcessingRating: false });
     } catch (error) {
       console.log(error);
@@ -336,7 +336,7 @@ class Book extends Component {
   async updateRating(newRating) {
     const { userRating } = this.state;
 
-    await updateRating(userRating, newRating);
+    await updateRating(userRating.id, newRating);
 
     this.setState({
       userRating: { ...this.state.userRating, rating: newRating }
@@ -346,7 +346,7 @@ class Book extends Component {
   async deleteRating() {
     const { userRating } = this.state;
 
-    await deleteRating(userRating);
+    await deleteRating(userRating.id);
 
     this.setState({ userRating: {} });
   }
