@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import withPagination from '../../components/withPagination';
@@ -66,6 +67,15 @@ class OrdersContainer extends Component {
     );
   }
 }
+
+OrdersContainer.propTypes = {
+  user: PropTypes.object.isRequired,
+  page: PropTypes.number.isRequired,
+  calcOffset: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    pathname: PropTypes.string.isRequired
+  }).isRequired
+};
 
 const mapStateToProps = ({ user }) => ({
   user

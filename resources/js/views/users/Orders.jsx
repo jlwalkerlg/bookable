@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Loading from '../../components/Loading';
 import Pagination from '../../components/Pagination';
 import Order from '../../components/Order';
@@ -40,6 +41,16 @@ const Orders = ({
       )}
     </>
   );
+};
+
+Orders.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
+  error: PropTypes.object,
+  transactions: PropTypes.array.isRequired,
+  count: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
+  limit: PropTypes.number.isRequired,
+  pathname: PropTypes.string.isRequired
 };
 
 export default Orders;
