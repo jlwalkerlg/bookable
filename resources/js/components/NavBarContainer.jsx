@@ -10,7 +10,6 @@ class NavBarContainer extends Component {
 
     try {
       await this.props.logout();
-      this.props.history.push('/');
     } catch (error) {
       console.log(error);
     }
