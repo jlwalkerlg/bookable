@@ -14,7 +14,7 @@ const Register = ({
 }) => {
   return (
     <main className="bg-beige">
-      <Container className="register container-narrow min-vh-100-nav d-flex justify-content-center flex-column">
+      <Container className="section container-narrow min-vh-100-nav d-flex justify-content-center flex-column">
         {error && (
           <Alert variant="danger">
             There was an issue with the login attempt.
