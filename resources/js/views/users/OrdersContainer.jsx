@@ -16,6 +16,8 @@ class OrdersContainer extends Component {
 
   limit = 10;
 
+  source = axios.CancelToken.source();
+
   componentDidMount() {
     this.fetchOrders();
   }
@@ -26,12 +28,17 @@ class OrdersContainer extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.source.cancel();
+  }
+
   async fetchOrders() {
     const { user } = this.props;
     const offset = this.props.calcOffset(this.limit);
 
     try {
       const response = await axios.get(`/api/users/${user.id}/transactions`, {
+        cancelToken: this.source.token,
         params: {
           with: 'cart.items.book.author',
           limit: this.limit,
@@ -43,7 +50,7 @@ class OrdersContainer extends Component {
       const { transactions, count } = response.data;
       this.setState({ transactions, count, isLoading: false });
     } catch (error) {
-      this.setState({ error, isLoading: false });
+      if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
