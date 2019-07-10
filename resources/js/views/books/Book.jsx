@@ -19,6 +19,12 @@ class Book extends Component {
     isProcessingRating: false
   };
 
+  source = axios.CancelToken.source();
+
+  componentWillUnmount() {
+    this.source.cancel();
+  }
+
   initState(callback) {
     this.setState(
       {
@@ -83,12 +89,14 @@ class Book extends Component {
 
     try {
       const response = await axios.get(`/api/books/${bookId}`, {
+        cancelToken: this.source.token,
         params: { with: 'author.books,categories' }
       });
       const book = response.data;
       this.setState({ book, isLoadingBook: false });
     } catch (error) {
-      this.setState({ errorBook: error, isLoadingBook: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorBook: error, isLoadingBook: false });
     }
   }
 
@@ -97,12 +105,14 @@ class Book extends Component {
 
     try {
       const response = await axios.get('/api/quotes', {
+        cancelToken: this.source.token,
         params: { book_id: bookId, limit: 5 }
       });
       const { quotes } = response.data;
       this.setState({ quotes, isLoadingQuotes: false });
     } catch (error) {
-      this.setError({ errorQuotes: error, isLoadingQuotes: false });
+      if (!axios.isCancel(error))
+        this.setError({ errorQuotes: error, isLoadingQuotes: false });
     }
   }
 
@@ -112,12 +122,14 @@ class Book extends Component {
 
     try {
       const response = await axios.get('/api/ratings', {
+        cancelToken: this.source.token,
         params: { book_id: bookId, user_id: user.id }
       });
       const userRating = response.data.ratings[0] || {};
       this.setState({ userRating, isLoadingUserRating: false });
     } catch (error) {
-      this.setState({ errorUserRating: error, isLoadingUserRating: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorUserRating: error, isLoadingUserRating: false });
     }
   }
 
@@ -131,6 +143,7 @@ class Book extends Component {
 
     try {
       const response = await axios.get('/api/reviews', {
+        cancelToken: this.source.token,
         params: {
           book_id: bookId,
           with: 'user',
@@ -157,10 +170,11 @@ class Book extends Component {
         isLoadingReviews: false
       });
     } catch (error) {
-      this.setState({
-        errorReviews: error,
-        isLoadingReviews: false
-      });
+      if (!axios.isCancel(error))
+        this.setState({
+          errorReviews: error,
+          isLoadingReviews: false
+        });
     }
   };
 
@@ -169,6 +183,7 @@ class Book extends Component {
     const { bookId } = this.props.match.params;
 
     const response = await axios.get('/api/ratings', {
+      cancelToken: this.source.token,
       params: { book_id: bookId, user_ids: userIds }
     });
     return response.data.ratings;
@@ -180,6 +195,7 @@ class Book extends Component {
 
     try {
       const response = await axios.get('/api/reviews', {
+        cancelToken: this.source.token,
         params: { book_id: bookId, user_id: user.id }
       });
       const userReview = response.data.reviews[0];
@@ -188,7 +204,8 @@ class Book extends Component {
         isLoadingUserReview: false
       });
     } catch (error) {
-      this.setState({ errorUserReview: error, isLoadingUserReview: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorUserReview: error, isLoadingUserReview: false });
     }
   }
 
@@ -197,12 +214,14 @@ class Book extends Component {
 
     try {
       const response = await axios.get(`/api/books/${bookId}/similar`, {
+        cancelToken: this.source.token,
         params: { limit: 15 }
       });
       const books = response.data;
       this.setState({ books, isLoadingBooks: false });
     } catch (error) {
-      this.setState({ errorBooks, isLoadingBooks: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorBooks, isLoadingBooks: false });
     }
   }
 
@@ -220,7 +239,8 @@ class Book extends Component {
 
       this.setState({ shelves, isLoadingShelves: false });
     } catch (error) {
-      this.setState({ errorShelves, isLoadingShelves: false });
+      if (!axios.isCancel(error))
+        this.setState({ errorShelves, isLoadingShelves: false });
     }
   }
 
@@ -228,6 +248,7 @@ class Book extends Component {
     const { user } = this.props;
 
     const response = await axios.get('/api/shelves', {
+      cancelToken: this.source.token,
       params: { user_id: user.id }
     });
     return response.data.shelves;
@@ -238,6 +259,7 @@ class Book extends Component {
     const { bookId } = this.props.match.params;
 
     const response = await axios.get('/api/shelves/items', {
+      cancelToken: this.source.token,
       params: { book_id: bookId, user_id: user.id }
     });
     return response.data.items;
