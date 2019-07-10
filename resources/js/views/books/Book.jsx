@@ -238,13 +238,13 @@ class Book extends Component {
 
   removeFromShelf = async item => {
     try {
-      await removeFromShelf(item);
+      await removeFromShelf(item.id);
       const shelves = this.state.shelves.map(shelf =>
         shelf.id !== item.shelf_id ? shelf : { ...shelf, items: [] }
       );
       this.setState({ shelves });
     } catch (error) {
-      this.setState({ errorShelves });
+      this.setState({ errorShelves: error });
     }
   };
 
