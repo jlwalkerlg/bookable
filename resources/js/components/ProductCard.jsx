@@ -6,6 +6,10 @@ import { Form, Button } from 'react-bootstrap';
 import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
 
 class ProductCard extends Component {
+  state = {
+    isProcessing: false
+  };
+
   inWishlist() {
     const { wishlist } = this.props;
     const { items } = wishlist;
@@ -13,19 +17,40 @@ class ProductCard extends Component {
     return items && !!items.filter(item => item.book_id === bookId).length;
   }
 
-  addToWishlist = e => {
+  addToWishlist = async e => {
     e.preventDefault();
+
+    if (this.state.isProcessing) return;
+    this.setState({ isProcessing: true });
+
     const bookId = parseInt(e.target.dataset.bookId);
-    this.props.addToWishlist(bookId);
+
+    try {
+      await this.props.addToWishlist(bookId);
+    } catch (error) {
+      console.log(error);
+    }
+    this.setState({ isProcessing: false });
   };
 
-  removeFromWishlist = e => {
+  removeFromWishlist = async e => {
     e.preventDefault();
+
+    if (this.state.isProcessing) return;
+    this.setState({ isProcessing: true });
+
     const bookId = parseInt(e.target.dataset.bookId);
-    this.props.removeFromWishlist(bookId);
+
+    try {
+      await this.props.removeFromWishlist(bookId);
+    } catch (error) {
+      console.log(error);
+    }
+    this.setState({ isProcessing: false });
   };
 
   render() {
+    const { isProcessing } = this.state;
     const { book, className, wishlistButton, size, user } = this.props;
     const { author } = book;
 
@@ -48,6 +73,7 @@ class ProductCard extends Component {
               variant="link"
               type="submit"
               className="link-secondary p-0"
+              disabled={isProcessing}
               aria-label={
                 inWishlist ? 'Remove from wishlist' : 'Add to wishlist'
               }
