@@ -30,7 +30,7 @@ const BookUserReview = ({ review, user, isLoading, error, book }) => {
         </div>
         <Media>
           <img
-            src="https://via.placeholder.com/150/92c952"
+            src={user.avatar}
             alt={`${user.name} profile picture`}
             width="70"
             height="70"
@@ -42,7 +42,7 @@ const BookUserReview = ({ review, user, isLoading, error, book }) => {
                 <span className="h6 mr-2 d-block d-md-inline-block">
                   {user.name}
                 </span>
-                {review.rating && (
+                {review.rating.rating && (
                   <>
                     <span className="mr-2">rated it</span>
                     <Stars rating={review.rating.rating} />

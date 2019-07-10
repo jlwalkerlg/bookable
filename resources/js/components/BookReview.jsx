@@ -14,7 +14,7 @@ const BookReview = ({ review }) => {
   return (
     <Media className="mt-4">
       <img
-        src="https://via.placeholder.com/150/92c952"
+        src={user.avatar}
         alt={`${review.user.name} profile picture`}
         width="70"
         height="70"

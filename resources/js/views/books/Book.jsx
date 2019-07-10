@@ -198,7 +198,7 @@ class Book extends Component {
         cancelToken: this.source.token,
         params: { book_id: bookId, user_id: user.id }
       });
-      const userReview = response.data.reviews[0];
+      const userReview = response.data.reviews[0] || {};
       this.setState({
         userReview,
         isLoadingUserReview: false
