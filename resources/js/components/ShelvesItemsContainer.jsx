@@ -219,7 +219,11 @@ class ShelvesItemsContainer extends Component {
         item => item.book_id !== bookId
       );
 
-      this.setState({ shelfItems, isProcessingItem: false });
+      this.setState({
+        shelfItems,
+        count: this.state.count - 1,
+        isProcessingItem: false
+      });
     } catch (error) {
       console.log(error);
     }

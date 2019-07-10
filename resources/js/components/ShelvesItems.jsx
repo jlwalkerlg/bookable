@@ -19,7 +19,7 @@ const ShelvesItems = ({
   onDeleteItem,
   isProcessingItem
 }) => {
-  if (!items.length) return <p>{user.name} has not shelved any books.</p>;
+  if (!count) return <p>{user.name} has not shelved any books.</p>;
 
   return (
     <>
