@@ -6,6 +6,7 @@ import withPagination from '../../components/withPagination';
 import Loading from '../../components/Loading';
 import Ratings from './Ratings';
 import { addRating, updateRating, deleteRating } from '../../actions/ratings';
+import { Container } from 'react-bootstrap';
 
 class RatingsContainer extends Component {
   state = {
@@ -183,7 +184,7 @@ class RatingsContainer extends Component {
   };
 
   render() {
-    const { isLoading, error } = this.state;
+    const { isLoading, error, user } = this.state;
 
     if (isLoading)
       return (
@@ -195,20 +196,25 @@ class RatingsContainer extends Component {
     if (error) return <p>Something went wrong: {error.message}.</p>;
 
     return (
-      <Ratings
-        userId={this.props.match.params.userId}
-        user={this.state.user}
-        authUser={this.props.user}
-        ratings={this.state.ratings}
-        count={this.state.count}
-        limit={this.limit}
-        page={this.props.page}
-        pathname={this.props.location.pathname}
-        onAddRating={this.handleAddRating}
-        onUpdateRating={this.handleUpdateRating}
-        onDeleteRating={this.handleDeleteRating}
-        isProcessingRating={this.state.isProcessingRating}
-      />
+      <div className="section">
+        <Container>
+          <h1 className="h5 text-uppercase mb-0">{user.name}&apos;s Ratings</h1>
+          <Ratings
+            userId={this.props.match.params.userId}
+            user={this.state.user}
+            authUser={this.props.user}
+            ratings={this.state.ratings}
+            count={this.state.count}
+            limit={this.limit}
+            page={this.props.page}
+            pathname={this.props.location.pathname}
+            onAddRating={this.handleAddRating}
+            onUpdateRating={this.handleUpdateRating}
+            onDeleteRating={this.handleDeleteRating}
+            isProcessingRating={this.state.isProcessingRating}
+          />
+        </Container>
+      </div>
     );
   }
 }

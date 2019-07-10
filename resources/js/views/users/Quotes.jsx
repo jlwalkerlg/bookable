@@ -22,34 +22,40 @@ const Quotes = ({
           {user.name}&apos;s Quotes
         </h1>
 
-        <div className="col-count-2">
-          {quotes.map(quote => {
-            const { userQuote, book, author } = quote;
+        {!count && <p>{user.name} has not saved any quotes.</p>}
 
-            return (
-              <QuoteCard
-                key={quote.id}
-                quote={quote}
-                book={book}
-                author={author}
-                userQuote={userQuote}
-                authUser={authUser}
-                onSave={onSave}
-                onDelete={onDelete}
-                isProcessing={isProcessing}
-              />
-            );
-          })}
-        </div>
+        {count && (
+          <>
+            <div className="col-count-2">
+              {quotes.map(quote => {
+                const { userQuote, book, author } = quote;
 
-        <Pagination
-          totalItems={count}
-          currentPage={page}
-          pageSize={limit}
-          maxPages={5}
-          url={`${pathname}?page=`}
-          className="justify-content-center pagination-warning mt-4"
-        />
+                return (
+                  <QuoteCard
+                    key={quote.id}
+                    quote={quote}
+                    book={book}
+                    author={author}
+                    userQuote={userQuote}
+                    authUser={authUser}
+                    onSave={onSave}
+                    onDelete={onDelete}
+                    isProcessing={isProcessing}
+                  />
+                );
+              })}
+            </div>
+
+            <Pagination
+              totalItems={count}
+              currentPage={page}
+              pageSize={limit}
+              maxPages={5}
+              url={`${pathname}?page=`}
+              className="justify-content-center pagination-warning mt-4"
+            />
+          </>
+        )}
       </Container>
     </div>
   );
