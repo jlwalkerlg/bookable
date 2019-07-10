@@ -21,9 +21,10 @@ class CategoryContainer extends Component {
     quotes: [],
     count: 0,
     order_by: 'ratings_count',
-    order_dir: 'desc',
-    limit: 20
+    order_dir: 'desc'
   };
+
+  limit = 20;
 
   source = axios.CancelToken.source();
 
@@ -60,8 +61,8 @@ class CategoryContainer extends Component {
 
   async fetchBooks() {
     const { categoryId } = this.props.match.params;
-    const { order_by, order_dir, limit } = this.state;
-    const offset = this.props.calcOffset();
+    const { order_by, order_dir } = this.state;
+    const offset = this.props.calcOffset(this.limit);
 
     try {
       const response = await axios.get('/api/books', {
@@ -69,7 +70,7 @@ class CategoryContainer extends Component {
         params: {
           with: 'author',
           category_id: categoryId,
-          limit,
+          limit: this.limit,
           offset,
           order_by,
           order_dir,
@@ -136,7 +137,7 @@ class CategoryContainer extends Component {
                   error={this.state.errorBooks}
                   page={this.props.page}
                   count={this.state.count}
-                  limit={this.state.limit}
+                  limit={this.limit}
                   pathname={this.props.location.pathname}
                   onSortChange={this.handleSortChange}
                   orderBy={this.state.order_by}
