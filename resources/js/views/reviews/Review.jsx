@@ -36,7 +36,7 @@ const Review = ({
                 editorState={editorState}
                 wrapperClassName=""
                 toolbarClassName="mb-0"
-                editorClassName="border border-top-0"
+                editorClassName="border border-top-0 px-3"
                 onEditorStateChange={onChange}
               />
 
