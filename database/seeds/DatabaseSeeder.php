@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(CategoriesSeeder::class);
         $this->call(UserQuotesSeeder::class);
         $this->call(ReviewsSeeder::class);
+        $this->call(TransactionSeeder::class);
     }
 
     private function truncateAll()

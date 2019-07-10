@@ -5,6 +5,7 @@ use App\Cart;
 use App\CartItem;
 use App\Book;
 use App\User;
+use Illuminate\Support\Str;
 
 class CartSeeder extends Seeder
 {
@@ -24,7 +25,8 @@ class CartSeeder extends Seeder
         });
 
         foreach ($userIds as $userId) {
-            $cart = Cart::create(['user_id' => $userId]);
+            $intentId = $userId === 1 ? Str::random() : null;
+            $cart = Cart::create(['user_id' => $userId, 'intent_id' => $intentId]);
 
             CartItem::insert(
                 $bookIds->random(8)->map(function ($bookId) use ($cart) {
@@ -38,5 +40,19 @@ class CartSeeder extends Seeder
                 })->all()
             );
         }
+
+        $cart = Cart::create(['user_id' => 1]);
+
+        CartItem::insert(
+            $bookIds->random(8)->map(function ($bookId) use ($cart) {
+                return [
+                    'quantity' => rand(1, 3),
+                    'book_id' => $bookId,
+                    'cart_id' => $cart->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->all()
+        );
     }
 }
