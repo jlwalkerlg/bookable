@@ -51,7 +51,7 @@ const App = ({ loading }) =>
         <AppRoute exact path="/categories" component={Categories} />
         <AppRoute
           exact
-          path="/category/:categoryId([0-9]+)"
+          path="/categories/:categoryId([0-9]+)"
           component={Category}
         />
         <AppRoute

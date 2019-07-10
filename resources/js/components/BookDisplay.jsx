@@ -30,7 +30,7 @@ const BookDisplay = ({
             <img
               src={book.large_image_url || book.image_url}
               alt={book.title}
-              className="d-block mx-auto mr-md-0 book-highlight"
+              className="d-block mx-auto book-highlight"
             />
 
             {/* User Rating */}
@@ -67,7 +67,9 @@ const BookDisplay = ({
                 categories.map((category, index) => (
                   <React.Fragment key={category.id}>
                     {index !== 0 && ', '}
-                    <Link to={`/category/${category.id}`}>{category.name}</Link>
+                    <Link to={`/categories/${category.id}`}>
+                      {category.name}
+                    </Link>
                   </React.Fragment>
                 ))
               ) : (

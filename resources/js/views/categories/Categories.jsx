@@ -39,7 +39,7 @@ class Categories extends Component {
           <ul className="list-unstyled categories-list">
             {categories.map(category => (
               <li key={category.id} className="categories-list__category">
-                <Link to={`/category/${category.id}`}>
+                <Link to={`/categories/${category.id}`}>
                   <p>{category.name}</p>
                 </Link>
               </li>
