@@ -18,20 +18,26 @@ const Orders = ({
 
   return (
     <>
-      <ul className="list-unstyled">
-        {transactions.map(transaction => {
-          return <Order key={transaction.id} transaction={transaction} />;
-        })}
-      </ul>
+      {!count && <p>No transactions to show.</p>}
 
-      <Pagination
-        totalItems={count}
-        currentPage={page}
-        pageSize={limit}
-        maxPages={5}
-        url={`${pathname}?page=`}
-        className="mt-3 justify-content-center pagination-warning"
-      />
+      {count && (
+        <>
+          <ul className="list-unstyled">
+            {transactions.map(transaction => {
+              return <Order key={transaction.id} transaction={transaction} />;
+            })}
+          </ul>
+
+          <Pagination
+            totalItems={count}
+            currentPage={page}
+            pageSize={limit}
+            maxPages={5}
+            url={`${pathname}?page=`}
+            className="mt-3 justify-content-center pagination-warning"
+          />
+        </>
+      )}
     </>
   );
 };
