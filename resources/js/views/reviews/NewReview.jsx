@@ -46,7 +46,7 @@ class NewReview extends Component {
 
     if (this.state.isProcessing) return;
 
-    this.setState({ isProcessing: true });
+    this.setState({ isProcessing: true, error: null, validationErrors: {} });
 
     const editorReview = this.getEditorHtml();
 

@@ -14,7 +14,6 @@ const ReviewForm = ({
   isProcessing,
   validationErrors
 }) => {
-  console.log(validationErrors);
   return (
     <>
       <h1 className="h4">

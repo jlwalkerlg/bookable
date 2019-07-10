@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Editor } from 'react-draft-wysiwyg/dist/react-draft-wysiwyg';
 import sanitize from '../../utils/sanitize';
@@ -15,7 +16,8 @@ const Review = ({
   authUser,
   onBeginEdit,
   onCancelEdit,
-  onDelete
+  onDelete,
+  validationErrors
 }) => {
   const { book, user } = review;
 
@@ -39,6 +41,12 @@ const Review = ({
                 editorClassName="border border-top-0 px-3"
                 onEditorStateChange={onChange}
               />
+
+              {validationErrors.review && (
+                <div className="invalid-feedback d-block">
+                  {validationErrors.review}
+                </div>
+              )}
 
               <div className="text-right mt-3">
                 <SubmitButton
@@ -92,6 +100,20 @@ const Review = ({
       </Container>
     </main>
   );
+};
+
+Review.propTypes = {
+  review: PropTypes.object.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  isEditing: PropTypes.bool.isRequired,
+  editorState: PropTypes.object.isRequired,
+  onChange: PropTypes.func.isRequired,
+  isProcessing: PropTypes.bool.isRequired,
+  authUser: PropTypes.object.isRequired,
+  onBeginEdit: PropTypes.func.isRequired,
+  onCancelEdit: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  validationErrors: PropTypes.object.isRequired
 };
 
 export default Review;

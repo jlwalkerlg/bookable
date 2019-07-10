@@ -17,6 +17,7 @@ class ReviewShow extends Component {
     isLoading: true,
     error: null,
     review: {},
+    validationErrors: {},
     editorState: EditorState.createEmpty(),
     isProcessing: false,
     isEditing: false
@@ -63,7 +64,12 @@ class ReviewShow extends Component {
 
   handleCancelEdit = () => {
     const editorState = this.getEditorState(this.state.review.review);
-    this.setState({ editorState, isEditing: false });
+    this.setState({
+      editorState,
+      isEditing: false,
+      error: null,
+      validationErrors: {}
+    });
   };
 
   handleSubmit = async e => {
@@ -71,7 +77,7 @@ class ReviewShow extends Component {
 
     if (this.state.isProcessing) return;
 
-    this.setState({ isProcessing: true });
+    this.setState({ isProcessing: true, error: null, validationErrors: {} });
 
     const { review } = this.state;
 
@@ -82,12 +88,16 @@ class ReviewShow extends Component {
 
       this.setState({
         review: { ...review, ...newReview },
+        validationErrors: {},
+        error: null,
         isEditing: false,
         isProcessing: false
       });
     } catch (error) {
-      console.log(error);
-      this.setState({ isProcessing: false });
+      this.setState({
+        validationErrors: error.response.data.errors || {},
+        isProcessing: false
+      });
     }
   };
 
@@ -136,6 +146,7 @@ class ReviewShow extends Component {
         authUser={this.props.user}
         onBeginEdit={this.handleBeginEdit}
         onCancelEdit={this.handleCancelEdit}
+        validationErrors={this.state.validationErrors}
       />
     );
   }
