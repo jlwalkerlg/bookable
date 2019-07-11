@@ -2,20 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import QuoteCard from '../../components/QuoteCard';
 import Pagination from '../../components/Pagination';
+import QuoteCardContainer from '../../components/QuoteCardContainer';
 
 const BookQuotes = ({
   book,
   quotes,
   user,
-  onSave,
-  onDelete,
   count,
   page,
   pathname,
   limit,
-  isProcessing
+  onSave,
+  onDelete
 }) => {
   return (
     <div className="section">
@@ -27,16 +26,15 @@ const BookQuotes = ({
         <div className="col-count-2">
           {quotes.map(quote => {
             return (
-              <QuoteCard
+              <QuoteCardContainer
                 key={quote.id}
                 quote={quote}
                 book={book}
                 author={quote.author}
                 userQuote={quote.userQuote}
-                authUser={user}
+                user={user}
                 onSave={onSave}
                 onDelete={onDelete}
-                isProcessing={isProcessing}
               />
             );
           })}
@@ -59,13 +57,12 @@ BookQuotes.propTypes = {
   book: PropTypes.object.isRequired,
   quotes: PropTypes.array.isRequired,
   user: PropTypes.object.isRequired,
-  onSave: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
   count: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired,
   pathname: PropTypes.string.isRequired,
   limit: PropTypes.number.isRequired,
-  isProcessing: PropTypes.bool.isRequired
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
 };
 
 export default BookQuotes;

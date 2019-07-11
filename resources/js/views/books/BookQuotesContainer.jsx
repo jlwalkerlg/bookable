@@ -13,13 +13,16 @@ class BookQuotesContainer extends Component {
     book: {},
     quotes: [],
     userQuotes: [],
-    count: 0,
-    isProcessing: false
+    count: 0
   };
 
   limit = 10;
 
   source = axios.CancelToken.source();
+
+  componentWillUnmount() {
+    this.source.cancel();
+  }
 
   componentDidMount() {
     this.fetchData();
@@ -29,10 +32,6 @@ class BookQuotesContainer extends Component {
     if (prevProps.page !== this.props.page) {
       this.setState({ isLoading: true }, this.fetchData);
     }
-  }
-
-  componentWillUnmount() {
-    this.source.cancel();
   }
 
   async fetchData() {
@@ -100,71 +99,26 @@ class BookQuotesContainer extends Component {
     return response.data.quotes;
   }
 
-  handleSave = async e => {
-    e.preventDefault();
+  handleSave = (quoteId, userQuote) => {
+    const quotes = this.state.quotes.map(quote =>
+      quote.id !== quoteId ? quote : { ...quote, userQuote }
+    );
 
-    if (this.state.isProcessing) return;
-    this.setState({ isProcessing: true });
+    const userQuotes = [...this.state.userQuotes, userQuote];
 
-    const { user } = this.props;
-    const quoteId = parseInt(e.target.dataset.quoteId);
-
-    try {
-      const response = await axios.post(
-        `/api/users/${user.id}/quotes`,
-        {
-          quote_id: quoteId
-        },
-        {
-          cancelToken: this.source.token
-        }
-      );
-
-      const userQuote = response.data;
-
-      const quotes = this.state.quotes.map(quote =>
-        quote.id !== quoteId ? quote : { ...quote, userQuote }
-      );
-
-      const userQuotes = [...this.state.userQuotes, userQuote];
-
-      this.setState({ quotes, userQuotes, isProcessing: false });
-    } catch (error) {
-      if (axios.isCancel(error)) return;
-      console.log(error);
-      this.setState({ isProcessing: false });
-    }
+    this.setState({ quotes, userQuotes });
   };
 
-  handleDelete = async e => {
-    e.preventDefault();
+  handleDelete = quoteId => {
+    const quotes = this.state.quotes.map(quote =>
+      quote.id !== quoteId ? quote : { ...quote, userQuote: null }
+    );
 
-    if (this.state.isProcessing) return;
-    this.setState({ isProcessing: true });
+    const userQuotes = this.state.userQuotes.filter(
+      userQuote => userQuote.id !== quoteId
+    );
 
-    const { user } = this.props;
-    const quoteId = parseInt(e.target.dataset.quoteId);
-
-    try {
-      await axios.delete(`/api/users/${user.id}/quotes`, {
-        cancelToken: this.source.token,
-        params: { quote_id: quoteId }
-      });
-
-      const quotes = this.state.quotes.map(quote =>
-        quote.id !== quoteId ? quote : { ...quote, userQuote: null }
-      );
-
-      const userQuotes = this.state.userQuotes.filter(
-        userQuote => userQuote.id !== quoteId
-      );
-
-      this.setState({ quotes, userQuotes, isProcessing: false });
-    } catch (error) {
-      if (axios.isCancel(error)) return;
-      console.log(error);
-      this.setState({ isProcessing: false });
-    }
+    this.setState({ quotes, userQuotes });
   };
 
   render() {
@@ -184,13 +138,12 @@ class BookQuotesContainer extends Component {
         book={this.state.book}
         quotes={this.state.quotes}
         user={this.props.user}
-        onSave={this.handleSave}
-        onDelete={this.handleDelete}
         count={this.state.count}
         page={this.props.page}
         pathname={this.props.location.pathname}
         limit={this.limit}
-        isProcessing={this.state.isProcessing}
+        onSave={this.handleSave}
+        onDelete={this.handleDelete}
       />
     );
   }
