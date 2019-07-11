@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import Pagination from '../../components/Pagination';
@@ -48,6 +49,18 @@ const AuthorQuotes = ({
       </Container>
     </div>
   );
+};
+
+AuthorQuotes.propTypes = {
+  author: PropTypes.object.isRequired,
+  quotes: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
+  count: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
+  pathname: PropTypes.string.isRequired,
+  limit: PropTypes.number.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
 };
 
 export default AuthorQuotes;

@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import AuthorQuotes from './AuthorQuotes';
-import withPagination from '../../components/withPagination';
 import Loading from '../../components/Loading';
+import CategoryQuotes from './CategoryQuotes';
+import withPagination from '../../components/withPagination';
 
-class AuthorQuotesContainer extends Component {
+class CategoryQuotesContainer extends Component {
   state = {
     isLoading: true,
     error: null,
-    author: {},
+    category: {},
     quotes: [],
     userQuotes: [],
     count: 0
@@ -38,8 +38,8 @@ class AuthorQuotesContainer extends Component {
     const { user } = this.props;
 
     try {
-      let [author, { quotes, count }] = await axios.all([
-        this.fetchAuthor(),
+      let [category, { quotes, count }] = await axios.all([
+        this.fetchCategory(),
         this.fetchQuotes()
       ]);
 
@@ -54,16 +54,16 @@ class AuthorQuotesContainer extends Component {
         )[0]
       }));
 
-      this.setState({ author, quotes, userQuotes, count, isLoading: false });
+      this.setState({ category, quotes, userQuotes, count, isLoading: false });
     } catch (error) {
       if (!axios.isCancel(error)) this.setState({ error, isLoading: false });
     }
   }
 
-  async fetchAuthor() {
-    const { authorId } = this.props.match.params;
+  async fetchCategory() {
+    const { categoryId } = this.props.match.params;
 
-    const response = await axios.get(`/api/authors/${authorId}`, {
+    const response = await axios.get(`/api/categories/${categoryId}`, {
       cancelToken: this.source.token
     });
 
@@ -71,16 +71,16 @@ class AuthorQuotesContainer extends Component {
   }
 
   async fetchQuotes() {
-    const { authorId } = this.props.match.params;
+    const { categoryId } = this.props.match.params;
     const offset = this.props.calcOffset(this.limit);
 
     const response = await axios.get(`/api/quotes`, {
       cancelToken: this.source.token,
       params: {
-        author_id: authorId,
+        category_id: categoryId,
         limit: this.limit,
         offset,
-        with: 'book',
+        with: 'book,author',
         count: true
       }
     });
@@ -134,8 +134,8 @@ class AuthorQuotesContainer extends Component {
     if (error) return <p>Something went wrong: {error.message}.</p>;
 
     return (
-      <AuthorQuotes
-        author={this.state.author}
+      <CategoryQuotes
+        category={this.state.category}
         quotes={this.state.quotes}
         user={this.props.user}
         count={this.state.count}
@@ -149,7 +149,7 @@ class AuthorQuotesContainer extends Component {
   }
 }
 
-AuthorQuotesContainer.propTypes = {
+CategoryQuotesContainer.propTypes = {
   user: PropTypes.object.isRequired,
   page: PropTypes.number.isRequired,
   calcOffset: PropTypes.func.isRequired,
@@ -162,4 +162,6 @@ const mapStateToProps = ({ user }) => ({
   user
 });
 
-export default withPagination(connect(mapStateToProps)(AuthorQuotesContainer));
+export default withPagination(
+  connect(mapStateToProps)(CategoryQuotesContainer)
+);

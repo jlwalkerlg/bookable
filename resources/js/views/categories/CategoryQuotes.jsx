@@ -1,241 +1,69 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import { Container } from 'react-bootstrap';
-import Async from '../../components/Async';
 import Pagination from '../../components/Pagination';
-import URL from '../../utils/URL';
-import QuoteCard from '../../components/QuoteCard';
+import QuoteCardContainer from '../../components/QuoteCardContainer';
 
-class UserQuotes extends Component {
-  state = {
-    loading: {
-      category: true,
-      quotes: true,
-      userQuotes: true
-    },
-    errors: {
-      category: null,
-      quotes: null,
-      userQuotes: null
-    },
-    category: null,
-    quotes: null,
-    userQuotes: null,
-    count: null,
-    limit: 10
-  };
+const CategoryQuotes = ({
+  category,
+  quotes,
+  user,
+  count,
+  page,
+  pathname,
+  limit,
+  onSave,
+  onDelete
+}) => {
+  return (
+    <div className="section">
+      <Container>
+        <h1 className="h5 text-uppercase mb-0 mb-md-3">
+          Quotes in{' '}
+          <Link to={`/categories/${category.id}`}>{category.name}</Link>
+        </h1>
 
-  componentDidMount() {
-    this.fetchCategory();
-    this.fetchQuotes();
-  }
+        <div className="col-count-2">
+          {quotes.map(quote => {
+            return (
+              <QuoteCardContainer
+                key={quote.id}
+                quote={quote}
+                book={quote.book}
+                author={quote.author}
+                userQuote={quote.userQuote}
+                user={user}
+                onSave={onSave}
+                onDelete={onDelete}
+              />
+            );
+          })}
+        </div>
 
-  componentDidUpdate(prevProps) {
-    if (this.needsUpdate(prevProps)) {
-      this.fetchCategory();
-      this.fetchQuotes();
-    }
-  }
+        <Pagination
+          totalItems={count}
+          currentPage={page}
+          pageSize={limit}
+          maxPages={5}
+          url={`${pathname}?page=`}
+          className="justify-content-center pagination-warning mt-4"
+        />
+      </Container>
+    </div>
+  );
+};
 
-  needsUpdate(prevProps) {
-    return prevProps.location.search !== this.props.location.search;
-  }
+CategoryQuotes.propTypes = {
+  category: PropTypes.object.isRequired,
+  quotes: PropTypes.array.isRequired,
+  user: PropTypes.object.isRequired,
+  count: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
+  pathname: PropTypes.string.isRequired,
+  limit: PropTypes.number.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired
+};
 
-  fetchCategory = async () => {
-    this.setLoading({ category: true });
-
-    const { categoryId } = this.props.match.params;
-    try {
-      const response = await axios.get(`/api/categories/${categoryId}`);
-      const category = response.data;
-      this.setState({ category });
-      this.setError({ category: null });
-    } catch (error) {
-      this.setError({ category: error.response.statusText });
-    }
-    this.setLoading({ category: false });
-  };
-
-  fetchQuotes = async () => {
-    this.setLoading({ quotes: true });
-
-    const { limit } = this.state;
-    const offset = this.calcOffset();
-    const { categoryId } = this.props.match.params;
-    try {
-      const response = await axios.get(`/api/quotes`, {
-        params: {
-          category_id: categoryId,
-          limit,
-          offset,
-          with: 'book,author',
-          count: true
-        }
-      });
-      const { quotes, count } = response.data;
-      this.setState({ quotes, count });
-      this.setError({ quotes: null });
-
-      this.fetchUserQuotes(quotes);
-    } catch (error) {
-      this.setError({ quotes: error.response.statusText });
-      this.setLoading({ userQuotes: false });
-    }
-    this.setLoading({ quotes: false });
-  };
-
-  fetchUserQuotes = async quotes => {
-    this.setLoading({ userQuotes: true });
-
-    const { user } = this.props;
-    if (!user.id) {
-      this.setError({ userQuotes: null });
-      this.setLoading({ userQuotes: false });
-      return;
-    }
-
-    const quoteIds = (quotes || this.state.quotes).map(quote => quote.id);
-    try {
-      const response = await axios.get(`/api/users/${user.id}/quotes`, {
-        params: { quote_ids: quoteIds.join(',') }
-      });
-      const userQuotes = response.data.quotes;
-      this.setState({ userQuotes });
-      this.setError({ userQuotes: null });
-    } catch (error) {
-      console.log(error);
-      this.setError({ userQuotes: error.response.statusText });
-    }
-    this.setLoading({ userQuotes: false });
-  };
-
-  setLoading(loading) {
-    this.setState({ loading: { ...this.state.loading, ...loading } });
-  }
-
-  setError(error) {
-    this.setState({ errors: { ...this.state.errors, ...error } });
-  }
-
-  calcOffset() {
-    const page = this.getCurrentPage();
-    const { limit } = this.state;
-    return (page - 1) * limit;
-  }
-
-  getCurrentPage() {
-    return (
-      parseInt(URL.query(this.props.location.search).getParam('page')) || 1
-    );
-  }
-
-  getUserQuote(quote) {
-    const { user } = this.props;
-    if (!user.id) return null;
-
-    const { userQuotes } = this.state;
-    return userQuotes.filter(userQuote => userQuote.quote_id === quote.id)[0];
-  }
-
-  deleteQuote = async (e, userQuote) => {
-    e.preventDefault();
-    try {
-      await axios.delete(`/api/user-quotes/${userQuote.id}`);
-      const userQuotes = this.state.userQuotes.filter(
-        authQuote => authQuote.id !== userQuote.id
-      );
-      this.setState({ userQuotes });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  saveQuote = async (e, quote) => {
-    e.preventDefault();
-    const { user } = this.props;
-    try {
-      const response = await axios.post(`/api/users/${user.id}/quotes`, {
-        quote_id: quote.id
-      });
-      const userQuotes = [...this.state.userQuotes, response.data];
-      this.setState({ userQuotes });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  render() {
-    const { loading, errors, category, quotes, count, limit } = this.state;
-    const authUser = this.props.user;
-
-    return (
-      <div className="section">
-        <Container>
-          <Async
-            loading={loading.category}
-            error={errors.category}
-            retry={this.fetchBook}
-          >
-            {() => (
-              <>
-                <h1 className="h5 text-uppercase mb-0 mb-md-3">
-                  Quotes in{' '}
-                  <Link to={`/categories/${category.id}`}>{category.name}</Link>
-                </h1>
-                <Async
-                  loading={loading.quotes || loading.userQuotes}
-                  error={errors.quotes || errors.userQuotes}
-                  retry={
-                    errors.quotes
-                      ? this.fetchQuotes
-                      : () => this.fetchUserQuotes()
-                  }
-                >
-                  {() => (
-                    <>
-                      <div className="col-count-2">
-                        {quotes.map(quote => {
-                          const { book, author } = quote;
-                          const userQuote = this.getUserQuote(quote);
-
-                          return (
-                            <QuoteCard
-                              key={quote.id}
-                              quote={quote}
-                              book={book}
-                              author={author}
-                              userQuote={userQuote}
-                              authUser={authUser}
-                              onSave={this.saveQuote}
-                              onDelete={this.deleteQuote}
-                            />
-                          );
-                        })}
-                      </div>
-                      <Pagination
-                        totalItems={count}
-                        currentPage={this.getCurrentPage()}
-                        pageSize={limit}
-                        maxPages={5}
-                        url={`${this.props.location.pathname}?page=`}
-                        className="justify-content-center pagination-warning mt-4"
-                      />
-                    </>
-                  )}
-                </Async>
-              </>
-            )}
-          </Async>
-        </Container>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = ({ user }) => ({
-  user
-});
-
-export default connect(mapStateToProps)(UserQuotes);
+export default CategoryQuotes;
