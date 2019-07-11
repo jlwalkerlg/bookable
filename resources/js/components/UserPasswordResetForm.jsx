@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import SubmitButton from './SubmitButton';
 import { Form } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import SubmitButton from './SubmitButton';
+import { addNotification } from '../actions/notifications';
 
 class UserPasswordResetForm extends Component {
   state = {
@@ -25,9 +27,9 @@ class UserPasswordResetForm extends Component {
         email: user.email
       });
 
-      alert('An email has been sent to your account.');
+      this.props.addNotification('An email has been sent to your account.');
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
 
     this.setState({ isProcessing: false });
@@ -53,7 +55,15 @@ class UserPasswordResetForm extends Component {
 
 UserPasswordResetForm.propTypes = {
   user: PropTypes.object.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  addNotification: PropTypes.func.isRequired
 };
 
-export default UserPasswordResetForm;
+const mapDispatchToProps = {
+  addNotification
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(UserPasswordResetForm);

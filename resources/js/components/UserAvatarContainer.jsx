@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import UserAvatarModal from './UserAvatarModal';
 import { addUser } from '../actions/user';
+import { addNotification } from '../actions/notifications';
 
 class UserAvatarContainer extends Component {
   state = {
@@ -63,7 +64,7 @@ class UserAvatarContainer extends Component {
       if (error.response.data.errors) {
         this.setState({ validationErrors: error.response.data.errors });
       } else {
-        console.log(error);
+        this.props.addNotification(`Something went wrong: ${error.message}.`);
       }
       this.setState({ isProcessing: false });
     }
@@ -90,7 +91,7 @@ class UserAvatarContainer extends Component {
       this.props.onUpdateUser(updatedUser);
     } catch (error) {
       if (axios.isCancel(error)) return;
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
       this.setState({ isProcessing: false });
     }
   };
@@ -151,7 +152,8 @@ UserAvatarContainer.propTypes = {
   user: PropTypes.object.isRequired,
   authUser: PropTypes.object.isRequired,
   addUser: PropTypes.func.isRequired,
-  onUpdateUser: PropTypes.func.isRequired
+  onUpdateUser: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user }) => ({
@@ -159,7 +161,8 @@ const mapStateToProps = ({ user }) => ({
 });
 
 const mapDispatchToProps = {
-  addUser
+  addUser,
+  addNotification
 };
 
 export default connect(

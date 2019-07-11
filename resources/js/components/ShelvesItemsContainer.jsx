@@ -8,6 +8,7 @@ import ShelvesItems from './ShelvesItems';
 import Loading from './Loading';
 import { addRating, updateRating, deleteRating } from '../actions/ratings';
 import { removeFromShelf } from '../actions/shelves';
+import { addNotification } from '../actions/notifications';
 
 class ShelvesItemsContainer extends Component {
   state = {
@@ -140,7 +141,7 @@ class ShelvesItemsContainer extends Component {
 
       this.setState({ userRatings, shelfItems, isProcessingRating: false });
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
   };
 
@@ -165,7 +166,7 @@ class ShelvesItemsContainer extends Component {
           : await this.updateRating(rating, newRating);
       this.setState({ userRatings, shelfItems, isProcessingRating: false });
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
   };
 
@@ -225,7 +226,7 @@ class ShelvesItemsContainer extends Component {
         isProcessingItem: false
       });
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
   };
 
@@ -263,13 +264,23 @@ ShelvesItemsContainer.propTypes = {
   calcOffset: PropTypes.func.isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string.isRequired
-  }).isRequired
+  }).isRequired,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user }) => ({
   user
 });
 
+const mapDispatchToProps = {
+  addNotification
+};
+
 export default withRouter(
-  withPagination(connect(mapStateToProps)(ShelvesItemsContainer))
+  withPagination(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(ShelvesItemsContainer)
+  )
 );

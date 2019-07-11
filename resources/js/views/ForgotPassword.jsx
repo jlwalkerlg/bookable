@@ -34,7 +34,7 @@ class ForgotPassword extends Component {
         email
       });
     } catch (error) {
-      console.log(error);
+      return error;
     }
     this.setState({ isProcessing: false, submitted: true });
   };

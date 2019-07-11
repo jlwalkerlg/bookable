@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import SubmitButton from './SubmitButton';
 import { Form } from 'react-bootstrap';
 import { logout } from '../actions/user';
+import { addNotification } from '../actions/notifications';
 
 class UserDeleteAccountForm extends Component {
   state = {
@@ -35,10 +36,10 @@ class UserDeleteAccountForm extends Component {
 
       this.props.logout();
 
-      alert('Your account has been deleted!');
+      this.props.addNotification('Your account has been deleted!');
     } catch (error) {
       if (axios.isCancel(error)) return;
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
 
     this.setState({ isProcessing: false });
@@ -65,11 +66,13 @@ class UserDeleteAccountForm extends Component {
 UserDeleteAccountForm.propTypes = {
   user: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapDispatchToProps = {
-  logout
+  logout,
+  addNotification
 };
 
 export default connect(

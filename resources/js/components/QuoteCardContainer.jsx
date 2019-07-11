@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import QuoteCard from './QuoteCard';
+import { addNotification } from '../actions/notifications';
 
 class QuoteCardContainer extends Component {
   state = {
@@ -41,7 +43,7 @@ class QuoteCardContainer extends Component {
       this.setState({ isProcessing: false });
     } catch (error) {
       if (axios.isCancel(error)) return;
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
       this.setState({ isProcessing: false });
     }
   };
@@ -66,7 +68,7 @@ class QuoteCardContainer extends Component {
       this.setState({ isProcessing: false });
     } catch (error) {
       if (axios.isCancel(error)) return;
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
       this.setState({ isProcessing: false });
     }
   };
@@ -94,7 +96,15 @@ QuoteCardContainer.propTypes = {
   userQuote: PropTypes.object,
   user: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired
 };
 
-export default QuoteCardContainer;
+const mapDispatchToProps = {
+  addNotification
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(QuoteCardContainer);

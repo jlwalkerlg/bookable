@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import {
@@ -9,6 +10,7 @@ import {
 } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import { updateReview, deleteReview } from '../../actions/reviews';
+import { addNotification } from '../../actions/notifications';
 import Review from './Review';
 import Loading from '../../components/Loading';
 
@@ -117,7 +119,7 @@ class ReviewShow extends Component {
       await deleteReview(review.id);
       this.props.history.push(`/users/${user.id}/reviews`);
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
       this.setState({ isProcessing: false });
     }
   };
@@ -152,8 +154,28 @@ class ReviewShow extends Component {
   }
 }
 
+ReviewContainer.propTypes = {
+  user: PropTypes.object.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired
+  }).isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      reviewId: PropTypes.string.isRequired
+    }).isRequired
+  }).isRequired,
+  addNotification: PropTypes.func.isRequired
+};
+
 const mapStateToProps = ({ user }) => ({
   user
 });
 
-export default connect(mapStateToProps)(ReviewShow);
+const mapDispatchToProps = {
+  addNotification
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ReviewShow);

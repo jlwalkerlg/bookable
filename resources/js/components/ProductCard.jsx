@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
+import { addNotification } from '../actions/notifications';
 
 class ProductCard extends Component {
   state = {
@@ -28,7 +29,7 @@ class ProductCard extends Component {
     try {
       await this.props.addToWishlist(bookId);
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
     this.setState({ isProcessing: false });
   };
@@ -44,7 +45,7 @@ class ProductCard extends Component {
     try {
       await this.props.removeFromWishlist(bookId);
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
     this.setState({ isProcessing: false });
   };
@@ -117,7 +118,8 @@ ProductCard.propTypes = {
   book: PropTypes.object.isRequired,
   className: PropTypes.string,
   wishlistButton: PropTypes.bool,
-  size: PropTypes.string
+  size: PropTypes.string,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user, wishlist }) => ({
@@ -127,7 +129,8 @@ const mapStateToProps = ({ user, wishlist }) => ({
 
 const mapDispatchToProps = {
   addToWishlist,
-  removeFromWishlist
+  removeFromWishlist,
+  addNotification
 };
 
 export default connect(

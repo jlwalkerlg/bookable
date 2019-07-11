@@ -14,5 +14,4 @@ export const fetchCategories = () => dispatch =>
         order_by: 'random'
       }
     })
-    .then(response => dispatch(hydrateCategories(response.data.categories)))
-    .catch(error => console.log(error));
+    .then(response => dispatch(hydrateCategories(response.data.categories)));

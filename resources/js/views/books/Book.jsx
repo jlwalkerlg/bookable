@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Container } from 'react-bootstrap';
 import { addRating, updateRating, deleteRating } from '../../actions/ratings';
 import { addToShelf, removeFromShelf } from '../../actions/shelves';
+import { addNotification } from '../../actions/notifications';
 import Loading from '../../components/Loading';
 import BookDisplay from '../../components/BookDisplay';
 import BookAbout from '../../components/BookAbout';
@@ -307,7 +308,7 @@ class Book extends Component {
       const userRating = await addRating(rating, book.id, user.id);
       this.setState({ userRating, isProcessingRating: false });
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
       this.setState({ errorUserRating: error, isProcessingRating: false });
     }
   };
@@ -427,11 +428,19 @@ Book.propTypes = {
     params: PropTypes.shape({
       bookId: PropTypes.string.isRequired
     }).isRequired
-  }).isRequired
+  }).isRequired,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user }) => ({
   user
 });
 
-export default connect(mapStateToProps)(Book);
+const mapDispatchToProps = {
+  addNotification
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Book);

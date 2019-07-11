@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { logout } from '../actions/user';
+import { addNotification } from '../actions/notifications';
 import NavBar from './NavBar';
 
 class NavBarContainer extends Component {
@@ -11,7 +12,7 @@ class NavBarContainer extends Component {
     try {
       await this.props.logout();
     } catch (error) {
-      console.log(error);
+      this.props.addNotification(`Something went wrong: ${error.message}.`);
     }
   };
 
@@ -35,7 +36,8 @@ class NavBarContainer extends Component {
 NavBarContainer.propTypes = {
   user: PropTypes.object.isRequired,
   cart: PropTypes.object.isRequired,
-  logout: PropTypes.func.isRequired
+  logout: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user, cart }) => ({
@@ -44,7 +46,8 @@ const mapStateToProps = ({ user, cart }) => ({
 });
 
 const mapDispatchToProps = {
-  logout
+  logout,
+  addNotification
 };
 
 export default connect(

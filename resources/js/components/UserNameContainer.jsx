@@ -4,6 +4,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { addUser } from '../actions/user';
 import UserNameModal from '../views/users/UserNameModal';
+import { addNotification } from '../actions/notifications';
 
 class UserNameContainer extends Component {
   state = {
@@ -46,7 +47,7 @@ class UserNameContainer extends Component {
       if (error.response.data.errors) {
         this.setState({ validationErrors: error.response.data.errors });
       } else {
-        console.log(error);
+        this.props.addNotification(`Something went wrong: ${error.message}.`);
       }
       this.setState({ isProcessing: false });
     }
@@ -105,7 +106,8 @@ UserNameContainer.propTypes = {
   user: PropTypes.object.isRequired,
   authUser: PropTypes.object.isRequired,
   addUser: PropTypes.func.isRequired,
-  onUpdateUser: PropTypes.func.isRequired
+  onUpdateUser: PropTypes.func.isRequired,
+  addNotification: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user }) => ({
@@ -113,7 +115,8 @@ const mapStateToProps = ({ user }) => ({
 });
 
 const mapDispatchToProps = {
-  addUser
+  addUser,
+  addNotification
 };
 
 export default connect(
