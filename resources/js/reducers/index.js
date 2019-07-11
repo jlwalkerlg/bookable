@@ -6,6 +6,7 @@ import wishlist from './wishlist';
 import cart from './cart';
 import categories from './categories';
 import home from './home';
+import notifications from './notifications';
 
 const rootReducer = combineReducers({
   loading,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   wishlist,
   cart,
   categories,
-  home
+  home,
+  notifications
 });
 
 export default rootReducer;

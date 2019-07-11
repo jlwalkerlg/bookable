@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import NavBarContainer from '../components/NavBarContainer';
 import Footer from '../components/Footer';
+import Notifications from '../components/Notifications';
 
 class AppRoute extends Component {
   componentDidUpdate(prevProps) {
@@ -16,6 +17,7 @@ class AppRoute extends Component {
         <NavBarContainer {...this.props} />
         <Route {...this.props} />
         <Footer {...this.props} />
+        <Notifications {...this.props} />
       </>
     );
   }
