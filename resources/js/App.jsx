@@ -20,7 +20,7 @@ import Shelves from './views/users/Shelves';
 import Ratings from './views/users/RatingsContainer';
 import UsersQuotes from './views/users/QuotesContainer';
 import BookQuotes from './views/books/BookQuotesContainer';
-import AuthorQuotes from './views/authors/AuthorQuotes';
+import AuthorQuotes from './views/authors/AuthorQuotesContainer';
 import CategoryQuotes from './views/categories/CategoryQuotes';
 import Reviews from './views/users/ReviewsContainer';
 import NewReview from './views/reviews/NewReview';
