@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from 'react-bootstrap';
-import QuoteCard from '../../components/QuoteCard';
 import Pagination from '../../components/Pagination';
+import QuoteCardContainer from '../../components/QuoteCardContainer';
 
 const Quotes = ({
   quotes,
@@ -12,8 +12,7 @@ const Quotes = ({
   page,
   pathname,
   onSave,
-  onDelete,
-  isProcessing
+  onDelete
 }) => {
   return (
     <div className="section">
@@ -28,19 +27,16 @@ const Quotes = ({
           <>
             <div className="col-count-2">
               {quotes.map(quote => {
-                const { userQuote, book, author } = quote;
-
                 return (
-                  <QuoteCard
+                  <QuoteCardContainer
                     key={quote.id}
                     quote={quote}
-                    book={book}
-                    author={author}
-                    userQuote={userQuote}
-                    authUser={authUser}
+                    book={quote.book}
+                    author={quote.author}
+                    userQuote={quote.userQuote}
+                    user={authUser}
                     onSave={onSave}
                     onDelete={onDelete}
-                    isProcessing={isProcessing}
                   />
                 );
               })}

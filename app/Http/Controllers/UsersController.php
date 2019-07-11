@@ -281,8 +281,8 @@ class UsersController extends Controller
             $query->with(explode(',', $with));
         }
 
-        $quotes = $query->get();
+        $userQuotes = $query->get();
 
-        return !is_null($count) ? compact('user', 'quotes', 'count') : compact('user', 'quotes');
+        return !is_null($count) ? compact('user', 'userQuotes', 'count') : compact('user', 'userQuotes');
     }
 }
