@@ -24,12 +24,13 @@ class UserQuotesController extends Controller
         return $userQuote;
     }
 
-    public function delete(User $user, $quoteId)
+    public function delete(Request $request, User $user)
     {
-        $result = UserQuote::where([
-            'user_id' => $user->id,
-            'quote_id' => $quoteId
-        ])->limit(1)->delete();
-        return $result ? response(null, 204) : response(null, 404);
+        $request->validate([
+            'quote_id' => 'required|int'
+        ]);
+
+        $user->quotes()->where('quote_id', $request->quote_id)->limit(1)->delete();
+        return response(null, 204);
     }
 }

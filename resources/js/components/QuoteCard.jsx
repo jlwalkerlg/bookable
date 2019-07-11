@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Card, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import sanitize from '../utils/sanitize';
@@ -64,6 +65,17 @@ const QuoteCard = ({
       </Card.Body>
     </Card>
   );
+};
+
+QuoteCard.propTypes = {
+  quote: PropTypes.object.isRequired,
+  book: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  userQuote: PropTypes.object,
+  authUser: PropTypes.object.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  isProcessing: PropTypes.bool.isRequired
 };
 
 export default QuoteCard;

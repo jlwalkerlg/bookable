@@ -54,7 +54,7 @@ Route::get('/categories/{category}', 'CategoryController@show');
 Route::get('/quotes', 'QuotesController@index');
 
 Route::get('/users/{user}/quotes', 'UsersController@quotes');
-Route::delete('/users/{user}/quotes/{quoteId}', 'UserQuotesController@delete')->middleware('can:update,user');
+Route::delete('/users/{user}/quotes/', 'UserQuotesController@delete')->middleware('can:update,user');
 Route::post('/users/{user}/quotes', 'UserQuotesController@store')->middleware('can:update,user');
 
 Route::get('/users/{user}', 'UsersController@show');
