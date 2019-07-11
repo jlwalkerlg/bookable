@@ -93,7 +93,7 @@ class RatingsContainer extends Component {
 
     this.setState({ isProcessingRating: true });
 
-    const rating = 5 - parseInt(e.target.dataset.index);
+    const rating = parseInt(e.target.dataset.value);
     const bookId = parseInt(e.target.dataset.bookId);
     const { user } = this.props;
 
@@ -120,7 +120,7 @@ class RatingsContainer extends Component {
     if (this.state.isProcessingRating) return;
 
     const currentRating = parseInt(e.target.dataset.rating);
-    const newRating = 5 - parseInt(e.target.dataset.index);
+    const newRating = parseInt(e.target.dataset.value);
 
     if (currentRating === newRating) return;
 

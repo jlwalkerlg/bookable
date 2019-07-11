@@ -10,7 +10,7 @@ const BookUserRating = ({
 }) => {
   return (
     <div className="text-center mt-3">
-      <p>
+      <div>
         Your rating:
         <Stars
           className={`ml-2${isProcessing ? ' disabled' : ''}`}
@@ -18,7 +18,7 @@ const BookUserRating = ({
           onClick={userRating.id ? onUpdateRating : onAddRating}
           rating={userRating.rating || 0}
         />
-      </p>
+      </div>
     </div>
   );
 };

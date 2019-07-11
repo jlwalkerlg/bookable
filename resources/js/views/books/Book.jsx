@@ -301,7 +301,7 @@ class Book extends Component {
 
     const { user } = this.props;
     const { book } = this.state;
-    const rating = 5 - parseInt(e.target.dataset.index);
+    const rating = parseInt(e.target.dataset.value);
 
     try {
       const userRating = await addRating(rating, book.id, user.id);
@@ -321,7 +321,7 @@ class Book extends Component {
     this.setState({ isProcessingRating: true });
 
     const { userRating } = this.state;
-    let newRating = 5 - parseInt(e.target.dataset.index);
+    let newRating = parseInt(e.target.dataset.value);
 
     try {
       newRating === userRating.rating
