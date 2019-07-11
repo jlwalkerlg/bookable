@@ -3,8 +3,6 @@ export const USER_REMOVE = 'USER_REMOVE';
 
 export const LOADING_FINISH = 'LOADING_FINISH';
 
-export const BOOKS_FETCH = 'BOOKS_FETCH';
-
 export const WISHLIST_ADD = 'WISHLIST_ADD';
 export const WISHLIST_REMOVE = 'WISHLIST_REMOVE';
 export const WISHLIST_HYDRATE = 'WISHLIST_HYDRATE';
