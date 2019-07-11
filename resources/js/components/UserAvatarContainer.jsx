@@ -53,9 +53,11 @@ class UserAvatarContainer extends Component {
         }
       );
 
+      const updatedUser = { ...user, avatar: response.data };
+
       this.setState({ isProcessing: false, isModalOpen: false, file: null });
-      this.props.addUser({ ...user, avatar: response.data });
-      this.props.onUpdateAvatar(response.data);
+      this.props.addUser(updatedUser);
+      this.props.onUpdateUser(updatedUser);
     } catch (error) {
       if (axios.isCancel(error)) return;
       if (error.response.data.errors) {
@@ -81,9 +83,11 @@ class UserAvatarContainer extends Component {
         cancelToken: this.source.token
       });
 
+      const updatedUser = { ...user, avatar: '/storage/avatars/default.svg' };
+
       this.setState({ isProcessing: false, isModalOpen: false });
-      this.props.addUser({ ...user, avatar: '/storage/avatars/default.svg' });
-      this.props.onDeleteAvatar();
+      this.props.addUser(updatedUser);
+      this.props.onUpdateUser(updatedUser);
     } catch (error) {
       if (axios.isCancel(error)) return;
       console.log(error);
@@ -147,8 +151,7 @@ UserAvatarContainer.propTypes = {
   user: PropTypes.object.isRequired,
   authUser: PropTypes.object.isRequired,
   addUser: PropTypes.func.isRequired,
-  onUpdateAvatar: PropTypes.func.isRequired,
-  onDeleteAvatar: PropTypes.func.isRequired
+  onUpdateUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user }) => ({

@@ -40,7 +40,7 @@ class User extends Authenticatable
 
     protected function getAvatarAttribute($value)
     {
-        return '/storage/avatars/' . ($value ?? 'default.svg');
+        return url('/storage/avatars/' . ($value ?? 'default.svg'));
     }
 
     public function wishlist()

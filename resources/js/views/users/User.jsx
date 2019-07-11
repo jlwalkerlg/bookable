@@ -35,19 +35,7 @@ class User extends Component {
     }
   }
 
-  handleUpdateAvatar = avatar =>
-    this.setState({ user: { ...this.state.user, avatar } });
-
-  handleDeleteAvatar = () =>
-    this.setState({
-      user: {
-        ...this.state.user,
-        avatar: '/storage/avatars/default.svg'
-      }
-    });
-
-  handleUpdateName = name =>
-    this.setState({ user: { ...this.state.user, name } });
+  handleUpdateUser = user => this.setState({ user });
 
   render() {
     const { user, totalRatings, totalReviews, isLoading, error } = this.state;
@@ -69,13 +57,12 @@ class User extends Component {
             <Col xs={12} md={4} className="text-center">
               <UserNameContainer
                 user={user}
-                onUpdateName={this.handleUpdateName}
+                onUpdateUser={this.handleUpdateUser}
               />
 
               <UserAvatarContainer
                 user={user}
-                onUpdateAvatar={this.handleUpdateAvatar}
-                onDeleteAvatar={this.handleDeleteAvatar}
+                onUpdateUser={this.handleUpdateUser}
               />
             </Col>
 

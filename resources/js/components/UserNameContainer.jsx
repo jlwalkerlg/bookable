@@ -38,8 +38,8 @@ class UserNameContainer extends Component {
 
       const updatedUser = response.data;
 
-      this.props.addUser({ ...user, name: updatedUser.name });
-      this.props.onUpdateName(updatedUser.name);
+      this.props.addUser(updatedUser);
+      this.props.onUpdateUser(updatedUser);
       this.setState({ isModalOpen: false, isProcessing: false });
     } catch (error) {
       if (axios.isCancel(error)) return;
@@ -105,7 +105,7 @@ UserNameContainer.propTypes = {
   user: PropTypes.object.isRequired,
   authUser: PropTypes.object.isRequired,
   addUser: PropTypes.func.isRequired,
-  onUpdateName: PropTypes.func.isRequired
+  onUpdateUser: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ({ user }) => ({
