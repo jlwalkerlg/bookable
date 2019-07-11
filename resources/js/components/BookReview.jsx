@@ -16,8 +16,8 @@ const BookReview = ({ review }) => {
       <img
         src={user.avatar}
         alt={`${review.user.name} profile picture`}
-        width="70"
-        height="70"
+        width="50"
+        height="50"
         className="mr-3"
       />
       <Media.Body>
