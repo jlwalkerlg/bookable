@@ -14,7 +14,7 @@ import { addNotification } from '../../actions/notifications';
 import Review from './Review';
 import Loading from '../../components/Loading';
 
-class ReviewShow extends Component {
+class ReviewContainer extends Component {
   state = {
     isLoading: true,
     error: null,
@@ -178,4 +178,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(ReviewShow);
+)(ReviewContainer);
