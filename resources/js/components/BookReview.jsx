@@ -2,14 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Media } from 'react-bootstrap';
 import Stars from './Stars';
+import sanitize from '../utils/sanitize';
 
 const BookReview = ({ review }) => {
   const { user, rating } = review;
 
-  const reviewText =
+  const reviewMarkup = sanitize.markup(
     review.review.length > 300
       ? review.review
-      : review.review.slice(0, 300) + '...';
+      : review.review.slice(0, 300) + '...'
+  );
 
   return (
     <Media className="mt-4">
@@ -38,7 +40,7 @@ const BookReview = ({ review }) => {
           </p>
           <p className="text-secondary">{review.created_at}</p>
         </div>
-        <p className="mb-0">{reviewText}</p>
+        <p className="mb-0" dangerouslySetInnerHTML={reviewMarkup} />
         <Link to={`/reviews/${review.id}`} className="default d-block mt-2">
           Read full review
         </Link>

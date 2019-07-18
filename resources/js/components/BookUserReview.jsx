@@ -4,6 +4,7 @@ import { Media } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Stars from './Stars';
 import Loading from './Loading';
+import sanitize from '../utils/sanitize';
 
 const BookUserReview = ({ review, user, isLoading, error, book }) => {
   if (isLoading) return <Loading />;
@@ -18,6 +19,12 @@ const BookUserReview = ({ review, user, isLoading, error, book }) => {
         </Link>
       </div>
     );
+
+  const reviewMarkup = sanitize.markup(
+    review.review.length > 300
+      ? review.review
+      : review.review.slice(0, 300) + '...'
+  );
 
   return (
     <section className="mb-5">
@@ -51,7 +58,7 @@ const BookUserReview = ({ review, user, isLoading, error, book }) => {
               </p>
               <p className="text-secondary">{review.created_at}</p>
             </div>
-            <p>{review.review}</p>
+            <p dangerouslySetInnerHTML={reviewMarkup} />
           </Media.Body>
         </Media>
         <hr />
