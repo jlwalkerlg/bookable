@@ -7,7 +7,7 @@ const Truncate = ({ text, length, html, ending, btnClassName, ...props }) => {
 
   const toggleExpanded = () => setExpanded(!expanded);
 
-  const full = html ? sanitize.sanitize(html) : text;
+  const full = html ? sanitize.sanitize(html) : text || '';
 
   if (full.length <= length)
     return (
