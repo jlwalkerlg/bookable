@@ -11,6 +11,4 @@
 |
 */
 
-Route::get('{any}', function () {
-    return view('welcome');
-})->where('any', '^(?!api).*');
+Route::get('{any}', 'HomeController@index')->where('any', '^(?!api).*');
