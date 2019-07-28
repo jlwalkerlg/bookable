@@ -1,0 +1,41 @@
+# If first time mounting dbdata:
+# docker-compose exec web php artisan migrate
+# docker-compose exec web php artisan passport:install
+# docker-compose exec web php artisan db:seed
+
+version: '3.1'
+
+services:
+  web:
+    build: .
+    image: jlwalkerlg/bookable:dev
+    volumes:
+      - .:/var/www/bookable
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 'true'
+      APP_URL: http://localhost
+      DB_HOST: db
+    ports:
+      - 80:80
+    working_dir: /var/www/bookable
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mysql:8.0.17
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+    restart: always
+
+volumes:
+  dbdata:
