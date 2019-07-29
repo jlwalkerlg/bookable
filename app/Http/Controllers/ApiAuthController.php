@@ -22,7 +22,7 @@ class ApiAuthController extends Controller
 
         $token = $user->createToken('BookOn Personal Access Client')->accessToken;
 
-        return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
+        return $this->respondWithToken($token);
     }
 
     public function logout(Request $request)
@@ -56,6 +56,14 @@ class ApiAuthController extends Controller
 
         $user->notify(new AccountCreated);
 
-        return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, config('app.env') !== 'local', true);
+        return $this->respondWithToken($token);
+    }
+
+    private function respondWithToken($token)
+    {
+        // TODO: https only cookie in production after buying SSL certificate
+        // $secure = config('app.env') !== 'local';
+        $secure = false;
+        return response()->json(['token' => $token])->cookie('laravel_token', $token, 100, '/', null, $secure, true);
     }
 }
