@@ -16,9 +16,6 @@ const CheckoutSuccess = ({ transaction, items, user }) => {
 
         <h1 className="h4">Order Confirmation</h1>
         <p className="font-size-7 mb-0">Order #{transaction.id}</p>
-        <p className="font-size-7 mt-1">
-          Intent #{transaction.payment_intent_id}
-        </p>
 
         <p>
           Good news: your order was successful! A confirmation email will be

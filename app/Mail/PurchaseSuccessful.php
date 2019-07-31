@@ -37,6 +37,6 @@ class PurchaseSuccessful extends Mailable
      */
     public function build()
     {
-        return $this->view('mail.purchase-successful');
+        return $this->from('noreply@bookable.com', 'Bookable')->subject('Order confirmation')->view('mail.purchase-successful');
     }
 }

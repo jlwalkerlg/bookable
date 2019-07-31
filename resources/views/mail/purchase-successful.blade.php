@@ -9,6 +9,8 @@
 
 <p>Your order:</p>
 
+<p>Order #{{ $transaction->id }}</p>
+
 <ul>
     @foreach ($items as $item)
     <li>
