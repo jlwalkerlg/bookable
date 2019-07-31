@@ -1,0 +1,21 @@
+# Set up web server.
+FROM jlwalkerlg/php7.3.4-laravel:prod
+
+# Copy files.
+COPY . /var/www/bookable/
+
+# Enable virtual host config.
+WORKDIR /etc/apache2/sites-available/
+COPY vhosts.conf .
+RUN a2ensite vhosts.conf \
+  && a2dissite 000-default.conf \
+  && service apache2 restart
+
+# Set permissions on bookable directories.
+RUN chown -R www-data:www-data /var/www/bookable/storage/ /var/www/bookable/bootstrap/cache/
+
+# Remove any existing symlink and create new symlink.
+WORKDIR /var/www/bookable/
+RUN rm -f public/storage && php artisan storage:link
+
+WORKDIR /var/www/

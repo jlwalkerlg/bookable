@@ -1,20 +1,7 @@
 # Set up web server.
-FROM php:7.3.4-apache
+FROM jlwalkerlg/php7.3.4-laravel:prod
 
-# Download packages needed for installing php extensions and composer packages.
-RUN apt-get update && apt-get install -y \
-  zlib1g-dev \
-  libzip-dev
-
-# Download and enable required php extensions.
-RUN docker-php-ext-install \
-  pdo_mysql \
-  zip \
-  bcmath \
-  calendar \
-  && a2enmod rewrite \
-  && service apache2 restart \
-  && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 # Enable virtual host config.
 WORKDIR /etc/apache2/sites-available/

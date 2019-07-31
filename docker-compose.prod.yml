@@ -1,16 +1,11 @@
-# If first time mounting dbdata:
-# docker-compose exec web php artisan migrate
-# docker-compose exec web php artisan passport:install
-# docker-compose exec web php artisan db:seed
-
 version: '3.1'
 
 services:
   web:
-    build: .
-    image: jlwalkerlg/bookable:dev
-    volumes:
-      - .:/var/www/bookable
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    image: jlwalkerlg/bookable:prod
     ports:
       - 80:80
     working_dir: /var/www/bookable
@@ -19,9 +14,7 @@ services:
     restart: always
 
   queue:
-    image: jlwalkerlg/bookable:dev
-    volumes:
-      - .:/var/www/bookable
+    image: jlwalkerlg/bookable:prod
     working_dir: /var/www/bookable
     command: php /var/www/bookable/artisan queue:work --verbose --tries=3 --timeout=90
     depends_on:
