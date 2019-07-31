@@ -46,11 +46,14 @@ class PurchaseSuccessful extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)->view('mail.purchase-successful', [
-            'user' => $notifiable,
-            'items' => $this->items,
-            'transaction' => $this->transaction
-        ]);
+        return (new MailMessage)
+            ->view('mail.purchase-successful', [
+                'user' => $notifiable,
+                'items' => $this->items,
+                'transaction' => $this->transaction
+            ])
+            ->from('noreply@bookable.com', 'Bookable')
+            ->subject('Order confirmation');
     }
 
     /**
