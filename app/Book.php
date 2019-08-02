@@ -18,7 +18,7 @@ class Book extends Model
 
     public function getPublicationDateAttribute($value)
     {
-        return date('d M Y', jdtounix($value));
+        return date('d M Y', strtotime(jdtogregorian($value)));
     }
 
     public function getAvgRatingAttribute($value)
