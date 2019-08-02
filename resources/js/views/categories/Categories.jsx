@@ -8,7 +8,7 @@ class Categories extends Component {
   state = {
     isLoading: true,
     error: null,
-    categories: []
+    categories: [],
   };
 
   async componentDidMount() {
@@ -40,7 +40,7 @@ class Categories extends Component {
             {categories.map(category => (
               <li key={category.id} className="categories-list__category">
                 <Link to={`/categories/${category.id}`}>
-                  <p>{category.name}</p>
+                  <span>{category.name}</span>
                 </Link>
               </li>
             ))}
