@@ -6,7 +6,7 @@ import BooksFilterForm from './BooksFilterForm';
 
 class BooksFilterFormContainer extends Component {
   state = {
-    isFilterOpen: false
+    isFilterOpen: false,
   };
 
   handleToggle = () =>
@@ -26,7 +26,7 @@ class BooksFilterFormContainer extends Component {
       categories,
       params,
       onChange,
-      onCategoryChange
+      onCategoryChange,
     } = this.props;
 
     return (
@@ -53,15 +53,17 @@ class BooksFilterFormContainer extends Component {
         <MediaQuery minWidth={768}>
           {matches => (
             <Collapse in={isFilterOpen || matches}>
-              <BooksFilterForm
-                isLoading={isLoading}
-                error={error}
-                categories={categories}
-                {...params}
-                onChange={onChange}
-                onSubmit={this.handleSubmit}
-                onCategoryChange={onCategoryChange}
-              />
+              <div>
+                <BooksFilterForm
+                  isLoading={isLoading}
+                  error={error}
+                  categories={categories}
+                  {...params}
+                  onChange={onChange}
+                  onSubmit={this.handleSubmit}
+                  onCategoryChange={onCategoryChange}
+                />
+              </div>
             </Collapse>
           )}
         </MediaQuery>
@@ -77,7 +79,7 @@ BooksFilterFormContainer.propTypes = {
   params: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  onCategoryChange: PropTypes.func.isRequired
+  onCategoryChange: PropTypes.func.isRequired,
 };
 
 export default BooksFilterFormContainer;
