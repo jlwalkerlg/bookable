@@ -18,7 +18,7 @@ const BookListing = ({
   isProcessingRating,
   deletable,
   onDelete,
-  isProcessingDelete
+  isProcessingDelete,
 }) => {
   const userIdInt = parseInt(userId);
 
@@ -70,7 +70,7 @@ const BookListing = ({
               data-rating={userRating}
               data-book-id={book.id}
               onClick={userRating ? onUpdateRating : onAddRating}
-              className={isProcessingRating && 'disabled'}
+              className={isProcessingRating ? 'disabled' : null}
             />
           </p>
         )}
@@ -96,7 +96,7 @@ BookListing.propTypes = {
   isProcessingRating: PropTypes.bool,
   deletable: PropTypes.bool,
   onDelete: PropTypes.func,
-  isProcessingDelete: PropTypes.bool
+  isProcessingDelete: PropTypes.bool,
 };
 
 export default BookListing;

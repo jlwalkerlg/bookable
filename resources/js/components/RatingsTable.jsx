@@ -11,7 +11,7 @@ const RatingsTable = ({
   onAddRating,
   onUpdateRating,
   onDeleteRating,
-  isProcessingRating
+  isProcessingRating,
 }) => {
   const userIdInt = parseInt(userId);
 
@@ -54,7 +54,7 @@ const RatingsTable = ({
               {user.id && (
                 <td className="text-nowrap">
                   <Stars
-                    className={isProcessingRating && 'disabled'}
+                    className={isProcessingRating ? 'disabled' : null}
                     rating={rating.userRating || 0}
                     editable
                     data-book-id={book.id}
@@ -98,7 +98,7 @@ RatingsTable.propTypes = {
   onAddRating: PropTypes.func.isRequired,
   onUpdateRating: PropTypes.func.isRequired,
   onDeleteRating: PropTypes.func.isRequired,
-  isProcessingRating: PropTypes.bool.isRequired
+  isProcessingRating: PropTypes.bool.isRequired,
 };
 
 export default RatingsTable;

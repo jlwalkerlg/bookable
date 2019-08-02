@@ -12,7 +12,7 @@ const ShelfItemsTable = ({
   onUpdateRating,
   isProcessingRating,
   onDeleteItem,
-  isProcessingItem
+  isProcessingItem,
 }) => {
   const userIdInt = parseInt(userId);
 
@@ -60,7 +60,7 @@ const ShelfItemsTable = ({
                     data-rating={item.userRating}
                     data-book-id={item.book.id}
                     onClick={item.userRating ? onUpdateRating : onAddRating}
-                    className={isProcessingRating && 'disabled'}
+                    className={isProcessingRating ? 'disabled' : null}
                   />
                 </td>
               )}
@@ -100,7 +100,7 @@ ShelfItemsTable.propTypes = {
   onUpdateRating: PropTypes.func.isRequired,
   isProcessingRating: PropTypes.bool.isRequired,
   onDeleteItem: PropTypes.func.isRequired,
-  isProcessingItem: PropTypes.bool.isRequired
+  isProcessingItem: PropTypes.bool.isRequired,
 };
 
 export default ShelfItemsTable;
