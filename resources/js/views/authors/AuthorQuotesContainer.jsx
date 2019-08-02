@@ -13,7 +13,7 @@ class AuthorQuotesContainer extends Component {
     author: {},
     quotes: [],
     userQuotes: [],
-    count: 0
+    count: 0,
   };
 
   limit = 10;
@@ -40,7 +40,7 @@ class AuthorQuotesContainer extends Component {
     try {
       let [author, { quotes, count }] = await axios.all([
         this.fetchAuthor(),
-        this.fetchQuotes()
+        this.fetchQuotes(),
       ]);
 
       const userQuotes = user.id
@@ -51,7 +51,7 @@ class AuthorQuotesContainer extends Component {
         ...quote,
         userQuote: userQuotes.filter(
           userQuote => userQuote.quote_id === quote.id
-        )[0]
+        )[0],
       }));
 
       this.setState({ author, quotes, userQuotes, count, isLoading: false });
@@ -64,7 +64,7 @@ class AuthorQuotesContainer extends Component {
     const { authorId } = this.props.match.params;
 
     const response = await axios.get(`/api/authors/${authorId}`, {
-      cancelToken: this.source.token
+      cancelToken: this.source.token,
     });
 
     return response.data;
@@ -81,8 +81,8 @@ class AuthorQuotesContainer extends Component {
         limit: this.limit,
         offset,
         with: 'book',
-        count: true
-      }
+        count: true,
+      },
     });
 
     return response.data;
@@ -93,10 +93,10 @@ class AuthorQuotesContainer extends Component {
 
     const response = await axios.get(`/api/users/${user.id}/quotes`, {
       cancelToken: this.source.token,
-      params: { quote_ids: quoteIds }
+      params: { quote_ids: quoteIds },
     });
 
-    return response.data.quotes;
+    return response.data.userQuotes;
   }
 
   handleSave = (quoteId, userQuote) => {
@@ -154,12 +154,12 @@ AuthorQuotesContainer.propTypes = {
   page: PropTypes.number.isRequired,
   calcOffset: PropTypes.func.isRequired,
   location: PropTypes.shape({
-    pathname: PropTypes.string.isRequired
-  }).isRequired
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = ({ user }) => ({
-  user
+  user,
 });
 
 export default withPagination(connect(mapStateToProps)(AuthorQuotesContainer));

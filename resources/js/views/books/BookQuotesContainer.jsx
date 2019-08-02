@@ -13,7 +13,7 @@ class BookQuotesContainer extends Component {
     book: {},
     quotes: [],
     userQuotes: [],
-    count: 0
+    count: 0,
   };
 
   limit = 10;
@@ -40,7 +40,7 @@ class BookQuotesContainer extends Component {
     try {
       let [book, { quotes, count }] = await axios.all([
         this.fetchBook(),
-        this.fetchQuotes()
+        this.fetchQuotes(),
       ]);
 
       const userQuotes = user.id
@@ -51,7 +51,7 @@ class BookQuotesContainer extends Component {
         ...quote,
         userQuote: userQuotes.filter(
           userQuote => userQuote.quote_id === quote.id
-        )[0]
+        )[0],
       }));
 
       this.setState({ book, quotes, userQuotes, count, isLoading: false });
@@ -64,7 +64,7 @@ class BookQuotesContainer extends Component {
     const { bookId } = this.props.match.params;
 
     const response = await axios.get(`/api/books/${bookId}`, {
-      cancelToken: this.source.token
+      cancelToken: this.source.token,
     });
 
     return response.data;
@@ -81,8 +81,8 @@ class BookQuotesContainer extends Component {
         limit: this.limit,
         offset,
         with: 'author',
-        count: true
-      }
+        count: true,
+      },
     });
 
     return response.data;
@@ -93,10 +93,10 @@ class BookQuotesContainer extends Component {
 
     const response = await axios.get(`/api/users/${user.id}/quotes`, {
       cancelToken: this.source.token,
-      params: { quote_ids: quoteIds }
+      params: { quote_ids: quoteIds },
     });
 
-    return response.data.quotes;
+    return response.data.userQuotes;
   }
 
   handleSave = (quoteId, userQuote) => {
@@ -154,12 +154,12 @@ BookQuotesContainer.propTypes = {
   page: PropTypes.number.isRequired,
   calcOffset: PropTypes.func.isRequired,
   location: PropTypes.shape({
-    pathname: PropTypes.string.isRequired
-  }).isRequired
+    pathname: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = ({ user }) => ({
-  user
+  user,
 });
 
 export default withPagination(connect(mapStateToProps)(BookQuotesContainer));
