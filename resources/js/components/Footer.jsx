@@ -75,6 +75,13 @@ const Footer = ({ user, categories }) => {
             </address>
           </Col>
         </Row>
+        <Row>
+          <Col>
+            <p className="site-foot__small-print">
+              <small>* All book and author data from from Goodreads.</small>
+            </p>
+          </Col>
+        </Row>
       </Container>
     </footer>
   );
@@ -82,12 +89,12 @@ const Footer = ({ user, categories }) => {
 
 Footer.propTypes = {
   user: PropTypes.object.isRequired,
-  categories: PropTypes.array.isRequired
+  categories: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = ({ user, categories }) => ({
   user,
-  categories
+  categories,
 });
 
 export default connect(mapStateToProps)(Footer);

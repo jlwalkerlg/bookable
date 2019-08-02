@@ -8,3 +8,9 @@
     @extend .link-secondary;
   }
 }
+
+.site-foot__small-print {
+  color: $gray-600;
+  text-align: right;
+  margin: 1rem 0 0;
+}
