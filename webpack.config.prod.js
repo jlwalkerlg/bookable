@@ -1,9 +1,9 @@
 const path = require('path');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const WebpackNotifierPlugin = require('webpack-notifier');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: {
     index: './resources/js/app.js',
   },
@@ -11,12 +11,17 @@ module.exports = {
     filename: 'js/app.js',
     path: path.resolve(__dirname, 'public'),
   },
-  devtool: 'source-map', // Generates source maps.
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        /* additional options here */
+      }),
+    ],
+  },
   plugins: [
-    new WebpackNotifierPlugin(),
-    // new MiniCssExtractPlugin({
-    //   filename: 'css/app.css'
-    // }),
+    new MiniCssExtractPlugin({
+      filename: 'css/app.css',
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -59,17 +64,13 @@ module.exports = {
       {
         test: /\.s[ac]ss$/,
         use: [
-          // {
-          //   // Extract CSS out of JS bundle
-          //   loader: MiniCssExtractPlugin.loader,
-          //   // Tell MiniCssExtractPlugin where to find dist folder so images are linked to correctly
-          //   options: {
-          //     publicPath: '../'
-          //   }
-          // },
           {
-            // Inject CSS into DOM from JS bundle.
-            loader: 'style-loader',
+            // Extract CSS out of JS bundle
+            loader: MiniCssExtractPlugin.loader,
+            // Tell MiniCssExtractPlugin where to find dist folder so images are linked to correctly
+            options: {
+              publicPath: '../',
+            },
           },
           {
             // Parse CSS file.
