@@ -13,7 +13,7 @@ const Notification = ({ notification, onClose }) => {
     <Toast
       show={isOpen}
       onClose={handleClose}
-      autohide
+      autohide={!!notification.autohide}
       delay={3000}
       className="notification"
     >

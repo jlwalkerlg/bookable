@@ -6,11 +6,22 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import CheckoutFormContainer from '../../components/CheckoutFormContainer';
 import { hydrateCart } from '../../actions/cart';
+import { addNotification } from '../../actions/notifications';
 
 class Checkout extends Component {
   state = {
-    error: null
+    error: null,
   };
+
+  componentDidMount() {
+    const message = (
+      <span>
+        You can test the checkout process with Strip&apos;s test card{' '}
+        <code>4242 4242 4242 4242</code>.
+      </span>
+    );
+    this.props.addNotification(message, { autohide: false });
+  }
 
   handleSubmit = () => this.setState({ error: null });
 
@@ -21,7 +32,7 @@ class Checkout extends Component {
     this.props.hydrateCart({ ...cart, items: [] });
     this.props.history.push('/checkout/success', {
       transaction,
-      cart: oldCart
+      cart: oldCart,
     });
   };
 
@@ -62,16 +73,17 @@ Checkout.propTypes = {
   cart: PropTypes.object.isRequired,
   hydrateCart: PropTypes.func.isRequired,
   history: PropTypes.shape({
-    push: PropTypes.func.isRequired
-  }).isRequired
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = ({ cart }) => ({
-  cart
+  cart,
 });
 
 const mapDispatchToProps = {
-  hydrateCart
+  hydrateCart,
+  addNotification,
 };
 
 export default connect(
