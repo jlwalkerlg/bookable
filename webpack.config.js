@@ -10,6 +10,7 @@ module.exports = {
   output: {
     filename: 'js/index.js',
     path: path.resolve(__dirname, 'public'),
+    publicPath: '/',
   },
   devtool: 'source-map', // Generates source maps.
   plugins: [
