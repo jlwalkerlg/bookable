@@ -19,7 +19,7 @@
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <script src="{{ asset('js/app.js', config('app.env') !== 'local') }}"></script>
+    <script src="{{ asset('js/index.js', config('app.env') !== 'local') }}"></script>
 </body>
 
 </html>

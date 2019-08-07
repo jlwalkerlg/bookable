@@ -5,10 +5,10 @@ const WebpackNotifierPlugin = require('webpack-notifier');
 module.exports = {
   mode: 'development',
   entry: {
-    index: './resources/js/app.js',
+    index: './resources/js/index.js',
   },
   output: {
-    filename: 'js/app.js',
+    filename: 'js/index.js',
     path: path.resolve(__dirname, 'public'),
   },
   devtool: 'source-map', // Generates source maps.
