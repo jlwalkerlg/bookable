@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import { addToWishlist, removeFromWishlist } from '../actions/wishlist';
 import { addNotification } from '../actions/notifications';
 
 class ProductCard extends Component {
   state = {
-    isProcessing: false
+    isProcessing: false,
   };
 
   inWishlist() {
@@ -119,18 +120,18 @@ ProductCard.propTypes = {
   className: PropTypes.string,
   wishlistButton: PropTypes.bool,
   size: PropTypes.string,
-  addNotification: PropTypes.func.isRequired
+  addNotification: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ({ user, wishlist }) => ({
   user,
-  wishlist
+  wishlist,
 });
 
 const mapDispatchToProps = {
   addToWishlist,
   removeFromWishlist,
-  addNotification
+  addNotification,
 };
 
 export default connect(

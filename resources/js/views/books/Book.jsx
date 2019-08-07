@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import { addRating, updateRating, deleteRating } from '../../actions/ratings';
 import { addToShelf, removeFromShelf } from '../../actions/shelves';
 import { addNotification } from '../../actions/notifications';

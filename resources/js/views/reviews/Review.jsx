@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { Editor } from 'react-draft-wysiwyg/dist/react-draft-wysiwyg';
 import sanitize from '../../utils/sanitize';
 import SubmitButton from '../../components/SubmitButton';
-import { Container, Form, Button } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 const Review = ({
   review,

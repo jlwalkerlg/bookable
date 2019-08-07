@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row, Col } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
 import Truncate from './Truncate';
 import BookUserActionsContainer from './BookUserActionsContainer';
@@ -17,7 +19,7 @@ const BookDisplay = ({
   isProcessingRating,
   userRating,
   onAddRating,
-  onUpdateRating
+  onUpdateRating,
 }) => {
   const { author, categories } = book;
 
@@ -112,7 +114,7 @@ BookDisplay.propTypes = {
   isProcessingRating: PropTypes.bool.isRequired,
   userRating: PropTypes.object.isRequired,
   onAddRating: PropTypes.func.isRequired,
-  onUpdateRating: PropTypes.func.isRequired
+  onUpdateRating: PropTypes.func.isRequired,
 };
 
 export default BookDisplay;

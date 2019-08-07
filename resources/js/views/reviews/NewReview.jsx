@@ -7,7 +7,8 @@ import draftToHtml from 'draftjs-to-html';
 import { addReview } from '../../actions/reviews';
 import Loading from '../../components/Loading';
 import ReviewForm from '../../components/ReviewForm';
-import { Container, Alert } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
 
 class NewReview extends Component {
   state = {
@@ -16,7 +17,7 @@ class NewReview extends Component {
     book: {},
     validationErrors: {},
     editorState: EditorState.createEmpty(),
-    isProcessing: false
+    isProcessing: false,
   };
 
   async componentDidMount() {
@@ -61,7 +62,7 @@ class NewReview extends Component {
       this.setState({
         error,
         validationErrors: error.response.data.errors || {},
-        isProcessing: false
+        isProcessing: false,
       });
     }
   };
@@ -103,12 +104,12 @@ class NewReview extends Component {
 NewReview.propTypes = {
   user: PropTypes.object.isRequired,
   history: PropTypes.shape({
-    push: PropTypes.func.isRequired
-  }).isRequired
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = ({ user }) => ({
-  user
+  user,
 });
 
 export default connect(mapStateToProps)(NewReview);

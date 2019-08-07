@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Media from 'react-responsive';
 import Loading from '../../components/Loading';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import WishlistProductRow from '../../components/WishlistProductRow';
 import WishlistProductListing from '../../components/WishlistProductListing';
 
@@ -15,7 +16,7 @@ const Wishlist = ({
   isProcessingWishlist,
   isProcessingCart,
   onAddToCart,
-  onRemoveFromCart
+  onRemoveFromCart,
 }) => {
   if (isLoading) return <Loading />;
 
@@ -90,7 +91,7 @@ Wishlist.propTypes = {
   isProcessingWishlist: PropTypes.bool.isRequired,
   isProcessingCart: PropTypes.bool.isRequired,
   onAddToCart: PropTypes.func.isRequired,
-  onRemoveFromCart: PropTypes.func.isRequired
+  onRemoveFromCart: PropTypes.func.isRequired,
 };
 
 export default Wishlist;

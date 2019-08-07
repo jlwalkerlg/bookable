@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import Loading from './Loading';
 
 const Async = ({ loading, error, retry, children }) => {

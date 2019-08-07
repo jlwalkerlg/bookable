@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Media, Form, Button } from 'react-bootstrap';
+import Media from 'react-bootstrap/Media';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 const WishlistProductListing = ({
   item,
@@ -9,7 +11,7 @@ const WishlistProductListing = ({
   onRemoveItem,
   isProcessingCart,
   onAddToCart,
-  onRemoveFromCart
+  onRemoveFromCart,
 }) => {
   const { book } = item;
   const { author } = book;
@@ -79,7 +81,7 @@ WishlistProductListing.propTypes = {
   onRemoveItem: PropTypes.func.isRequired,
   isProcessingCart: PropTypes.bool.isRequired,
   onAddToCart: PropTypes.func.isRequired,
-  onRemoveFromCart: PropTypes.func.isRequired
+  onRemoveFromCart: PropTypes.func.isRequired,
 };
 
 export default WishlistProductListing;

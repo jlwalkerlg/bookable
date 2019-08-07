@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Form } from 'react-bootstrap';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 import Loading from './Loading';
 import CategoryTags from './CategoryTags';
 import SubmitButton from './SubmitButton';
@@ -17,7 +18,7 @@ const BooksFilterForm = ({
   max_date,
   onChange,
   onSubmit,
-  onCategoryChange
+  onCategoryChange,
 }) => {
   if (isLoading) return <Loading />;
 
@@ -139,7 +140,7 @@ BooksFilterForm.propTypes = {
   max_date: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  onCategoryChange: PropTypes.func.isRequired
+  onCategoryChange: PropTypes.func.isRequired,
 };
 
 export default BooksFilterForm;

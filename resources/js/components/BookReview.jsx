@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Media } from 'react-bootstrap';
+import Media from 'react-bootstrap/Media';
 import Stars from './Stars';
 import sanitize from '../utils/sanitize';
 

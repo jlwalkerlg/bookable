@@ -1,15 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-  Form,
-  Button,
-  Container,
-  Badge
-} from 'react-bootstrap';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Badge from 'react-bootstrap/Badge';
 
 const NavBar = ({ user, cartItemsCount, onLogout }) => {
   return (
@@ -136,7 +134,7 @@ const NavBar = ({ user, cartItemsCount, onLogout }) => {
 NavBar.propTypes = {
   user: PropTypes.object.isRequired,
   cartItemsCount: PropTypes.number.isRequired,
-  onLogout: PropTypes.func.isRequired
+  onLogout: PropTypes.func.isRequired,
 };
 
 export default NavBar;

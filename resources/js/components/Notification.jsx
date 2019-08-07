@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Toast } from 'react-bootstrap';
+import Toast from 'react-bootstrap/Toast';
 
 const Notification = ({ notification, onClose }) => {
   const [isOpen, setOpen] = useState(true);

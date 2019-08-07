@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Media, Button, Form } from 'react-bootstrap';
+import Media from 'react-bootstrap/Media';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import Stars from './Stars';
 
 const BookListing = ({

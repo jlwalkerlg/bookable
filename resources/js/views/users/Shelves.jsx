@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row, Col } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import ShelvesListContainer from '../../components/ShelvesListContainer';
 import ShelvesItemsContainer from '../../components/ShelvesItemsContainer';
 
@@ -28,9 +30,9 @@ Shelves.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({
       userId: PropTypes.string.isRequired,
-      shelfId: PropTypes.string
-    }).isRequired
-  }).isRequired
+      shelfId: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default Shelves;

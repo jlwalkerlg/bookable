@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { Button } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
 import UserAvatarModal from './UserAvatarModal';
 import { addUser } from '../actions/user';
 import { addNotification } from '../actions/notifications';

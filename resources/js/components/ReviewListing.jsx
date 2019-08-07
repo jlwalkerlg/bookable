@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Media } from 'react-bootstrap';
+import Media from 'react-bootstrap/Media';
 import sanitize from '../utils/sanitize';
 
 const reviewText = review =>

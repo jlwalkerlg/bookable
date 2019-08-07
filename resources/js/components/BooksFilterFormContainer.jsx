@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import MediaQuery from 'react-responsive';
-import { Collapse } from 'react-bootstrap';
+import Collapse from 'react-bootstrap/Collapse';
 import BooksFilterForm from './BooksFilterForm';
 
 class BooksFilterFormContainer extends Component {

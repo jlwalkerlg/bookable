@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import Cart from './Cart';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import { removeFromCart } from '../../actions/cart';
 
 class CartContainer extends Component {

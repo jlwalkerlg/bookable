@@ -3,7 +3,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import SubmitButton from './SubmitButton';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { logout } from '../actions/user';
 import { addNotification } from '../actions/notifications';
 

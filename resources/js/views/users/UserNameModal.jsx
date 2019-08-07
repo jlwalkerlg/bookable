@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 import SubmitButton from '../../components/SubmitButton';
 
 const UserNameModal = ({
@@ -10,7 +11,7 @@ const UserNameModal = ({
   onSubmit,
   onChange,
   validationErrors,
-  isProcessing
+  isProcessing,
 }) => {
   return (
     <Modal show={isOpen} onHide={onClose}>
@@ -56,7 +57,7 @@ UserNameModal.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   validationErrors: PropTypes.object.isRequired,
-  isProcessing: PropTypes.bool.isRequired
+  isProcessing: PropTypes.bool.isRequired,
 };
 
 export default UserNameModal;

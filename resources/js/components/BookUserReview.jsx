@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Media } from 'react-bootstrap';
+import Media from 'react-bootstrap/Media';
 import { Link } from 'react-router-dom';
 import Stars from './Stars';
 import Loading from './Loading';

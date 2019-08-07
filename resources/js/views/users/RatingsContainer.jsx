@@ -6,7 +6,7 @@ import withPagination from '../../components/withPagination';
 import Loading from '../../components/Loading';
 import Ratings from './Ratings';
 import { addRating, updateRating, deleteRating } from '../../actions/ratings';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 
 class RatingsContainer extends Component {
   state = {

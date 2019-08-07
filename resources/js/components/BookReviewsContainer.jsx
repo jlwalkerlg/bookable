@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import BookReviews from './BookReviews';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import BookUserReview from './BookUserReview';
 
 class BookReviewsContainer extends Component {

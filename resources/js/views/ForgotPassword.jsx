@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Container, Alert } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
 import axios from 'axios';
 import SubmitButton from '../components/SubmitButton';
 
@@ -8,7 +10,7 @@ class ForgotPassword extends Component {
     email: '',
     isInvalidEmail: false,
     isProcessing: false,
-    submitted: false
+    submitted: false,
   };
 
   emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -31,7 +33,7 @@ class ForgotPassword extends Component {
 
     try {
       await axios.post('/api/passwords/reset', {
-        email
+        email,
       });
     } catch (error) {
       return error;

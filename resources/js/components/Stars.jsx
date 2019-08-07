@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, ListGroup } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Media from 'react-responsive';
 
 const PlainStars = ({ rating, className, onClick }) => {
@@ -147,7 +148,7 @@ Stars.propTypes = {
   rating: PropTypes.number,
   editable: PropTypes.bool,
   className: PropTypes.string,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
 };
 
 export default Stars;

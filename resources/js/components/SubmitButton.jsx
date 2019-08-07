@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Spinner } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 
 const SubmitButton = ({
   isLoading,
@@ -8,7 +9,7 @@ const SubmitButton = ({
   size = 'md',
   className,
   onClick,
-  children
+  children,
 }) => {
   return (
     <Button
@@ -39,7 +40,7 @@ SubmitButton.propTypes = {
   children: PropTypes.oneOfType([PropTypes.object, PropTypes.string])
     .isRequired,
   onClick: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 export default SubmitButton;

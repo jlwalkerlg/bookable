@@ -1,5 +1,5 @@
 import React from 'react';
-import { Spinner } from 'react-bootstrap';
+import Spinner from 'react-bootstrap/Spinner';
 
 const Loading = () => (
   <div className="h-100 d-flex justify-content-center align-items-center">

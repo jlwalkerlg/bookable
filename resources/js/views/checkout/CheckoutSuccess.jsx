@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Container } from 'react-bootstrap';
+import Alert from 'react-bootstrap/Alert';
+import Container from 'react-bootstrap/Container';
 import OrderListing from '../../components/OrderListing';
 
 const CheckoutSuccess = ({ transaction, items, user }) => {
@@ -62,7 +63,7 @@ const CheckoutSuccess = ({ transaction, items, user }) => {
 
 CheckoutSuccess.propTypes = {
   transaction: PropTypes.object.isRequired,
-  items: PropTypes.array.isRequired
+  items: PropTypes.array.isRequired,
 };
 
 export default CheckoutSuccess;

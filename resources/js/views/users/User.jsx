@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -18,7 +20,7 @@ class User extends Component {
     user: {},
     totalRatings: 0,
     totalReviews: 0,
-    name: this.props.user.name || ''
+    name: this.props.user.name || '',
   };
 
   async componentDidMount() {
@@ -111,12 +113,12 @@ class User extends Component {
 }
 
 const mapStateToProps = ({ user }) => ({
-  user
+  user,
 });
 
 const mapDispatchToProps = {
   addUser,
-  logout
+  logout,
 };
 
 export default connect(

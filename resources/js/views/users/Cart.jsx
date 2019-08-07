@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Row, Col } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Loading from '../../components/Loading';
 import Media from 'react-responsive';
 import ProductRow from '../../components/ProductRow';
@@ -13,7 +14,7 @@ const Cart = ({
   isLoading,
   error,
   isProcessingDelete,
-  onDeleteItem
+  onDeleteItem,
 }) => {
   if (isLoading) return <Loading />;
 
@@ -86,7 +87,7 @@ Cart.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   error: PropTypes.object,
   isProcessingDelete: PropTypes.bool.isRequired,
-  onDeleteItem: PropTypes.func.isRequired
+  onDeleteItem: PropTypes.func.isRequired,
 };
 
 export default Cart;

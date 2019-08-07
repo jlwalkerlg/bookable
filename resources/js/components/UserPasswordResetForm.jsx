@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { Form } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 import { connect } from 'react-redux';
 import SubmitButton from './SubmitButton';
 import { addNotification } from '../actions/notifications';

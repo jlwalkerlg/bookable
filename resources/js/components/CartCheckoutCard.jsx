@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
 
 const CartCheckoutCard = ({ items }) => {
   const count = items.reduce((prev, current) => prev + current.quantity, 0);

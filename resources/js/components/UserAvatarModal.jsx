@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, Button } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import FileInput from './FileInput';
 import SubmitButton from './SubmitButton';
 
@@ -13,7 +15,7 @@ const UserAvatarModal = ({
   onChange,
   isProcessing,
   onDelete,
-  validationErrors
+  validationErrors,
 }) => {
   return (
     <Modal show={isOpen} onHide={onClose}>
@@ -67,7 +69,7 @@ UserAvatarModal.propTypes = {
   onChange: PropTypes.func.isRequired,
   isProcessing: PropTypes.bool.isRequired,
   onDelete: PropTypes.func.isRequired,
-  validationErrors: PropTypes.object.isRequired
+  validationErrors: PropTypes.object.isRequired,
 };
 
 export default UserAvatarModal;

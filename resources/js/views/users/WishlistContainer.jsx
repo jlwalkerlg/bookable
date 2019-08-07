@@ -5,7 +5,7 @@ import axios from 'axios';
 import { removeFromWishlist } from '../../actions/wishlist';
 import { addToCart, removeFromCart } from '../../actions/cart';
 import Wishlist from './Wishlist';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 
 class WishlistContainer extends Component {
   state = {

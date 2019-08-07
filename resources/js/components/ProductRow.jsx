@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Row, Col, Media, Form, Button } from 'react-bootstrap';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Media from 'react-bootstrap/Media';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 const ProductRow = ({ item, isProcessingDelete, onDelete }) => {
   const { book } = item;
@@ -54,7 +58,7 @@ const ProductRow = ({ item, isProcessingDelete, onDelete }) => {
 ProductRow.propTypes = {
   item: PropTypes.object.isRequired,
   isProcessingDelete: PropTypes.bool.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default ProductRow;

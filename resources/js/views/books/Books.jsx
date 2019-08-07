@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { Container, Row, Col } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import URL from '../../utils/URL';
 import SortBySelect from '../../components/SortBySelect';
 import BooksFilterFormContainer from '../../components/BooksFilterFormContainer';
@@ -16,7 +18,7 @@ const sortOptions = {
   'price.desc': 'Price (desc)',
   'price.asc': 'Price (asc)',
   'publication_date.desc': 'Date (desc)',
-  'publication_date.asc': 'Date (asc)'
+  'publication_date.asc': 'Date (asc)',
 };
 
 class Books extends Component {
@@ -34,11 +36,11 @@ class Books extends Component {
       min_rating: '',
       max_rating: '',
       min_date: '',
-      max_date: ''
+      max_date: '',
     },
     categories: [],
     books: [],
-    count: 0
+    count: 0,
   };
 
   source = axios.CancelToken.source();
@@ -66,7 +68,7 @@ class Books extends Component {
     try {
       const response = await axios.get('/api/books', {
         cancelToken: this.source.token,
-        params
+        params,
       });
       const { books, count } = response.data;
       this.setState({ books, count, isLoadingBooks: false });
@@ -79,11 +81,11 @@ class Books extends Component {
   async fetchCategories() {
     try {
       const response = await axios.get('/api/categories', {
-        cancelToken: this.source.token
+        cancelToken: this.source.token,
       });
       const categories = response.data.categories.map(category => ({
         ...category,
-        checked: false
+        checked: false,
       }));
       this.setState({ categories, isLoadingCategories: false });
     } catch (error) {
@@ -103,7 +105,7 @@ class Books extends Component {
 
     const result = {
       offset: this.props.calcOffset(params.limit),
-      count: true
+      count: true,
     };
 
     if (categoryIds.length) {
@@ -129,7 +131,7 @@ class Books extends Component {
 
   handleFilterChange = e => {
     this.setState({
-      params: { ...this.state.params, [e.target.id]: e.target.value }
+      params: { ...this.state.params, [e.target.id]: e.target.value },
     });
   };
 
@@ -140,7 +142,7 @@ class Books extends Component {
         return category.id === categoryId
           ? { ...category, checked: !category.checked }
           : category;
-      })
+      }),
     });
   };
 
@@ -161,7 +163,7 @@ class Books extends Component {
       books,
       count,
       categories,
-      params
+      params,
     } = this.state;
     const { limit } = params;
     const { page } = this.props;
@@ -209,11 +211,11 @@ class Books extends Component {
 Books.propTypes = {
   page: PropTypes.number.isRequired,
   location: PropTypes.shape({
-    search: PropTypes.string.isRequired
+    search: PropTypes.string.isRequired,
   }).isRequired,
   history: PropTypes.shape({
-    push: PropTypes.func.isRequired
-  }).isRequired
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default withPagination(Books);

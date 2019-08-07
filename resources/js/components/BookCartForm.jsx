@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Button } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 const BookCartForm = ({
   quantity,
   onChange,
   isInCart,
   addToCart,
-  removeFromCart
+  removeFromCart,
 }) => {
   return (
     <Form
@@ -53,7 +54,7 @@ BookCartForm.propTypes = {
   onChange: PropTypes.func.isRequired,
   isInCart: PropTypes.bool.isRequired,
   addToCart: PropTypes.func.isRequired,
-  removeFromCart: PropTypes.func.isRequired
+  removeFromCart: PropTypes.func.isRequired,
 };
 
 export default BookCartForm;

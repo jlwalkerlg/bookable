@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import Pagination from '../../components/Pagination';
 import QuoteCardContainer from '../../components/QuoteCardContainer';
 

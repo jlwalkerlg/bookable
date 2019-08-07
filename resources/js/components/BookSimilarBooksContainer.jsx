@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import BookCarousel from './BookCarousel';
 import Loading from './Loading';
 

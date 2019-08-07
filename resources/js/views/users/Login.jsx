@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Alert, Form, Button } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import SubmitButton from '../../components/SubmitButton';
 
 const Login = ({
@@ -9,7 +12,7 @@ const Login = ({
   error,
   isProcessing,
   onChange,
-  onSubmit
+  onSubmit,
 }) => {
   return (
     <main className="bg-beige">

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Container, Alert } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import URL from '../utils/URL';
@@ -11,7 +13,7 @@ class PasswordReset extends Component {
     password: '',
     isProcessing: false,
     success: false,
-    validationErrors: {}
+    validationErrors: {},
   };
 
   handleChange = e =>
@@ -19,8 +21,8 @@ class PasswordReset extends Component {
       [e.target.name]: e.target.value,
       validationErrors: {
         ...this.state.validationErrors,
-        [e.target.name]: null
-      }
+        [e.target.name]: null,
+      },
     });
 
   handleSubmit = async e => {
@@ -36,14 +38,14 @@ class PasswordReset extends Component {
     try {
       await axios.post(`/api/passwords/reset/${token}`, {
         email,
-        password
+        password,
       });
       this.setState({ success: true, isProcessing: false });
     } catch (error) {
       if (error.response && error.response.data.errors) {
         this.setState({
           validationErrors: error.response.data.errors,
-          isProcessing: false
+          isProcessing: false,
         });
       } else {
         this.setState({ error, isProcessing: false });
@@ -58,7 +60,7 @@ class PasswordReset extends Component {
       isProcessing,
       success,
       error,
-      validationErrors
+      validationErrors,
     } = this.state;
     const { token } = this.props.match.params;
 

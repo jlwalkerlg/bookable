@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dropdown, Form } from 'react-bootstrap';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Form from 'react-bootstrap/Form';
 
 const BookShelvesForm = ({
   shelves,
   onRemoveShelfItem,
   onAddShelfItem,
-  isProcessing
+  isProcessing,
 }) => {
   return (
     <Dropdown>
@@ -48,7 +49,7 @@ BookShelvesForm.propTypes = {
   shelves: PropTypes.array.isRequired,
   onRemoveShelfItem: PropTypes.func.isRequired,
   onAddShelfItem: PropTypes.func.isRequired,
-  isProcessing: PropTypes.bool.isRequired
+  isProcessing: PropTypes.bool.isRequired,
 };
 
 export default BookShelvesForm;

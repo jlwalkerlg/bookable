@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Media, Form, Button } from 'react-bootstrap';
+import Media from 'react-bootstrap/Media';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 const ProductListing = ({ item, isProcessingDelete, onDelete }) => {
   const { book } = item;
@@ -50,7 +52,7 @@ const ProductListing = ({ item, isProcessingDelete, onDelete }) => {
 ProductListing.propTypes = {
   item: PropTypes.object.isRequired,
   isProcessingDelete: PropTypes.bool.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default ProductListing;

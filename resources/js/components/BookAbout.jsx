@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import BookQuotes from './BookQuotes';
-import { Container, Row, Col } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Scrollspy from 'react-scrollspy';
 import sanitize from '../utils/sanitize';
 
@@ -84,7 +86,7 @@ BookAbout.propTypes = {
   book: PropTypes.object.isRequired,
   quotes: PropTypes.array.isRequired,
   isLoadingQuotes: PropTypes.bool.isRequired,
-  errorQuotes: PropTypes.object
+  errorQuotes: PropTypes.object,
 };
 
 export default BookAbout;

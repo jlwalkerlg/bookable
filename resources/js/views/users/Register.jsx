@@ -1,5 +1,7 @@
 import React from 'react';
-import { Container, Alert, Form } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
+import Form from 'react-bootstrap/Form';
 import SubmitButton from '../../components/SubmitButton';
 
 const Register = ({
@@ -10,7 +12,7 @@ const Register = ({
   error,
   isProcessing,
   onChange,
-  onSubmit
+  onSubmit,
 }) => {
   return (
     <main className="bg-beige">

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Elements, StripeProvider } from 'react-stripe-elements';
-import { Container, Alert } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import CheckoutFormContainer from '../../components/CheckoutFormContainer';

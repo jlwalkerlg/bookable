@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, Form } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
 import { Link } from 'react-router-dom';
 import sanitize from '../utils/sanitize';
 import SubmitButton from './SubmitButton';
@@ -13,7 +14,7 @@ const QuoteCard = ({
   authUser,
   onSave,
   onDelete,
-  isProcessing
+  isProcessing,
 }) => {
   return (
     <Card className="d-inline-block w-100 mt-3">
@@ -75,7 +76,7 @@ QuoteCard.propTypes = {
   authUser: PropTypes.object.isRequired,
   onSave: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
-  isProcessing: PropTypes.bool.isRequired
+  isProcessing: PropTypes.bool.isRequired,
 };
 
 export default QuoteCard;

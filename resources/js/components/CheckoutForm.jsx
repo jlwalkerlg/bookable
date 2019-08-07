@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Col } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
 import { CardElement } from 'react-stripe-elements';
 import SubmitButton from './SubmitButton';
 
@@ -10,7 +11,7 @@ const CheckoutForm = ({
   validationErrors,
   values,
   onReady,
-  isProcessing
+  isProcessing,
 }) => {
   return (
     <Form action="" method="POST" onSubmit={onSubmit}>
@@ -96,10 +97,10 @@ CheckoutForm.propTypes = {
   values: PropTypes.shape({
     street_address: PropTypes.string.isRequired,
     city: PropTypes.string.isRequired,
-    postcode: PropTypes.string.isRequired
+    postcode: PropTypes.string.isRequired,
   }).isRequired,
   onReady: PropTypes.func.isRequired,
-  isProcessing: PropTypes.bool.isRequired
+  isProcessing: PropTypes.bool.isRequired,
 };
 
 export default CheckoutForm;

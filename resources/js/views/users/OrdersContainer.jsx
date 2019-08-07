@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import withPagination from '../../components/withPagination';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import Orders from './Orders';
 
 class OrdersContainer extends Component {

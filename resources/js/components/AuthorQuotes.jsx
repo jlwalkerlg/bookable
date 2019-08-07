@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import SlickArrow from './SlickArrow';
-import { Container } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
 import sanitize from '../utils/sanitize';
 import Loading from './Loading';
 

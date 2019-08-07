@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Card, Media } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+import Media from 'react-bootstrap/Media';
 
 const Order = ({ transaction }) => {
   const { items } = transaction.cart;
@@ -76,7 +77,7 @@ const Order = ({ transaction }) => {
 };
 
 Order.propTypes = {
-  transaction: PropTypes.object.isRequired
+  transaction: PropTypes.object.isRequired,
 };
 
 export default Order;

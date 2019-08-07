@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Container, Row, Col } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Truncate from './Truncate';
 
 const AuthorDisplay = ({ author, books }) => {
@@ -62,7 +64,7 @@ const AuthorDisplay = ({ author, books }) => {
 
 AuthorDisplay.propTypes = {
   author: PropTypes.object.isRequired,
-  books: PropTypes.array.isRequired
+  books: PropTypes.array.isRequired,
 };
 
 export default AuthorDisplay;
