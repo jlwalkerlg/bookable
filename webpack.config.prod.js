@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'production',
@@ -21,6 +22,9 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'css/app.css',
+    }),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['js', 'css', 'images'],
     }),
   ],
   resolve: {

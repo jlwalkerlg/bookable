@@ -1,6 +1,6 @@
 const path = require('path');
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -14,9 +14,9 @@ module.exports = {
   devtool: 'source-map', // Generates source maps.
   plugins: [
     new WebpackNotifierPlugin(),
-    // new MiniCssExtractPlugin({
-    //   filename: 'css/app.css'
-    // }),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['js', 'css', 'images'],
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -59,14 +59,6 @@ module.exports = {
       {
         test: /\.s[ac]ss$/,
         use: [
-          // {
-          //   // Extract CSS out of JS bundle
-          //   loader: MiniCssExtractPlugin.loader,
-          //   // Tell MiniCssExtractPlugin where to find dist folder so images are linked to correctly
-          //   options: {
-          //     publicPath: '../'
-          //   }
-          // },
           {
             // Inject CSS into DOM from JS bundle.
             loader: 'style-loader',
