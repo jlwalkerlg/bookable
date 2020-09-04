@@ -44,7 +44,7 @@
     "jquery": "^3.2",
     "lodash": "^4.17.14",
     "mini-css-extract-plugin": "^0.5.0",
-    "node-sass": "^4.11.0",
+    "node-sass": "^4.13.1",
     "popper.js": "^1.12",
     "resolve-url-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
