@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
-    "dompurify": "^1.0.11",
+    "dompurify": "^2.0.7",
     "draft-js": "^0.10.5",
     "draftjs-to-html": "^0.8.4",
     "jw-paginate": "^1.0.4",
