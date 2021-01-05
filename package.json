@@ -10,7 +10,7 @@
     "watch-poll": "npm run watch -- --watch-poll"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "dompurify": "^1.0.11",
     "draft-js": "^0.10.5",
